@@ -1,3 +1,3 @@
-module github.com/sacloud/go-template
+module github.com/sacloud/apprun-template
 
-go 1.21
+go 1.23
