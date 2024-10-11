@@ -9,7 +9,7 @@ linters:
   disable-all: true
   enable:
     - errcheck
-    - exportloopref
+    - copyloopvar
     - gocritic
     - gofmt
     - goimports
