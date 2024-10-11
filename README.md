@@ -13,5 +13,5 @@ sacloud/apprun-api-goはさくらのクラウド AppRun APIをGo言語から利�
 
 ## License
 
-`apprun-api-go` Copyright (C) 2022-2023 The sacloud/go-template authors.
+`apprun-api-go` Copyright (C) 2022-2023 The sacloud/apprun-api-go authors.
 This project is published under [Apache 2.0 License](LICENSE).
