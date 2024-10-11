@@ -1,4 +1,4 @@
-module github.com/sacloud/apprun-template
+module github.com/sacloud/apprun-api-go
 
 go 1.23
 
