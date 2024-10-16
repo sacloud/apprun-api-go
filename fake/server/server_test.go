@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,7 @@ func TestMain(m *testing.M) {
 	testServer = httptest.NewServer(server.Handler())
 	defer testServer.Close()
 
-	os.Exit(m.Run())
+	m.Run()
 }
 
 func TestServer_ping(t *testing.T) {
