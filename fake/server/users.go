@@ -10,7 +10,10 @@ import (
 // (GET /user)
 func (s *Server) GetUser(c *gin.Context) {
 	// TODO: handle error
-	s.Engine.GetUser()
+	err := s.Engine.GetUser()
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
 
 	c.Status(http.StatusOK)
 }
@@ -19,7 +22,10 @@ func (s *Server) GetUser(c *gin.Context) {
 // (POST /user)
 func (s *Server) PostUser(c *gin.Context) {
 	// TODO: handle error
-	s.Engine.CreateUser()
+	err := s.Engine.CreateUser()
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
 
 	c.Status(http.StatusCreated)
 }

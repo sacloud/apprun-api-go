@@ -12,7 +12,7 @@ type User struct {
 }
 
 func (engine *Engine) CreateUser() error {
-	defer engine.rLock()()
+	defer engine.lock()()
 
 	u := engine.User
 	if u != nil {

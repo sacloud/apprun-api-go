@@ -17,7 +17,6 @@ func TestEngine_User(t *testing.T) {
 	})
 
 	t.Run("get user", func(t *testing.T) {
-		engine.CreateUser()
 		err := engine.GetUser()
 		require.NoError(t, err)
 	})
