@@ -70,13 +70,3 @@ func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId s
 func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
 
 }
-
-// (GET /user)
-func (s *Server) GetUser(c *gin.Context) {
-
-}
-
-// (POST /user)
-func (s *Server) PostUser(c *gin.Context) {
-
-}

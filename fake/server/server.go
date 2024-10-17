@@ -6,11 +6,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/apprun-api-go/fake"
 )
 
 var _ v1.ServerInterface = (*Server)(nil)
 
 type Server struct {
+	Engine *fake.Engine
 }
 
 func (s *Server) Handler() http.Handler {
