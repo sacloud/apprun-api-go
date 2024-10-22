@@ -12,33 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package fake
+package server
 
 import (
-	"sync"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// Engine Fakeサーバであつかうダミーデータを表す
-//
-// Serverに渡した後はDataStore内のデータを外部から操作しないこと
-// Note: 本来はサイトごとに保持するデータを分離すべきだが、現状だと実質1サイトのみのため分離していない。
-type Engine struct {
-	// User ユーザー
-	User *User
+// アプリケーションを作成します。
+// (POST /applications)
+func (s *Server) PostApplication(c *gin.Context) {
+	// デフォルト値のみ予めセットしておく
+	paramJSON := &v1.PostApplicationBody{
+		TimeoutSeconds: 60,
+		MinScale:       0,
+		MaxScale:       10,
+	}
+	if err := c.ShouldBindJSON(paramJSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	Application *v1.HandlerPostApplication
+	application, err := s.Engine.CreateApplication(paramJSON)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
 
-	mu sync.RWMutex
-}
-
-func (engine *Engine) lock() func() {
-	engine.mu.Lock()
-	return engine.mu.Unlock
-}
-
-func (engine *Engine) rLock() func() {
-	engine.mu.RLock()
-	return engine.mu.RUnlock
+	c.JSON(http.StatusCreated, &application)
 }

@@ -25,12 +25,6 @@ func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsPara
 
 }
 
-// アプリケーションを作成します。
-// (POST /applications)
-func (s *Server) PostApplication(c *gin.Context) {
-
-}
-
 // アプリケーションを削除します。
 // (DELETE /applications/{id})
 func (s *Server) DeleteApplication(c *gin.Context, id string) {
