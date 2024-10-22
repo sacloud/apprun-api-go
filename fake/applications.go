@@ -22,6 +22,26 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
+func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
+	defer engine.rLock()()
+
+	if len(engine.Applications) == 0 {
+		return nil, newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	for _, app := range engine.Applications {
+		if app != nil && app.Id != nil && *app.Id == id {
+			return app, nil
+		}
+	}
+
+	return nil, newError(
+		ErrorTypeNotFound, "application", nil,
+		"アプリケーションが見つかりませんでした。")
+}
+
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
 	id, err := newId()

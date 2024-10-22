@@ -21,6 +21,17 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
+// アプリケーション詳細を取得します。
+// (GET /applications/{id})
+func (s *Server) GetApplication(c *gin.Context, id string) {
+	application, err := s.Engine.ReadApplication(id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+
+	c.JSON(http.StatusOK, &application)
+}
+
 // アプリケーションを作成します。
 // (POST /applications)
 func (s *Server) PostApplication(c *gin.Context) {

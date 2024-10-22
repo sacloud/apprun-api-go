@@ -16,7 +16,6 @@ package fake
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
@@ -26,63 +25,66 @@ import (
 
 func TestEngine_Application(t *testing.T) {
 	engine := &Engine{}
+	t.Run("read application", func(t *testing.T) {
+		req := postApplicationBody()
+		createResp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		readResp, err := engine.ReadApplication(*createResp.Id)
+		require.NoError(t, err)
+
+		respJson, err := json.Marshal(readResp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"id": "` + *readResp.Id + `",
+			"name": "app1",
+			"timeout_seconds": 20,
+			"port": 8081,
+			"min_scale": 1,
+			"max_scale": 10,
+			"components": [
+				{
+					"name": "component1",
+					"max_cpu": "0.2",
+					"max_memory": "512Mi",
+					"datasource": {
+						"container_registry": {
+							"image": "apprun-example.sakuracr.jp/helloworld:latest",
+							"server": "apprun-example.sakuracr.jp",
+							"username": "apprun"
+						}
+					},
+					"env": [
+						{
+							"key": "envkey",
+							"value": "envvalue"
+						}
+					],
+					"probe": {
+						"http_get": {
+							"path": "/healthz",
+							"port": 8080,
+							"headers": [
+								{
+									"name": "Custom-Header",
+									"value": "Awesome"
+								}
+							]
+						}
+					}
+				}
+			],
+			"status": "Success",
+			"public_url": "` + *readResp.PublicUrl + `",
+			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
 
 	t.Run("create application", func(t *testing.T) {
-		server, userName, password := "apprun-example.sakuracr.jp", "apprun", "apprun" //nolint:gosec
-		envKey, envValue := "envkey", "envvalue"
-		headerName, headerValue := "Custom-Header", "Awesome"
-		probe := v1.PostApplicationBodyComponentProbe{
-			HttpGet: &struct {
-				Headers *[]struct {
-					Name  *string "json:\"name,omitempty\""
-					Value *string "json:\"value,omitempty\""
-				} "json:\"headers,omitempty\""
-				Path string "json:\"path\""
-				Port int    "json:\"port\""
-			}{
-				Headers: &[]struct {
-					Name  *string `json:"name,omitempty"`
-					Value *string `json:"value,omitempty"`
-				}{
-					{
-						Name:  &headerName,
-						Value: &headerValue,
-					},
-				},
-				Path: "/healthz",
-				Port: 8080,
-			},
-		}
-		req := &v1.PostApplicationBody{
-			Name:     "app1",
-			Port:     8081,
-			MinScale: 1,
-			MaxScale: 10,
-			Components: []v1.PostApplicationBodyComponent{
-				{
-					Name:      "component1",
-					MaxCpu:    "0.2",
-					MaxMemory: "512Mi",
-					Datasource: v1.PostApplicationBodyComponentDataSource{
-						ContainerRegistry: &v1.PostApplicationBodyComponentDataSourceContainerRegistry{
-							Image:    "apprun-example.sakuracr.jp/helloworld:latest",
-							Server:   &server,
-							Username: &userName,
-							Password: &password,
-						},
-					},
-					Env: &[]v1.PostApplicationBodyComponentEnv{
-						{
-							Key:   &envKey,
-							Value: &envValue,
-						},
-					},
-					Probe: &probe,
-				},
-			},
-			TimeoutSeconds: 20,
-		}
-
+		req := postApplicationBody()
 		resp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
@@ -133,7 +135,65 @@ func TestEngine_Application(t *testing.T) {
 			"public_url": "` + *resp.PublicUrl + `",
 			"created_at": "` + resp.CreatedAt.Format(time.RFC3339) + `"
 		}`
-		fmt.Print(string(respJson))
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
+}
+
+func postApplicationBody() *v1.PostApplicationBody {
+	server, userName, password := "apprun-example.sakuracr.jp", "apprun", "apprun" //nolint:gosec
+	envKey, envValue := "envkey", "envvalue"
+	headerName, headerValue := "Custom-Header", "Awesome"
+	probe := v1.PostApplicationBodyComponentProbe{
+		HttpGet: &struct {
+			Headers *[]struct {
+				Name  *string "json:\"name,omitempty\""
+				Value *string "json:\"value,omitempty\""
+			} "json:\"headers,omitempty\""
+			Path string "json:\"path\""
+			Port int    "json:\"port\""
+		}{
+			Headers: &[]struct {
+				Name  *string `json:"name,omitempty"`
+				Value *string `json:"value,omitempty"`
+			}{
+				{
+					Name:  &headerName,
+					Value: &headerValue,
+				},
+			},
+			Path: "/healthz",
+			Port: 8080,
+		},
+	}
+	req := &v1.PostApplicationBody{
+		Name:     "app1",
+		Port:     8081,
+		MinScale: 1,
+		MaxScale: 10,
+		Components: []v1.PostApplicationBodyComponent{
+			{
+				Name:      "component1",
+				MaxCpu:    "0.2",
+				MaxMemory: "512Mi",
+				Datasource: v1.PostApplicationBodyComponentDataSource{
+					ContainerRegistry: &v1.PostApplicationBodyComponentDataSourceContainerRegistry{
+						Image:    "apprun-example.sakuracr.jp/helloworld:latest",
+						Server:   &server,
+						Username: &userName,
+						Password: &password,
+					},
+				},
+				Env: &[]v1.PostApplicationBodyComponentEnv{
+					{
+						Key:   &envKey,
+						Value: &envValue,
+					},
+				},
+				Probe: &probe,
+			},
+		},
+		TimeoutSeconds: 20,
+	}
+
+	return req
 }
