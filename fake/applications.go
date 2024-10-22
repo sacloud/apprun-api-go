@@ -22,7 +22,7 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.HandlerPostApplication, error) {
+func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
 	id, err := newId()
 	if err != nil {
@@ -31,36 +31,36 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ha
 			"IDの生成に失敗しました。")
 	}
 
-	var components []v1.HandlerPostApplicationComponent
+	var components []v1.HandlerApplicationComponent
 	for _, reqComponent := range reqBody.Components {
-		var cr v1.HandlerPostApplicationComponentDataSourceContainerRegistry
+		var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
 		if reqComponent.Datasource.ContainerRegistry != nil {
 			cr.Image = reqComponent.Datasource.ContainerRegistry.Image
 			cr.Server = reqComponent.Datasource.ContainerRegistry.Server
 			cr.Username = reqComponent.Datasource.ContainerRegistry.Username
 		}
 
-		var env []v1.HandlerPostApplicationComponentEnv
+		var env []v1.HandlerApplicationComponentEnv
 		if reqComponent.Env != nil {
 			for _, e := range *reqComponent.Env {
-				env = append(env, (v1.HandlerPostApplicationComponentEnv)(e))
+				env = append(env, (v1.HandlerApplicationComponentEnv)(e))
 			}
 		}
 
-		var component v1.HandlerPostApplicationComponent
+		var component v1.HandlerApplicationComponent
 		component.Name = reqComponent.Name
 		component.MaxCpu = string(reqComponent.MaxCpu)
 		component.MaxMemory = string(reqComponent.MaxMemory)
 		component.Datasource.ContainerRegistry = &cr
 		component.Env = &env
-		component.Probe = (*v1.HandlerPostApplicationComponentProbe)(reqComponent.Probe)
+		component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
 		components = append(components, component)
 	}
 
-	status := v1.HandlerPostApplicationStatusSuccess
+	status := v1.ApplicationStatusSuccess
 	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", id)
 	createdAt := time.Now().UTC().Truncate(time.Second)
-	engine.Application = &v1.HandlerPostApplication{
+	app := &v1.Application{
 		Id:             &id,
 		Name:           &reqBody.Name,
 		TimeoutSeconds: &reqBody.TimeoutSeconds,
@@ -72,7 +72,9 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ha
 		PublicUrl:      &url,
 		CreatedAt:      &createdAt,
 	}
-	return engine.Application, nil
+	engine.Applications = append(engine.Applications, app)
+
+	return app, nil
 }
 
 func newId() (string, error) {
