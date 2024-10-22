@@ -21,11 +21,11 @@ import (
 	"time"
 )
 
-// Defines values for HandlerGetApplicationStatus.
+// Defines values for ApplicationStatus.
 const (
-	HandlerGetApplicationStatusFail    HandlerGetApplicationStatus = "Fail"
-	HandlerGetApplicationStatusSuccess HandlerGetApplicationStatus = "Success"
-	HandlerGetApplicationStatusUnknown HandlerGetApplicationStatus = "Unknown"
+	ApplicationStatusFail    ApplicationStatus = "Fail"
+	ApplicationStatusSuccess ApplicationStatus = "Success"
+	ApplicationStatusUnknown ApplicationStatus = "Unknown"
 )
 
 // Defines values for HandlerGetApplicationStatusStatus.
@@ -73,13 +73,6 @@ const (
 	HandlerPatchApplicationStatusFail    HandlerPatchApplicationStatus = "Fail"
 	HandlerPatchApplicationStatusSuccess HandlerPatchApplicationStatus = "Success"
 	HandlerPatchApplicationStatusUnknown HandlerPatchApplicationStatus = "Unknown"
-)
-
-// Defines values for HandlerPostApplicationStatus.
-const (
-	HandlerPostApplicationStatusFail    HandlerPostApplicationStatus = "Fail"
-	HandlerPostApplicationStatusSuccess HandlerPostApplicationStatus = "Success"
-	HandlerPostApplicationStatusUnknown HandlerPostApplicationStatus = "Unknown"
 )
 
 // Defines values for ModelErrorsLocationType.
@@ -146,63 +139,10 @@ const (
 	ListApplicationVersionsParamsSortOrderDesc ListApplicationVersionsParamsSortOrder = "desc"
 )
 
-// HandlerGetApplication defines model for handler.getApplication.
-type HandlerGetApplication struct {
+// Application defines model for Application.
+type Application struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server,omitempty"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username,omitempty"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env,omitempty"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu string `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory string `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
 
 	// CreatedAt 作成日時
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -226,14 +166,81 @@ type HandlerGetApplication struct {
 	PublicUrl *string `json:"public_url,omitempty"`
 
 	// Status アプリケーションステータス
-	Status *HandlerGetApplicationStatus `json:"status,omitempty"`
+	Status *ApplicationStatus `json:"status,omitempty"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
 	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
 }
 
-// HandlerGetApplicationStatus アプリケーションステータス
-type HandlerGetApplicationStatus string
+// ApplicationStatus アプリケーションステータス
+type ApplicationStatus string
+
+// HandlerApplicationComponent defines model for handler.ApplicationComponent.
+type HandlerApplicationComponent struct {
+	Datasource HandlerApplicationComponentDataSource `json:"datasource"`
+
+	// Env コンポーネントに渡す環境変数
+	Env *[]HandlerApplicationComponentEnv `json:"env,omitempty"`
+
+	// MaxCpu コンポーネントの最大CPU数
+	MaxCpu string `json:"max_cpu"`
+
+	// MaxMemory コンポーネントの最大メモリ
+	MaxMemory string `json:"max_memory"`
+
+	// Name コンポーネント名
+	Name  string                            `json:"name"`
+	Probe *HandlerApplicationComponentProbe `json:"probe"`
+}
+
+// HandlerApplicationComponentDataSource defines model for handler.ApplicationComponentDataSource.
+type HandlerApplicationComponentDataSource struct {
+	ContainerRegistry *HandlerApplicationComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+}
+
+// HandlerApplicationComponentDataSourceContainerRegistry defines model for handler.ApplicationComponentDataSourceContainerRegistry.
+type HandlerApplicationComponentDataSourceContainerRegistry struct {
+	// Image コンテナイメージ名
+	Image string `json:"image"`
+
+	// Server コンテナレジストリのサーバー名
+	Server *string `json:"server,omitempty"`
+
+	// Username コンテナレジストリの認証情報
+	Username *string `json:"username,omitempty"`
+}
+
+// HandlerApplicationComponentEnv defines model for handler.ApplicationComponentEnv.
+type HandlerApplicationComponentEnv struct {
+	// Key 環境変数名
+	Key *string `json:"key,omitempty"`
+
+	// Value 環境変数の値
+	Value *string `json:"value,omitempty"`
+}
+
+// HandlerApplicationComponentProbe defines model for handler.ApplicationComponentProbe.
+type HandlerApplicationComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
+	HttpGet *struct {
+		Headers *[]struct {
+			// Name ヘッダーフィールド名
+			Name *string `json:"name,omitempty"`
+
+			// Value ヘッダーフィールド値
+			Value *string `json:"value,omitempty"`
+		} `json:"headers,omitempty"`
+
+		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+		Path string `json:"path"`
+
+		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+		Port int `json:"port"`
+	} `json:"http_get"`
+}
+
+// HandlerGetApplication defines model for handler.getApplication.
+type HandlerGetApplication = Application
 
 // HandlerGetApplicationStatusResponse defines model for handler.getApplicationStatus.
 type HandlerGetApplicationStatusResponse struct {
@@ -501,104 +508,7 @@ type HandlerPatchApplication struct {
 type HandlerPatchApplicationStatus string
 
 // HandlerPostApplication defines model for handler.postApplication.
-type HandlerPostApplication struct {
-	// Components アプリケーションのコンポーネント情報
-	Components *[]HandlerPostApplicationComponent `json:"components,omitempty"`
-
-	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-
-	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
-
-	// MaxScale アプリケーション全体の最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
-
-	// MinScale アプリケーション全体の最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
-
-	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
-
-	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
-
-	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
-
-	// Status アプリケーションステータス
-	Status *HandlerPostApplicationStatus `json:"status,omitempty"`
-
-	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
-}
-
-// HandlerPostApplicationStatus アプリケーションステータス
-type HandlerPostApplicationStatus string
-
-// HandlerPostApplicationComponent defines model for handler.postApplicationComponent.
-type HandlerPostApplicationComponent struct {
-	Datasource HandlerPostApplicationComponentDataSource `json:"datasource"`
-
-	// Env コンポーネントに渡す環境変数
-	Env *[]HandlerPostApplicationComponentEnv `json:"env,omitempty"`
-
-	// MaxCpu コンポーネントの最大CPU数
-	MaxCpu string `json:"max_cpu"`
-
-	// MaxMemory コンポーネントの最大メモリ
-	MaxMemory string `json:"max_memory"`
-
-	// Name コンポーネント名
-	Name  string                                `json:"name"`
-	Probe *HandlerPostApplicationComponentProbe `json:"probe"`
-}
-
-// HandlerPostApplicationComponentDataSource defines model for handler.postApplicationComponentDataSource.
-type HandlerPostApplicationComponentDataSource struct {
-	ContainerRegistry *HandlerPostApplicationComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
-}
-
-// HandlerPostApplicationComponentDataSourceContainerRegistry defines model for handler.postApplicationComponentDataSourceContainerRegistry.
-type HandlerPostApplicationComponentDataSourceContainerRegistry struct {
-	// Image コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-	Image string `json:"image"`
-
-	// Server コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-	Server *string `json:"server,omitempty"`
-
-	// Username コンテナレジストリの認証情報
-	Username *string `json:"username,omitempty"`
-}
-
-// HandlerPostApplicationComponentEnv defines model for handler.postApplicationComponentEnv.
-type HandlerPostApplicationComponentEnv struct {
-	// Key 環境変数名
-	Key *string `json:"key,omitempty"`
-
-	// Value 環境変数の値
-	Value *string `json:"value,omitempty"`
-}
-
-// HandlerPostApplicationComponentProbe defines model for handler.postApplicationComponentProbe.
-type HandlerPostApplicationComponentProbe struct {
-	// HttpGet HTTP Getプローブタイプ
-	HttpGet *struct {
-		Headers *[]struct {
-			// Name ヘッダーフィールド名
-			Name *string `json:"name,omitempty"`
-
-			// Value ヘッダーフィールド値
-			Value *string `json:"value,omitempty"`
-		} `json:"headers,omitempty"`
-
-		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-		Path string `json:"path"`
-
-		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-		Port int `json:"port"`
-	} `json:"http_get"`
-}
+type HandlerPostApplication = Application
 
 // HandlerPutTraffics defines model for handler.putTraffics.
 type HandlerPutTraffics struct {
