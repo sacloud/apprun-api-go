@@ -28,7 +28,7 @@ func TestEngine_Application(t *testing.T) {
 	engine := &Engine{}
 
 	t.Run("create application", func(t *testing.T) {
-		server, userName, password := "apprun-example.sakuracr.jp", "apprun", "apprun"
+		server, userName, password := "apprun-example.sakuracr.jp", "apprun", "apprun" //nolint:gosec
 		envKey, envValue := "envkey", "envvalue"
 		headerName, headerValue := "Custom-Header", "Awesome"
 		probe := v1.PostApplicationBodyComponentProbe{
