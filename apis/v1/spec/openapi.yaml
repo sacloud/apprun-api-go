@@ -1075,97 +1075,7 @@ components:
           description: アプリケーションのコンポーネント情報
           type: array
           items:
-            type: object
-            required:
-              - name
-              - max_cpu
-              - max_memory
-              - datasource
-            properties:
-              name:
-                description: コンポーネント名
-                type: string
-                example: コンポーネント1
-              max_cpu:
-                description: コンポーネントの最大CPU数
-                type: string
-                example: "0.1"
-              max_memory:
-                description: コンポーネントの最大メモリ
-                type: string
-                example: 256Mi
-              datasource:
-                description: コンポーネントを構成するソース
-                type: object
-                properties:
-                  container_registry:
-                    description: コンテナレジストリ
-                    type: object
-                    required:
-                      - image
-                    properties:
-                      image:
-                        description: コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-                        type: string
-                        example: apprun-example.sakuracr.jp/helloworld:latest
-                      server:
-                        description: コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-                        type: string
-                        example: apprun-example.sakuracr.jp
-                      username:
-                        description: コンテナレジストリの認証情報
-                        type: string
-                        example: apprun
-              env:
-                description: コンポーネントに渡す環境変数
-                type: array
-                items:
-                  type: object
-                  properties:
-                    key:
-                      description: 環境変数名
-                      type: string
-                      example: MY_ENV
-                    value:
-                      description: 環境変数の値
-                      type: string
-                      example: my_value
-              probe:
-                description: コンポーネントのプローブ設定
-                type: object
-                nullable: true
-                properties:
-                  http_get:
-                    description: HTTP Getプローブタイプ
-                    type: object
-                    required:
-                      - path
-                      - port
-                    nullable: true
-                    properties:
-                      path:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-                        type: string
-                        example: /healthz
-                      port:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-                        type: integer
-                        example: 8080
-                        minimum: 1
-                        maximum: 65535
-                      headers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              description: ヘッダーフィールド名
-                              type: string
-                              example: Custom-Header
-                            value:
-                              description: ヘッダーフィールド値
-                              type: string
-                              example: Awesome
+            $ref: "#/components/schemas/handler.postApplicationComponent"
         status:
           description: アプリケーションステータス
           type: string
@@ -1182,6 +1092,107 @@ components:
           description: 作成日時
           type: string
           format: date-time
+    # handler.postApplicationから切り出した
+    handler.postApplicationComponent:
+      type: object
+      required:
+        - name
+        - max_cpu
+        - max_memory
+        - datasource
+      properties:
+        name:
+          description: コンポーネント名
+          type: string
+          example: コンポーネント1
+        max_cpu:
+          description: コンポーネントの最大CPU数
+          type: string
+          example: "0.1"
+        max_memory:
+          description: コンポーネントの最大メモリ
+          type: string
+          example: 256Mi
+        datasource:
+          description: コンポーネントを構成するソース
+          $ref: "#/components/schemas/handler.postApplicationComponentDataSource"
+        env:
+          description: コンポーネントに渡す環境変数
+          type: array
+          items:
+            $ref: "#/components/schemas/handler.postApplicationComponentEnv"
+        probe:
+          description: コンポーネントのプローブ設定
+          $ref: "#/components/schemas/handler.postApplicationComponentProbe"
+    handler.postApplicationComponentDataSource:
+      type: object
+      properties:
+        container_registry:
+          description: コンテナレジストリ
+          $ref: "#/components/schemas/handler.postApplicationComponentDataSourceContainerRegistry"
+    handler.postApplicationComponentDataSourceContainerRegistry:
+      type: object
+      required:
+        - image
+      properties:
+        image:
+          description: コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
+          type: string
+          example: apprun-example.sakuracr.jp/helloworld:latest
+        server:
+          description: コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
+          type: string
+          example: apprun-example.sakuracr.jp
+        username:
+          description: コンテナレジストリの認証情報
+          type: string
+          example: apprun
+    handler.postApplicationComponentEnv:
+      type: object
+      properties:
+        key:
+          description: 環境変数名
+          type: string
+          example: MY_ENV
+        value:
+          description: 環境変数の値
+          type: string
+          example: my_value
+    handler.postApplicationComponentProbe:
+      type: object
+      nullable: true
+      properties:
+        http_get:
+          description: HTTP Getプローブタイプ
+          type: object
+          required:
+            - path
+            - port
+          nullable: true
+          properties:
+            path:
+              description: HTTPサーバーへアクセスしプローブをチェックする際のパス
+              type: string
+              example: /healthz
+            port:
+              description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+              type: integer
+              example: 8080
+              minimum: 1
+              maximum: 65535
+            headers:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    description: ヘッダーフィールド名
+                    type: string
+                    example: Custom-Header
+                  value:
+                    description: ヘッダーフィールド値
+                    type: string
+                    example: Awesome
     handler.getApplication:
       type: object
       properties:
@@ -1780,131 +1791,142 @@ components:
           description: アプリケーションのコンポーネント情報
           type: array
           items:
-            type: object
-            required:
-              - name
-              - max_cpu
-              - max_memory
-              - datasource
-            properties:
-              name:
-                description: コンポーネント名
-                type: string
-                example: コンポーネント1
-                minLength: 1
-                maxLength: 255
-              max_cpu:
-                description: コンポーネントの最大CPU数
-                type: string
-                example: "0.1"
-                enum:
-                  - "0.1"
-                  - "0.2"
-                  - "0.3"
-                  - "0.4"
-                  - "0.5"
-                  - "0.6"
-                  - "0.7"
-                  - "0.8"
-                  - "0.9"
-                  - "1"
-              max_memory:
-                description: コンポーネントの最大メモリ
-                type: string
-                example: 256Mi
-                enum:
-                  - 256Mi
-                  - 512Mi
-                  - 1Gi
-                  - 2Gi
-              datasource:
-                description: コンポーネントを構成するソース
+            $ref: "#/components/schemas/postApplicationBodyComponent"
+    # postApplicationBodyから切り出した
+    postApplicationBodyComponent:
+      type: object
+      required:
+        - name
+        - max_cpu
+        - max_memory
+        - datasource
+      properties:
+        name:
+          description: コンポーネント名
+          type: string
+          example: コンポーネント1
+          minLength: 1
+          maxLength: 255
+        max_cpu:
+          description: コンポーネントの最大CPU数
+          type: string
+          example: "0.1"
+          enum:
+            - "0.1"
+            - "0.2"
+            - "0.3"
+            - "0.4"
+            - "0.5"
+            - "0.6"
+            - "0.7"
+            - "0.8"
+            - "0.9"
+            - "1"
+        max_memory:
+          description: コンポーネントの最大メモリ
+          type: string
+          example: 256Mi
+          enum:
+            - 256Mi
+            - 512Mi
+            - 1Gi
+            - 2Gi
+        datasource:
+          description: コンポーネントを構成するソース
+          $ref: "#/components/schemas/postApplicationBodyComponentDataSource"
+        env:
+          description: コンポーネントに渡す環境変数
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/postApplicationBodyComponentEnv"
+        probe:
+          description: コンポーネントのプローブ設定
+          $ref: "#/components/schemas/postApplicationBodyComponentProbe"
+    postApplicationBodyComponentDataSource:
+      type: object
+      properties:
+        container_registry:
+          description: コンテナレジストリ
+          $ref: "#/components/schemas/postApplicationBodyComponentDataSourceContainerRegistry"
+    postApplicationBodyComponentDataSourceContainerRegistry:
+      type: object
+      required:
+        - image
+      properties:
+        image:
+          description: コンテナイメージ名
+          type: string
+          example: apprun-example.sakuracr.jp/helloworld:latest
+          minLength: 1
+          maxLength: 128
+        server:
+          description: コンテナレジストリのサーバー名
+          type: string
+          example: apprun-example.sakuracr.jp
+          minLength: 1
+          maxLength: 128
+          nullable: true
+        username:
+          description: コンテナレジストリの認証情報
+          type: string
+          example: apprun
+          minLength: 1
+          maxLength: 63
+          nullable: true
+        password:
+          description: コンテナレジストリの認証情報
+          type: string
+          example: apprun
+          minLength: 1
+          maxLength: 63
+          nullable: true
+    postApplicationBodyComponentEnv:
+      type: object
+      properties:
+        key:
+          description: 環境変数名
+          type: string
+          example: MY_ENV
+        value:
+          description: 環境変数の値
+          type: string
+          example: my_value
+    postApplicationBodyComponentProbe:
+      type: object
+      nullable: true
+      properties:
+        http_get:
+          description: HTTP Getプローブタイプ
+          type: object
+          required:
+            - path
+            - port
+          nullable: true
+          properties:
+            path:
+              description: HTTPサーバーへアクセスしプローブをチェックする際のパス
+              type: string
+              example: /healthz
+            port:
+              description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+              type: integer
+              example: 8080
+              minimum: 1
+              maximum: 65535
+            headers:
+              type: array
+              items:
                 type: object
                 properties:
-                  container_registry:
-                    description: コンテナレジストリ
-                    type: object
-                    required:
-                      - image
-                    properties:
-                      image:
-                        description: コンテナイメージ名
-                        type: string
-                        example: apprun-example.sakuracr.jp/helloworld:latest
-                        minLength: 1
-                        maxLength: 128
-                      server:
-                        description: コンテナレジストリのサーバー名
-                        type: string
-                        example: apprun-example.sakuracr.jp
-                        minLength: 1
-                        maxLength: 128
-                        nullable: true
-                      username:
-                        description: コンテナレジストリの認証情報
-                        type: string
-                        example: apprun
-                        minLength: 1
-                        maxLength: 63
-                        nullable: true
-                      password:
-                        description: コンテナレジストリの認証情報
-                        type: string
-                        example: apprun
-                        minLength: 1
-                        maxLength: 63
-                        nullable: true
-              env:
-                description: コンポーネントに渡す環境変数
-                type: array
-                nullable: true
-                items:
-                  type: object
-                  properties:
-                    key:
-                      description: 環境変数名
-                      type: string
-                      example: MY_ENV
-                    value:
-                      description: 環境変数の値
-                      type: string
-                      example: my_value
-              probe:
-                description: コンポーネントのプローブ設定
-                type: object
-                nullable: true
-                properties:
-                  http_get:
-                    description: HTTP Getプローブタイプ
-                    type: object
-                    required:
-                      - path
-                      - port
-                    nullable: true
-                    properties:
-                      path:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-                        type: string
-                        example: /healthz
-                      port:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-                        type: integer
-                        example: 8080
-                        minimum: 1
-                        maximum: 65535
-                      headers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              description: ヘッダーフィールド名
-                              type: string
-                              example: Custom-Header
-                            value:
-                              description: ヘッダーフィールド値
-                              type: string
-                              example: Awesome
+                  name:
+                    description: ヘッダーフィールド名
+                    type: string
+                    example: Custom-Header
+                  value:
+                    description: ヘッダーフィールド値
+                    type: string
+                    example: Awesome
     patchApplicationBody:
       type: object
       properties:

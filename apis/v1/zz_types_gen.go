@@ -112,26 +112,26 @@ const (
 	PatchApplicationBodyComponentsMaxMemoryN512Mi PatchApplicationBodyComponentsMaxMemory = "512Mi"
 )
 
-// Defines values for PostApplicationBodyComponentsMaxCpu.
+// Defines values for PostApplicationBodyComponentMaxCpu.
 const (
-	PostApplicationBodyComponentsMaxCpuN01 PostApplicationBodyComponentsMaxCpu = "0.1"
-	PostApplicationBodyComponentsMaxCpuN02 PostApplicationBodyComponentsMaxCpu = "0.2"
-	PostApplicationBodyComponentsMaxCpuN03 PostApplicationBodyComponentsMaxCpu = "0.3"
-	PostApplicationBodyComponentsMaxCpuN04 PostApplicationBodyComponentsMaxCpu = "0.4"
-	PostApplicationBodyComponentsMaxCpuN05 PostApplicationBodyComponentsMaxCpu = "0.5"
-	PostApplicationBodyComponentsMaxCpuN06 PostApplicationBodyComponentsMaxCpu = "0.6"
-	PostApplicationBodyComponentsMaxCpuN07 PostApplicationBodyComponentsMaxCpu = "0.7"
-	PostApplicationBodyComponentsMaxCpuN08 PostApplicationBodyComponentsMaxCpu = "0.8"
-	PostApplicationBodyComponentsMaxCpuN09 PostApplicationBodyComponentsMaxCpu = "0.9"
-	PostApplicationBodyComponentsMaxCpuN1  PostApplicationBodyComponentsMaxCpu = "1"
+	PostApplicationBodyComponentMaxCpuN01 PostApplicationBodyComponentMaxCpu = "0.1"
+	PostApplicationBodyComponentMaxCpuN02 PostApplicationBodyComponentMaxCpu = "0.2"
+	PostApplicationBodyComponentMaxCpuN03 PostApplicationBodyComponentMaxCpu = "0.3"
+	PostApplicationBodyComponentMaxCpuN04 PostApplicationBodyComponentMaxCpu = "0.4"
+	PostApplicationBodyComponentMaxCpuN05 PostApplicationBodyComponentMaxCpu = "0.5"
+	PostApplicationBodyComponentMaxCpuN06 PostApplicationBodyComponentMaxCpu = "0.6"
+	PostApplicationBodyComponentMaxCpuN07 PostApplicationBodyComponentMaxCpu = "0.7"
+	PostApplicationBodyComponentMaxCpuN08 PostApplicationBodyComponentMaxCpu = "0.8"
+	PostApplicationBodyComponentMaxCpuN09 PostApplicationBodyComponentMaxCpu = "0.9"
+	PostApplicationBodyComponentMaxCpuN1  PostApplicationBodyComponentMaxCpu = "1"
 )
 
-// Defines values for PostApplicationBodyComponentsMaxMemory.
+// Defines values for PostApplicationBodyComponentMaxMemory.
 const (
-	PostApplicationBodyComponentsMaxMemoryN1Gi   PostApplicationBodyComponentsMaxMemory = "1Gi"
-	PostApplicationBodyComponentsMaxMemoryN256Mi PostApplicationBodyComponentsMaxMemory = "256Mi"
-	PostApplicationBodyComponentsMaxMemoryN2Gi   PostApplicationBodyComponentsMaxMemory = "2Gi"
-	PostApplicationBodyComponentsMaxMemoryN512Mi PostApplicationBodyComponentsMaxMemory = "512Mi"
+	PostApplicationBodyComponentMaxMemoryN1Gi   PostApplicationBodyComponentMaxMemory = "1Gi"
+	PostApplicationBodyComponentMaxMemoryN256Mi PostApplicationBodyComponentMaxMemory = "256Mi"
+	PostApplicationBodyComponentMaxMemoryN2Gi   PostApplicationBodyComponentMaxMemory = "2Gi"
+	PostApplicationBodyComponentMaxMemoryN512Mi PostApplicationBodyComponentMaxMemory = "512Mi"
 )
 
 // Defines values for ListApplicationsParamsSortOrder.
@@ -503,60 +503,7 @@ type HandlerPatchApplicationStatus string
 // HandlerPostApplication defines model for handler.postApplication.
 type HandlerPostApplication struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-				Image string `json:"image"`
-
-				// Server コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
-				Server *string `json:"server,omitempty"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username,omitempty"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env,omitempty"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu string `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory string `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]HandlerPostApplicationComponent `json:"components,omitempty"`
 
 	// CreatedAt 作成日時
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -588,6 +535,70 @@ type HandlerPostApplication struct {
 
 // HandlerPostApplicationStatus アプリケーションステータス
 type HandlerPostApplicationStatus string
+
+// HandlerPostApplicationComponent defines model for handler.postApplicationComponent.
+type HandlerPostApplicationComponent struct {
+	Datasource HandlerPostApplicationComponentDataSource `json:"datasource"`
+
+	// Env コンポーネントに渡す環境変数
+	Env *[]HandlerPostApplicationComponentEnv `json:"env,omitempty"`
+
+	// MaxCpu コンポーネントの最大CPU数
+	MaxCpu string `json:"max_cpu"`
+
+	// MaxMemory コンポーネントの最大メモリ
+	MaxMemory string `json:"max_memory"`
+
+	// Name コンポーネント名
+	Name  string                                `json:"name"`
+	Probe *HandlerPostApplicationComponentProbe `json:"probe"`
+}
+
+// HandlerPostApplicationComponentDataSource defines model for handler.postApplicationComponentDataSource.
+type HandlerPostApplicationComponentDataSource struct {
+	ContainerRegistry *HandlerPostApplicationComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+}
+
+// HandlerPostApplicationComponentDataSourceContainerRegistry defines model for handler.postApplicationComponentDataSourceContainerRegistry.
+type HandlerPostApplicationComponentDataSourceContainerRegistry struct {
+	// Image コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
+	Image string `json:"image"`
+
+	// Server コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。
+	Server *string `json:"server,omitempty"`
+
+	// Username コンテナレジストリの認証情報
+	Username *string `json:"username,omitempty"`
+}
+
+// HandlerPostApplicationComponentEnv defines model for handler.postApplicationComponentEnv.
+type HandlerPostApplicationComponentEnv struct {
+	// Key 環境変数名
+	Key *string `json:"key,omitempty"`
+
+	// Value 環境変数の値
+	Value *string `json:"value,omitempty"`
+}
+
+// HandlerPostApplicationComponentProbe defines model for handler.postApplicationComponentProbe.
+type HandlerPostApplicationComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
+	HttpGet *struct {
+		Headers *[]struct {
+			// Name ヘッダーフィールド名
+			Name *string `json:"name,omitempty"`
+
+			// Value ヘッダーフィールド値
+			Value *string `json:"value,omitempty"`
+		} `json:"headers,omitempty"`
+
+		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+		Path string `json:"path"`
+
+		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+		Port int `json:"port"`
+	} `json:"http_get"`
+}
 
 // HandlerPutTraffics defines model for handler.putTraffics.
 type HandlerPutTraffics struct {
@@ -714,63 +725,7 @@ type PatchApplicationBodyComponentsMaxMemory string
 // PostApplicationBody defines model for postApplicationBody.
 type PostApplicationBody struct {
 	// Components アプリケーションのコンポーネント情報
-	Components []struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Password コンテナレジストリの認証情報
-				Password *string `json:"password"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu PostApplicationBodyComponentsMaxCpu `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory PostApplicationBodyComponentsMaxMemory `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components"`
+	Components []PostApplicationBodyComponent `json:"components"`
 
 	// MaxScale アプリケーション全体の最大スケール数
 	MaxScale int `json:"max_scale"`
@@ -788,11 +743,78 @@ type PostApplicationBody struct {
 	TimeoutSeconds int `json:"timeout_seconds"`
 }
 
-// PostApplicationBodyComponentsMaxCpu コンポーネントの最大CPU数
-type PostApplicationBodyComponentsMaxCpu string
+// PostApplicationBodyComponent defines model for postApplicationBodyComponent.
+type PostApplicationBodyComponent struct {
+	Datasource PostApplicationBodyComponentDataSource `json:"datasource"`
 
-// PostApplicationBodyComponentsMaxMemory コンポーネントの最大メモリ
-type PostApplicationBodyComponentsMaxMemory string
+	// Env コンポーネントに渡す環境変数
+	Env *[]PostApplicationBodyComponentEnv `json:"env"`
+
+	// MaxCpu コンポーネントの最大CPU数
+	MaxCpu PostApplicationBodyComponentMaxCpu `json:"max_cpu"`
+
+	// MaxMemory コンポーネントの最大メモリ
+	MaxMemory PostApplicationBodyComponentMaxMemory `json:"max_memory"`
+
+	// Name コンポーネント名
+	Name  string                             `json:"name"`
+	Probe *PostApplicationBodyComponentProbe `json:"probe"`
+}
+
+// PostApplicationBodyComponentMaxCpu コンポーネントの最大CPU数
+type PostApplicationBodyComponentMaxCpu string
+
+// PostApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
+type PostApplicationBodyComponentMaxMemory string
+
+// PostApplicationBodyComponentDataSource defines model for postApplicationBodyComponentDataSource.
+type PostApplicationBodyComponentDataSource struct {
+	ContainerRegistry *PostApplicationBodyComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+}
+
+// PostApplicationBodyComponentDataSourceContainerRegistry defines model for postApplicationBodyComponentDataSourceContainerRegistry.
+type PostApplicationBodyComponentDataSourceContainerRegistry struct {
+	// Image コンテナイメージ名
+	Image string `json:"image"`
+
+	// Password コンテナレジストリの認証情報
+	Password *string `json:"password"`
+
+	// Server コンテナレジストリのサーバー名
+	Server *string `json:"server"`
+
+	// Username コンテナレジストリの認証情報
+	Username *string `json:"username"`
+}
+
+// PostApplicationBodyComponentEnv defines model for postApplicationBodyComponentEnv.
+type PostApplicationBodyComponentEnv struct {
+	// Key 環境変数名
+	Key *string `json:"key,omitempty"`
+
+	// Value 環境変数の値
+	Value *string `json:"value,omitempty"`
+}
+
+// PostApplicationBodyComponentProbe defines model for postApplicationBodyComponentProbe.
+type PostApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
+	HttpGet *struct {
+		Headers *[]struct {
+			// Name ヘッダーフィールド名
+			Name *string `json:"name,omitempty"`
+
+			// Value ヘッダーフィールド値
+			Value *string `json:"value,omitempty"`
+		} `json:"headers,omitempty"`
+
+		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+		Path string `json:"path"`
+
+		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+		Port int `json:"port"`
+	} `json:"http_get"`
+}
 
 // PutTrafficsBody defines model for putTrafficsBody.
 type PutTrafficsBody = []struct {
