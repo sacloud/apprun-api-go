@@ -60,6 +60,9 @@ func TestEngine_Application(t *testing.T) {
 			MaxScale: 10,
 			Components: []v1.PostApplicationBodyComponent{
 				{
+					Name:      "component1",
+					MaxCpu:    "0.2",
+					MaxMemory: "512Mi",
 					Datasource: v1.PostApplicationBodyComponentDataSource{
 						ContainerRegistry: &v1.PostApplicationBodyComponentDataSourceContainerRegistry{
 							Image:    "apprun-example.sakuracr.jp/helloworld:latest",
@@ -96,9 +99,9 @@ func TestEngine_Application(t *testing.T) {
 			"max_scale": 10,
 			"components": [
 				{
-					"name": "",
-					"max_cpu": "",
-					"max_memory": "",
+					"name": "component1",
+					"max_cpu": "0.2",
+					"max_memory": "512Mi",
 					"datasource": {
 						"container_registry": {
 							"image": "apprun-example.sakuracr.jp/helloworld:latest",
