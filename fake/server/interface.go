@@ -19,12 +19,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// アプリケーション一覧を取得します。
-// (GET /applications)
-func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsParams) {
-
-}
-
 // アプリケーションを削除します。
 // (DELETE /applications/{id})
 func (s *Server) DeleteApplication(c *gin.Context, id string) {

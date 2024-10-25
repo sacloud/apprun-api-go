@@ -21,6 +21,13 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
+var (
+	defaultPageNum   = 1
+	defaultPageSize  = 50
+	defaultSortField = "created_at"
+	defaultSortOrder = v1.ListApplicationsParamsSortOrderDesc
+)
+
 // アプリケーション詳細を取得します。
 // (GET /applications/{id})
 func (s *Server) GetApplication(c *gin.Context, id string) {
@@ -30,6 +37,31 @@ func (s *Server) GetApplication(c *gin.Context, id string) {
 	}
 
 	c.JSON(http.StatusOK, &application)
+}
+
+// アプリケーション一覧を取得します。
+// (GET /applications)
+func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsParams) {
+	// クエリパラメーターのデフォルト値のセット
+	if params.PageNum == nil {
+		params.PageNum = &defaultPageNum
+	}
+	if params.PageSize == nil {
+		params.PageSize = &defaultPageSize
+	}
+	if params.SortField == nil {
+		params.SortField = &defaultSortField
+	}
+	if params.SortOrder == nil {
+		params.SortOrder = &defaultSortOrder
+	}
+
+	applications, err := s.Engine.ListApplications(params)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+
+	c.JSON(http.StatusOK, applications)
 }
 
 // アプリケーションを作成します。

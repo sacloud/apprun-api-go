@@ -16,6 +16,7 @@ package fake
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -40,6 +41,71 @@ func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
 	return nil, newError(
 		ErrorTypeNotFound, "application", nil,
 		"アプリケーションが見つかりませんでした。")
+}
+
+// sort_field, sort_orderは無視する
+func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.HandlerListApplications, error) {
+	defer engine.rLock()()
+
+	apps := engine.Applications
+	appsLen := len(apps)
+	if appsLen == 0 {
+		return nil, newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	sort.Slice(apps, func(i int, j int) bool {
+		switch *param.SortField {
+		case "created_at":
+			if *param.SortOrder == "desc" {
+				return apps[i].CreatedAt.After(*apps[j].CreatedAt)
+			}
+			return apps[i].CreatedAt.Before(*apps[j].CreatedAt)
+		// sort_fieldのデフォルト値であるcreated_at以外は未サポート
+		default:
+			return false
+		}
+	})
+
+	start := (*param.PageNum - 1) * *param.PageSize
+	// 範囲外の場合nilを返す
+	if start > len(apps) {
+		return nil, nil
+	}
+
+	end := start + *param.PageSize
+	if end > len(apps) {
+		end = len(apps)
+	}
+
+	var data []v1.HandlerListApplicationsData
+	for _, app := range apps[start:end] {
+		if app != nil {
+			d := v1.HandlerListApplicationsData{
+				Id:        app.Id,
+				Name:      app.Name,
+				Status:    (*v1.HandlerListApplicationsDataStatus)(app.Status),
+				PublicUrl: app.PublicUrl,
+				CreatedAt: app.CreatedAt,
+			}
+
+			data = append(data, d)
+		}
+	}
+
+	meta := v1.HandlerListApplicationsMeta{
+		PageNum:     param.PageNum,
+		PageSize:    param.PageSize,
+		ObjectTotal: &appsLen,
+		SortField:   param.SortField,
+		SortOrder:   (*v1.HandlerListApplicationsMetaSortOrder)(param.SortOrder),
+	}
+
+	return &v1.HandlerListApplications{
+		Data: &data,
+		Meta: &meta,
+	}, nil
 }
 
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {

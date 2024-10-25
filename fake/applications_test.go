@@ -24,8 +24,8 @@ import (
 )
 
 func TestEngine_Application(t *testing.T) {
-	engine := &Engine{}
 	t.Run("read application", func(t *testing.T) {
+		engine := &Engine{}
 		req := postApplicationBody()
 		createResp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
@@ -83,7 +83,64 @@ func TestEngine_Application(t *testing.T) {
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
 
+	t.Run("list applications", func(t *testing.T) {
+		engine := &Engine{}
+		for i := 0; i < 3; i++ {
+			req := postApplicationBody()
+			_, err := engine.CreateApplication(req)
+			require.NoError(t, err)
+		}
+
+		pageNum := 1
+		pageSize := 2
+		sortField := "created_at"
+		sortOrder := v1.ListApplicationsParamsSortOrderDesc
+		resp, err := engine.ListApplications(v1.ListApplicationsParams{
+			PageNum:   &pageNum,
+			PageSize:  &pageSize,
+			SortField: &sortField,
+			SortOrder: &sortOrder,
+		})
+		require.NoError(t, err)
+
+		d := *resp.Data
+		d0 := d[0]
+		d1 := d[1]
+
+		respJson, err := json.Marshal(resp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"meta": {
+				"object_total": 3,
+				"page_num": 1,
+				"page_size": 2,
+				"sort_field": "created_at",
+				"sort_order": "desc"
+			},
+			"data": [
+				{
+					"id": "` + *d0.Id + `",
+					"name": "` + *d0.Name + `",
+					"status": "` + string(*d0.Status) + `",
+					"public_url": "` + *d0.PublicUrl + `",
+					"created_at": "` + d0.CreatedAt.Format(time.RFC3339) + `"
+				},
+				{
+					"id": "` + *d1.Id + `",
+					"name": "` + *d1.Name + `",
+					"status": "` + string(*d1.Status) + `",
+					"public_url": "` + *d1.PublicUrl + `",
+					"created_at": "` + d1.CreatedAt.Format(time.RFC3339) + `"
+				}
+			]
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
+
 	t.Run("create application", func(t *testing.T) {
+		engine := &Engine{}
 		req := postApplicationBody()
 		resp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
