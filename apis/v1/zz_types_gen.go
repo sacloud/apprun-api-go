@@ -342,35 +342,41 @@ type HandlerGetVersionStatus string
 
 // HandlerListApplications defines model for handler.listApplications.
 type HandlerListApplications struct {
-	Data *[]struct {
-		// CreatedAt 作成日時
-		CreatedAt *time.Time `json:"created_at,omitempty"`
+	Data *[]HandlerListApplicationsData `json:"data,omitempty"`
+	Meta *HandlerListApplicationsMeta   `json:"meta,omitempty"`
+}
 
-		// Id アプリケーションID
-		Id *string `json:"id,omitempty"`
+// HandlerListApplicationsData defines model for handler.listApplicationsData.
+type HandlerListApplicationsData struct {
+	// CreatedAt 作成日時
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-		// Name アプリケーション名
-		Name *string `json:"name,omitempty"`
+	// Id アプリケーションID
+	Id *string `json:"id,omitempty"`
 
-		// PublicUrl 公開URL
-		PublicUrl *string `json:"public_url,omitempty"`
+	// Name アプリケーション名
+	Name *string `json:"name,omitempty"`
 
-		// Status アプリケーションステータス
-		Status *HandlerListApplicationsDataStatus `json:"status,omitempty"`
-	} `json:"data,omitempty"`
-	Meta *struct {
-		ObjectTotal *int                                  `json:"object_total,omitempty"`
-		PageNum     *int                                  `json:"page_num,omitempty"`
-		PageSize    *int                                  `json:"page_size,omitempty"`
-		SortField   *string                               `json:"sort_field,omitempty"`
-		SortOrder   *HandlerListApplicationsMetaSortOrder `json:"sort_order,omitempty"`
-	} `json:"meta,omitempty"`
+	// PublicUrl 公開URL
+	PublicUrl *string `json:"public_url,omitempty"`
+
+	// Status アプリケーションステータス
+	Status *HandlerListApplicationsDataStatus `json:"status,omitempty"`
 }
 
 // HandlerListApplicationsDataStatus アプリケーションステータス
 type HandlerListApplicationsDataStatus string
 
-// HandlerListApplicationsMetaSortOrder defines model for HandlerListApplications.Meta.SortOrder.
+// HandlerListApplicationsMeta defines model for handler.listApplicationsMeta.
+type HandlerListApplicationsMeta struct {
+	ObjectTotal *int                                  `json:"object_total,omitempty"`
+	PageNum     *int                                  `json:"page_num,omitempty"`
+	PageSize    *int                                  `json:"page_size,omitempty"`
+	SortField   *string                               `json:"sort_field,omitempty"`
+	SortOrder   *HandlerListApplicationsMetaSortOrder `json:"sort_order,omitempty"`
+}
+
+// HandlerListApplicationsMetaSortOrder defines model for HandlerListApplicationsMeta.SortOrder.
 type HandlerListApplicationsMetaSortOrder string
 
 // HandlerListTraffics defines model for handler.listTraffics.
