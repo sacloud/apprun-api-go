@@ -28,7 +28,7 @@ type Engine struct {
 	// User ユーザー
 	User *User
 
-	Application *v1.HandlerPostApplication
+	Applications []*v1.Application
 
 	mu sync.RWMutex
 }
