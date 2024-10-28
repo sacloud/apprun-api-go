@@ -194,6 +194,19 @@ func TestEngine_Application(t *testing.T) {
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
+
+	t.Run("delete application", func(t *testing.T) {
+		engine := &Engine{}
+		for i := 0; i < 3; i++ {
+			req := postApplicationBody()
+			_, err := engine.CreateApplication(req)
+			require.NoError(t, err)
+		}
+
+		err := engine.DeleteApplication(*engine.Applications[0].Id)
+		require.NoError(t, err)
+		require.Equal(t, len(engine.Applications), 2)
+	})
 }
 
 func postApplicationBody() *v1.PostApplicationBody {
