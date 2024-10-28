@@ -19,12 +19,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// アプリケーションステータスを取得します。
-// (GET /applications/{id}/status)
-func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
-
-}
-
 // アプリケーショントラフィック分散を取得します。
 // (GET /applications/{id}/traffics)
 func (s *Server) ListApplicationTraffics(c *gin.Context, id string) {
