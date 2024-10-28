@@ -2,3 +2,4 @@
 apis/v1/spec/original-openapi.yaml
 apis/v1/spec/openapi.json
 dist/
+.vscode/
