@@ -231,19 +231,19 @@ func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBo
 					app.Components = &components
 				}
 			}
-		}
 
-		updatedAt := time.Now().UTC().Truncate(time.Second)
-		patchedApp = v1.HandlerPatchApplication{
-			Name:           app.Name,
-			TimeoutSeconds: app.TimeoutSeconds,
-			Port:           app.Port,
-			MinScale:       app.MinScale,
-			MaxScale:       app.MaxScale,
-			Components:     app.Components,
-			Status:         (*v1.HandlerPatchApplicationStatus)(app.Status),
-			PublicUrl:      app.PublicUrl,
-			UpdatedAt:      &updatedAt,
+			updatedAt := time.Now().UTC().Truncate(time.Second)
+			patchedApp = v1.HandlerPatchApplication{
+				Name:           app.Name,
+				TimeoutSeconds: app.TimeoutSeconds,
+				Port:           app.Port,
+				MinScale:       app.MinScale,
+				MaxScale:       app.MaxScale,
+				Components:     app.Components,
+				Status:         (*v1.HandlerPatchApplicationStatus)(app.Status),
+				PublicUrl:      app.PublicUrl,
+				UpdatedAt:      &updatedAt,
+			}
 		}
 	}
 
