@@ -19,12 +19,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// アプリケーションを削除します。
-// (DELETE /applications/{id})
-func (s *Server) DeleteApplication(c *gin.Context, id string) {
-
-}
-
 // アプリケーションを部分的に変更します。
 // (PATCH /applications/{id})
 func (s *Server) PatchApplication(c *gin.Context, id string) {

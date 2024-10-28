@@ -64,6 +64,17 @@ func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsPara
 	c.JSON(http.StatusOK, applications)
 }
 
+// アプリケーションを削除します。
+// (DELETE /applications/{id})
+func (s *Server) DeleteApplication(c *gin.Context, id string) {
+	err := s.Engine.DeleteApplication(id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
 // アプリケーションを作成します。
 // (POST /applications)
 func (s *Server) PostApplication(c *gin.Context) {

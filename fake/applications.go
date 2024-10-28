@@ -108,6 +108,23 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 	}, nil
 }
 
+func (engine *Engine) DeleteApplication(id string) error {
+	defer engine.lock()()
+
+	var idx int
+	for i, app := range engine.Applications {
+		if *app.Id == id {
+			idx = i
+			break
+		}
+	}
+
+	engine.Applications[idx] = engine.Applications[len(engine.Applications)-1]
+	engine.Applications = engine.Applications[:len(engine.Applications)-1]
+
+	return nil
+}
+
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
 	id, err := newId()
