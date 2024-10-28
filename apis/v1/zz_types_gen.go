@@ -83,26 +83,26 @@ const (
 	ModelErrorsLocationTypeQuery     ModelErrorsLocationType = "query"
 )
 
-// Defines values for PatchApplicationBodyComponentsMaxCpu.
+// Defines values for PatchApplicationBodyComponentMaxCpu.
 const (
-	PatchApplicationBodyComponentsMaxCpuN01 PatchApplicationBodyComponentsMaxCpu = "0.1"
-	PatchApplicationBodyComponentsMaxCpuN02 PatchApplicationBodyComponentsMaxCpu = "0.2"
-	PatchApplicationBodyComponentsMaxCpuN03 PatchApplicationBodyComponentsMaxCpu = "0.3"
-	PatchApplicationBodyComponentsMaxCpuN04 PatchApplicationBodyComponentsMaxCpu = "0.4"
-	PatchApplicationBodyComponentsMaxCpuN05 PatchApplicationBodyComponentsMaxCpu = "0.5"
-	PatchApplicationBodyComponentsMaxCpuN06 PatchApplicationBodyComponentsMaxCpu = "0.6"
-	PatchApplicationBodyComponentsMaxCpuN07 PatchApplicationBodyComponentsMaxCpu = "0.7"
-	PatchApplicationBodyComponentsMaxCpuN08 PatchApplicationBodyComponentsMaxCpu = "0.8"
-	PatchApplicationBodyComponentsMaxCpuN09 PatchApplicationBodyComponentsMaxCpu = "0.9"
-	PatchApplicationBodyComponentsMaxCpuN1  PatchApplicationBodyComponentsMaxCpu = "1"
+	PatchApplicationBodyComponentMaxCpuN01 PatchApplicationBodyComponentMaxCpu = "0.1"
+	PatchApplicationBodyComponentMaxCpuN02 PatchApplicationBodyComponentMaxCpu = "0.2"
+	PatchApplicationBodyComponentMaxCpuN03 PatchApplicationBodyComponentMaxCpu = "0.3"
+	PatchApplicationBodyComponentMaxCpuN04 PatchApplicationBodyComponentMaxCpu = "0.4"
+	PatchApplicationBodyComponentMaxCpuN05 PatchApplicationBodyComponentMaxCpu = "0.5"
+	PatchApplicationBodyComponentMaxCpuN06 PatchApplicationBodyComponentMaxCpu = "0.6"
+	PatchApplicationBodyComponentMaxCpuN07 PatchApplicationBodyComponentMaxCpu = "0.7"
+	PatchApplicationBodyComponentMaxCpuN08 PatchApplicationBodyComponentMaxCpu = "0.8"
+	PatchApplicationBodyComponentMaxCpuN09 PatchApplicationBodyComponentMaxCpu = "0.9"
+	PatchApplicationBodyComponentMaxCpuN1  PatchApplicationBodyComponentMaxCpu = "1"
 )
 
-// Defines values for PatchApplicationBodyComponentsMaxMemory.
+// Defines values for PatchApplicationBodyComponentMaxMemory.
 const (
-	PatchApplicationBodyComponentsMaxMemoryN1Gi   PatchApplicationBodyComponentsMaxMemory = "1Gi"
-	PatchApplicationBodyComponentsMaxMemoryN256Mi PatchApplicationBodyComponentsMaxMemory = "256Mi"
-	PatchApplicationBodyComponentsMaxMemoryN2Gi   PatchApplicationBodyComponentsMaxMemory = "2Gi"
-	PatchApplicationBodyComponentsMaxMemoryN512Mi PatchApplicationBodyComponentsMaxMemory = "512Mi"
+	PatchApplicationBodyComponentMaxMemoryN1Gi   PatchApplicationBodyComponentMaxMemory = "1Gi"
+	PatchApplicationBodyComponentMaxMemoryN256Mi PatchApplicationBodyComponentMaxMemory = "256Mi"
+	PatchApplicationBodyComponentMaxMemoryN2Gi   PatchApplicationBodyComponentMaxMemory = "2Gi"
+	PatchApplicationBodyComponentMaxMemoryN512Mi PatchApplicationBodyComponentMaxMemory = "512Mi"
 )
 
 // Defines values for PostApplicationBodyComponentMaxCpu.
@@ -427,60 +427,7 @@ type HandlerListVersionsMetaSortOrder string
 // HandlerPatchApplication defines model for handler.patchApplication.
 type HandlerPatchApplication struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server,omitempty"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username,omitempty"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env,omitempty"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu string `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory string `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
 
 	// Id アプリケーションID
 	Id *string `json:"id,omitempty"`
@@ -558,63 +505,7 @@ type PatchApplicationBody struct {
 	AllTrafficAvailable *bool `json:"all_traffic_available,omitempty"`
 
 	// Components アプリケーションのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Password コンテナレジストリの認証情報
-				Password *string `json:"password"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu PatchApplicationBodyComponentsMaxCpu `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory PatchApplicationBodyComponentsMaxMemory `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]PatchApplicationBodyComponent `json:"components,omitempty"`
 
 	// MaxScale アプリケーション全体の最大スケール数
 	MaxScale *int `json:"max_scale,omitempty"`
@@ -632,11 +523,76 @@ type PatchApplicationBody struct {
 	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
 }
 
-// PatchApplicationBodyComponentsMaxCpu コンポーネントの最大CPU数
-type PatchApplicationBodyComponentsMaxCpu string
+// PatchApplicationBodyComponent defines model for patchApplicationBodyComponent.
+type PatchApplicationBodyComponent struct {
+	Datasource PatchApplicationBodyComponentDataSource `json:"datasource"`
+	Env        *PatchApplicationBodyComponentEnv       `json:"env"`
 
-// PatchApplicationBodyComponentsMaxMemory コンポーネントの最大メモリ
-type PatchApplicationBodyComponentsMaxMemory string
+	// MaxCpu コンポーネントの最大CPU数
+	MaxCpu PatchApplicationBodyComponentMaxCpu `json:"max_cpu"`
+
+	// MaxMemory コンポーネントの最大メモリ
+	MaxMemory PatchApplicationBodyComponentMaxMemory `json:"max_memory"`
+
+	// Name コンポーネント名
+	Name  string                              `json:"name"`
+	Probe *PatchApplicationBodyComponentProbe `json:"probe"`
+}
+
+// PatchApplicationBodyComponentMaxCpu コンポーネントの最大CPU数
+type PatchApplicationBodyComponentMaxCpu string
+
+// PatchApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
+type PatchApplicationBodyComponentMaxMemory string
+
+// PatchApplicationBodyComponentDataSource defines model for patchApplicationBodyComponentDataSource.
+type PatchApplicationBodyComponentDataSource struct {
+	ContainerRegistry *PatchApplicationBodyComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+}
+
+// PatchApplicationBodyComponentDataSourceContainerRegistry defines model for patchApplicationBodyComponentDataSourceContainerRegistry.
+type PatchApplicationBodyComponentDataSourceContainerRegistry struct {
+	// Image コンテナイメージ名
+	Image string `json:"image"`
+
+	// Password コンテナレジストリの認証情報
+	Password *string `json:"password"`
+
+	// Server コンテナレジストリのサーバー名
+	Server *string `json:"server"`
+
+	// Username コンテナレジストリの認証情報
+	Username *string `json:"username"`
+}
+
+// PatchApplicationBodyComponentEnv defines model for patchApplicationBodyComponentEnv.
+type PatchApplicationBodyComponentEnv = []struct {
+	// Key 環境変数名
+	Key *string `json:"key,omitempty"`
+
+	// Value 環境変数の値
+	Value *string `json:"value,omitempty"`
+}
+
+// PatchApplicationBodyComponentProbe defines model for patchApplicationBodyComponentProbe.
+type PatchApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
+	HttpGet *struct {
+		Headers *[]struct {
+			// Name ヘッダーフィールド名
+			Name *string `json:"name,omitempty"`
+
+			// Value ヘッダーフィールド値
+			Value *string `json:"value,omitempty"`
+		} `json:"headers,omitempty"`
+
+		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+		Path string `json:"path"`
+
+		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+		Port int `json:"port"`
+	} `json:"http_get"`
+}
 
 // PostApplicationBody defines model for postApplicationBody.
 type PostApplicationBody struct {
