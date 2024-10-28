@@ -19,12 +19,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// アプリケーションを部分的に変更します。
-// (PATCH /applications/{id})
-func (s *Server) PatchApplication(c *gin.Context, id string) {
-
-}
-
 // アプリケーションステータスを取得します。
 // (GET /applications/{id}/status)
 func (s *Server) GetApplicationStatus(c *gin.Context, id string) {

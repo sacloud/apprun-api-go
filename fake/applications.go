@@ -180,6 +180,76 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	return app, nil
 }
 
+func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
+	defer engine.lock()()
+	var patchedApp v1.HandlerPatchApplication
+	for _, app := range engine.Applications {
+		if *app.Id == id {
+			if reqBody.Name != nil {
+				app.Name = reqBody.Name
+			}
+			if reqBody.TimeoutSeconds != nil {
+				app.TimeoutSeconds = reqBody.TimeoutSeconds
+			}
+			if reqBody.Port != nil {
+				app.Port = reqBody.Port
+			}
+			if reqBody.MinScale != nil {
+				app.MinScale = reqBody.MinScale
+			}
+			if reqBody.MaxScale != nil {
+				app.MaxScale = reqBody.MaxScale
+			}
+			if reqBody.Components != nil {
+				var components []v1.HandlerApplicationComponent
+				for _, reqComponent := range *reqBody.Components {
+					var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
+					if reqComponent.Datasource.ContainerRegistry != nil {
+						cr.Image = reqComponent.Datasource.ContainerRegistry.Image
+						cr.Server = reqComponent.Datasource.ContainerRegistry.Server
+						cr.Username = reqComponent.Datasource.ContainerRegistry.Username
+					}
+
+					var env []v1.HandlerApplicationComponentEnv
+					if reqComponent.Env != nil {
+						for _, e := range *reqComponent.Env {
+							env = append(env, (v1.HandlerApplicationComponentEnv)(e))
+						}
+					}
+
+					var component v1.HandlerApplicationComponent
+					component.Name = reqComponent.Name
+					component.MaxCpu = string(reqComponent.MaxCpu)
+					component.MaxMemory = string(reqComponent.MaxMemory)
+					component.Datasource.ContainerRegistry = &cr
+					component.Env = &env
+					component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
+					components = append(components, component)
+				}
+
+				if len(components) > 0 {
+					app.Components = &components
+				}
+			}
+		}
+
+		updatedAt := time.Now().UTC().Truncate(time.Second)
+		patchedApp = v1.HandlerPatchApplication{
+			Name:           app.Name,
+			TimeoutSeconds: app.TimeoutSeconds,
+			Port:           app.Port,
+			MinScale:       app.MinScale,
+			MaxScale:       app.MaxScale,
+			Components:     app.Components,
+			Status:         (*v1.HandlerPatchApplicationStatus)(app.Status),
+			PublicUrl:      app.PublicUrl,
+			UpdatedAt:      &updatedAt,
+		}
+	}
+
+	return &patchedApp, nil
+}
+
 func newId() (string, error) {
 	id, err := uuid.NewRandom()
 	return id.String(), err

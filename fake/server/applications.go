@@ -96,3 +96,20 @@ func (s *Server) PostApplication(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, &application)
 }
+
+// アプリケーションを部分的に変更します。
+// (PATCH /applications/{id})
+func (s *Server) PatchApplication(c *gin.Context, id string) {
+	paramJSON := &v1.PatchApplicationBody{}
+	if err := c.ShouldBindJSON(paramJSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	application, err := s.Engine.PatchApplication(id, paramJSON)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+
+	c.JSON(http.StatusOK, &application)
+}

@@ -207,6 +207,20 @@ func TestEngine_Application(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, len(engine.Applications), 2)
 	})
+
+	t.Run("patch application", func(t *testing.T) {
+		engine := &Engine{}
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		n := "changedName"
+		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+		require.Equal(t, n, *patchedApp.Name)
+	})
 }
 
 func postApplicationBody() *v1.PostApplicationBody {
