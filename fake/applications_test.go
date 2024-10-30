@@ -25,7 +25,7 @@ import (
 
 func TestEngine_Application(t *testing.T) {
 	t.Run("read application", func(t *testing.T) {
-		engine := &Engine{}
+		engine := NewEngine()
 		req := postApplicationBody()
 		createResp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
@@ -84,7 +84,7 @@ func TestEngine_Application(t *testing.T) {
 	})
 
 	t.Run("list applications", func(t *testing.T) {
-		engine := &Engine{}
+		engine := NewEngine()
 		for i := 0; i < 3; i++ {
 			req := postApplicationBody()
 			_, err := engine.CreateApplication(req)
@@ -140,7 +140,7 @@ func TestEngine_Application(t *testing.T) {
 	})
 
 	t.Run("create application", func(t *testing.T) {
-		engine := &Engine{}
+		engine := NewEngine()
 		req := postApplicationBody()
 		resp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
@@ -196,20 +196,22 @@ func TestEngine_Application(t *testing.T) {
 	})
 
 	t.Run("delete application", func(t *testing.T) {
-		engine := &Engine{}
+		engine := NewEngine()
 		for i := 0; i < 3; i++ {
 			req := postApplicationBody()
 			_, err := engine.CreateApplication(req)
 			require.NoError(t, err)
 		}
 
-		err := engine.DeleteApplication(*engine.Applications[0].Id)
+		id := *engine.Applications[0].Id
+		err := engine.DeleteApplication(id)
 		require.NoError(t, err)
-		require.Equal(t, len(engine.Applications), 2)
+
+		require.Equal(t, len(engine.appVersionRelations), 2)
 	})
 
 	t.Run("patch application", func(t *testing.T) {
-		engine := &Engine{}
+		engine := NewEngine()
 		req := postApplicationBody()
 		createdApp, err := engine.CreateApplication(req)
 		require.NoError(t, err)

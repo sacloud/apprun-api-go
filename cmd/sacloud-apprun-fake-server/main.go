@@ -86,7 +86,7 @@ func run(cmd *cobra.Command, _ []string) error {
 }
 
 func startServer(addr, dataFile string) error {
-	var engine fake.Engine
+	engine := fake.NewEngine()
 	fakeData := defaultData
 
 	if dataFile != "" {
@@ -96,12 +96,12 @@ func startServer(addr, dataFile string) error {
 		}
 		fakeData = data
 	}
-	if err := json.Unmarshal(fakeData, &engine); err != nil {
+	if err := json.Unmarshal(fakeData, engine); err != nil {
 		return err
 	}
 
 	fakeServer := server.Server{
-		Engine: &engine,
+		Engine: engine,
 	}
 	httpServer := &http.Server{
 		Handler:           fakeServer.Handler(),

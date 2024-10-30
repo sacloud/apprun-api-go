@@ -23,14 +23,31 @@ import (
 // Engine Fakeサーバであつかうダミーデータを表す
 //
 // Serverに渡した後はDataStore内のデータを外部から操作しないこと
-// Note: 本来はサイトごとに保持するデータを分離すべきだが、現状だと実質1サイトのみのため分離していない。
 type Engine struct {
 	// User ユーザー
-	User *User
-
+	User         *User
 	Applications []*v1.Application
+	Versions     []*v1.Version
+	// MapのkeyにApplicationのIDを利用する
+	appVersionRelations map[string][]*appVersionRelation
+
+	// GeneratedID 採番済みの最終ID
+	//
+	// DataStoreの各フィールドの値との整合性は確認されないため利用者側が管理する必要がある
+	GeneratedVersionID int
 
 	mu sync.RWMutex
+}
+
+type appVersionRelation struct {
+	application *v1.Application
+	version     *v1.Version
+}
+
+func NewEngine() *Engine {
+	return &Engine{
+		appVersionRelations: make(map[string][]*appVersionRelation),
+	}
 }
 
 func (engine *Engine) lock() func() {
@@ -41,4 +58,13 @@ func (engine *Engine) lock() func() {
 func (engine *Engine) rLock() func() {
 	engine.mu.RLock()
 	return engine.mu.RUnlock
+}
+
+// nextId GeneratedVersionID+1したものを返す
+//
+// ロックは行わないため呼び出し側で適切に制御すること
+func (engine *Engine) nextVersionId() int {
+	engine.GeneratedVersionID++
+	id := engine.GeneratedVersionID
+	return id
 }
