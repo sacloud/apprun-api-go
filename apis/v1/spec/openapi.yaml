@@ -1118,51 +1118,56 @@ components:
       type: object
       properties:
         meta:
-          type: object
-          properties:
-            page_num:
-              type: integer
-              example: 1
-            page_size:
-              type: integer
-              example: 100
-            object_total:
-              type: integer
-              example: 1000
-            sort_field:
-              type: string
-              example: created_at
-            sort_order:
-              type: string
-              example: asc
-              enum:
-                - asc
-                - desc
+          $ref: "#/components/schemas/handler.listVersionsMeta"
         data:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                description: バージョンID
-                type: string
-                example: BIi7jHVWGjg7NaxcK
-              name:
-                description: バージョン名
-                type: string
-                example: version-001
-              status:
-                description: ステータス
-                type: string
-                example: Success
-                enum:
-                  - Success
-                  - Fail
-                  - Unknown
-              created_at:
-                description: 作成日時
-                type: string
-                format: date-time
+            $ref: "#/components/schemas/Version"
+    # handler.listVersionsから切り出した
+    handler.listVersionsMeta:
+      type: object
+      properties:
+        page_num:
+          type: integer
+          example: 1
+        page_size:
+          type: integer
+          example: 100
+        object_total:
+          type: integer
+          example: 1000
+        sort_field:
+          type: string
+          example: created_at
+        sort_order:
+          type: string
+          example: asc
+          enum:
+            - asc
+            - desc
+    Version:
+      type: object
+      properties:
+        id:
+          description: バージョンID
+          type: string
+          example: BIi7jHVWGjg7NaxcK
+        name:
+          description: バージョン名
+          type: string
+          example: version-001
+        status:
+          description: ステータス
+          type: string
+          example: Success
+          enum:
+            - Success
+            - Fail
+            - Unknown
+        created_at:
+          description: 作成日時
+          type: string
+          format: date-time
     handler.getVersion:
       type: object
       properties:

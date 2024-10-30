@@ -28,6 +28,13 @@ const (
 	ApplicationStatusUnknown ApplicationStatus = "Unknown"
 )
 
+// Defines values for VersionStatus.
+const (
+	VersionStatusFail    VersionStatus = "Fail"
+	VersionStatusSuccess VersionStatus = "Success"
+	VersionStatusUnknown VersionStatus = "Unknown"
+)
+
 // Defines values for HandlerGetApplicationStatusStatus.
 const (
 	HandlerGetApplicationStatusStatusFail    HandlerGetApplicationStatusStatus = "Fail"
@@ -53,13 +60,6 @@ const (
 const (
 	HandlerListApplicationsMetaSortOrderAsc  HandlerListApplicationsMetaSortOrder = "asc"
 	HandlerListApplicationsMetaSortOrderDesc HandlerListApplicationsMetaSortOrder = "desc"
-)
-
-// Defines values for HandlerListVersionsDataStatus.
-const (
-	HandlerListVersionsDataStatusFail    HandlerListVersionsDataStatus = "Fail"
-	HandlerListVersionsDataStatusSuccess HandlerListVersionsDataStatus = "Success"
-	HandlerListVersionsDataStatusUnknown HandlerListVersionsDataStatus = "Unknown"
 )
 
 // Defines values for HandlerListVersionsMetaSortOrder.
@@ -174,6 +174,24 @@ type Application struct {
 
 // ApplicationStatus アプリケーションステータス
 type ApplicationStatus string
+
+// Version defines model for Version.
+type Version struct {
+	// CreatedAt 作成日時
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	// Id バージョンID
+	Id *string `json:"id,omitempty"`
+
+	// Name バージョン名
+	Name *string `json:"name,omitempty"`
+
+	// Status ステータス
+	Status *VersionStatus `json:"status,omitempty"`
+}
+
+// VersionStatus ステータス
+type VersionStatus string
 
 // HandlerApplicationComponent defines model for handler.ApplicationComponent.
 type HandlerApplicationComponent struct {
@@ -396,32 +414,20 @@ type HandlerListTraffics struct {
 
 // HandlerListVersions defines model for handler.listVersions.
 type HandlerListVersions struct {
-	Data *[]struct {
-		// CreatedAt 作成日時
-		CreatedAt *time.Time `json:"created_at,omitempty"`
-
-		// Id バージョンID
-		Id *string `json:"id,omitempty"`
-
-		// Name バージョン名
-		Name *string `json:"name,omitempty"`
-
-		// Status ステータス
-		Status *HandlerListVersionsDataStatus `json:"status,omitempty"`
-	} `json:"data,omitempty"`
-	Meta *struct {
-		ObjectTotal *int                              `json:"object_total,omitempty"`
-		PageNum     *int                              `json:"page_num,omitempty"`
-		PageSize    *int                              `json:"page_size,omitempty"`
-		SortField   *string                           `json:"sort_field,omitempty"`
-		SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
-	} `json:"meta,omitempty"`
+	Data *[]Version               `json:"data,omitempty"`
+	Meta *HandlerListVersionsMeta `json:"meta,omitempty"`
 }
 
-// HandlerListVersionsDataStatus ステータス
-type HandlerListVersionsDataStatus string
+// HandlerListVersionsMeta defines model for handler.listVersionsMeta.
+type HandlerListVersionsMeta struct {
+	ObjectTotal *int                              `json:"object_total,omitempty"`
+	PageNum     *int                              `json:"page_num,omitempty"`
+	PageSize    *int                              `json:"page_size,omitempty"`
+	SortField   *string                           `json:"sort_field,omitempty"`
+	SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
+}
 
-// HandlerListVersionsMetaSortOrder defines model for HandlerListVersions.Meta.SortOrder.
+// HandlerListVersionsMetaSortOrder defines model for HandlerListVersionsMeta.SortOrder.
 type HandlerListVersionsMetaSortOrder string
 
 // HandlerPatchApplication defines model for handler.patchApplication.
