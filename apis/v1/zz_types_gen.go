@@ -175,6 +175,18 @@ type Application struct {
 // ApplicationStatus アプリケーションステータス
 type ApplicationStatus string
 
+// Traffic defines model for Traffic.
+type Traffic struct {
+	// IsLatestVersion 最新バージョンかどうか
+	IsLatestVersion *bool `json:"is_latest_version,omitempty"`
+
+	// Percent トラフィック分散の割合
+	Percent *int `json:"percent,omitempty"`
+
+	// VersionName バージョン名
+	VersionName *string `json:"version_name,omitempty"`
+}
+
 // Version defines model for Version.
 type Version struct {
 	// CreatedAt 作成日時
@@ -346,16 +358,7 @@ type HandlerListApplicationsMetaSortOrder string
 
 // HandlerListTraffics defines model for handler.listTraffics.
 type HandlerListTraffics struct {
-	Data *[]struct {
-		// IsLatestVersion 最新バージョンかどうか
-		IsLatestVersion *bool `json:"is_latest_version,omitempty"`
-
-		// Percent トラフィック分散の割合
-		Percent *int `json:"percent,omitempty"`
-
-		// VersionName バージョン名
-		VersionName *string `json:"version_name,omitempty"`
-	} `json:"data,omitempty"`
+	Data *[]Traffic              `json:"data,omitempty"`
 	Meta *map[string]interface{} `json:"meta"`
 }
 
@@ -418,16 +421,7 @@ type HandlerPostApplication = Application
 
 // HandlerPutTraffics defines model for handler.putTraffics.
 type HandlerPutTraffics struct {
-	Data *[]struct {
-		// IsLatestVersion 最新バージョンかどうか
-		IsLatestVersion *bool `json:"is_latest_version,omitempty"`
-
-		// Percent トラフィック分散の割合
-		Percent *int `json:"percent,omitempty"`
-
-		// VersionName バージョン名
-		VersionName *string `json:"version_name,omitempty"`
-	} `json:"data,omitempty"`
+	Data *[]Traffic              `json:"data,omitempty"`
 	Meta *map[string]interface{} `json:"meta"`
 }
 
