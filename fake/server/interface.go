@@ -16,7 +16,6 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
 // アプリケーショントラフィック分散を取得します。
@@ -28,23 +27,5 @@ func (s *Server) ListApplicationTraffics(c *gin.Context, id string) {
 // アプリケーショントラフィック分散を変更します。
 // (PUT /applications/{id}/traffics)
 func (s *Server) PutApplicationTraffic(c *gin.Context, id string) {
-
-}
-
-// アプリケーションバージョン一覧を取得します。
-// (GET /applications/{id}/versions)
-func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.ListApplicationVersionsParams) {
-
-}
-
-// アプリケーションバージョンを削除します。
-// (DELETE /applications/{id}/versions/{version_id})
-func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
-
-}
-
-// アプリケーションバージョン詳細を取得します。
-// (GET /applications/{id}/versions/{version_id})
-func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
 
 }

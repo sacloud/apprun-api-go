@@ -28,6 +28,13 @@ const (
 	ApplicationStatusUnknown ApplicationStatus = "Unknown"
 )
 
+// Defines values for VersionStatus.
+const (
+	VersionStatusFail    VersionStatus = "Fail"
+	VersionStatusSuccess VersionStatus = "Success"
+	VersionStatusUnknown VersionStatus = "Unknown"
+)
+
 // Defines values for HandlerGetApplicationStatusStatus.
 const (
 	HandlerGetApplicationStatusStatusFail    HandlerGetApplicationStatusStatus = "Fail"
@@ -53,13 +60,6 @@ const (
 const (
 	HandlerListApplicationsMetaSortOrderAsc  HandlerListApplicationsMetaSortOrder = "asc"
 	HandlerListApplicationsMetaSortOrderDesc HandlerListApplicationsMetaSortOrder = "desc"
-)
-
-// Defines values for HandlerListVersionsDataStatus.
-const (
-	HandlerListVersionsDataStatusFail    HandlerListVersionsDataStatus = "Fail"
-	HandlerListVersionsDataStatusSuccess HandlerListVersionsDataStatus = "Success"
-	HandlerListVersionsDataStatusUnknown HandlerListVersionsDataStatus = "Unknown"
 )
 
 // Defines values for HandlerListVersionsMetaSortOrder.
@@ -175,6 +175,24 @@ type Application struct {
 // ApplicationStatus アプリケーションステータス
 type ApplicationStatus string
 
+// Version defines model for Version.
+type Version struct {
+	// CreatedAt 作成日時
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	// Id バージョンID
+	Id *string `json:"id,omitempty"`
+
+	// Name バージョン名
+	Name *string `json:"name,omitempty"`
+
+	// Status ステータス
+	Status *VersionStatus `json:"status,omitempty"`
+}
+
+// VersionStatus ステータス
+type VersionStatus string
+
 // HandlerApplicationComponent defines model for handler.ApplicationComponent.
 type HandlerApplicationComponent struct {
 	Datasource HandlerApplicationComponentDataSource `json:"datasource"`
@@ -257,60 +275,7 @@ type HandlerGetApplicationStatusStatus string
 // HandlerGetVersion defines model for handler.getVersion.
 type HandlerGetVersion struct {
 	// Components バージョンのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server,omitempty"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username,omitempty"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env,omitempty"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu string `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory string `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
 
 	// CreatedAt 作成日時
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -396,32 +361,20 @@ type HandlerListTraffics struct {
 
 // HandlerListVersions defines model for handler.listVersions.
 type HandlerListVersions struct {
-	Data *[]struct {
-		// CreatedAt 作成日時
-		CreatedAt *time.Time `json:"created_at,omitempty"`
-
-		// Id バージョンID
-		Id *string `json:"id,omitempty"`
-
-		// Name バージョン名
-		Name *string `json:"name,omitempty"`
-
-		// Status ステータス
-		Status *HandlerListVersionsDataStatus `json:"status,omitempty"`
-	} `json:"data,omitempty"`
-	Meta *struct {
-		ObjectTotal *int                              `json:"object_total,omitempty"`
-		PageNum     *int                              `json:"page_num,omitempty"`
-		PageSize    *int                              `json:"page_size,omitempty"`
-		SortField   *string                           `json:"sort_field,omitempty"`
-		SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
-	} `json:"meta,omitempty"`
+	Data *[]Version               `json:"data,omitempty"`
+	Meta *HandlerListVersionsMeta `json:"meta,omitempty"`
 }
 
-// HandlerListVersionsDataStatus ステータス
-type HandlerListVersionsDataStatus string
+// HandlerListVersionsMeta defines model for handler.listVersionsMeta.
+type HandlerListVersionsMeta struct {
+	ObjectTotal *int                              `json:"object_total,omitempty"`
+	PageNum     *int                              `json:"page_num,omitempty"`
+	PageSize    *int                              `json:"page_size,omitempty"`
+	SortField   *string                           `json:"sort_field,omitempty"`
+	SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
+}
 
-// HandlerListVersionsMetaSortOrder defines model for HandlerListVersions.Meta.SortOrder.
+// HandlerListVersionsMetaSortOrder defines model for HandlerListVersionsMeta.SortOrder.
 type HandlerListVersionsMetaSortOrder string
 
 // HandlerPatchApplication defines model for handler.patchApplication.

@@ -32,10 +32,9 @@ func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
 			"アプリケーションが見つかりませんでした。")
 	}
 
-	for _, app := range engine.Applications {
-		if app != nil && app.Id != nil && *app.Id == id {
-			return app, nil
-		}
+	app := engine.latestApplication(id)
+	if app != nil && app.Id != nil && *app.Id == id {
+		return app, nil
 	}
 
 	return nil, newError(
@@ -43,16 +42,19 @@ func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
 		"アプリケーションが見つかりませんでした。")
 }
 
-// sort_field, sort_orderは無視する
 func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.HandlerListApplications, error) {
 	defer engine.rLock()()
 
-	apps := engine.Applications
-	appsLen := len(apps)
-	if appsLen == 0 {
+	if len(engine.Applications) == 0 {
 		return nil, newError(
 			ErrorTypeNotFound, "application", nil,
 			"アプリケーションが見つかりませんでした。")
+	}
+
+	// 各Applicationの最新バージョンのみを取り出す
+	var apps []*v1.Application
+	for id := range engine.appVersionRelations {
+		apps = append(apps, engine.latestApplication(id))
 	}
 
 	sort.Slice(apps, func(i int, j int) bool {
@@ -68,15 +70,16 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 		}
 	})
 
+	appsLen := len(apps)
 	start := (*param.PageNum - 1) * *param.PageSize
 	// 範囲外の場合nilを返す
-	if start > len(apps) {
+	if start > appsLen {
 		return nil, nil
 	}
 
 	end := start + *param.PageSize
-	if end > len(apps) {
-		end = len(apps)
+	if end > appsLen {
+		end = appsLen
 	}
 
 	var data []v1.HandlerListApplicationsData
@@ -111,27 +114,18 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 func (engine *Engine) DeleteApplication(id string) error {
 	defer engine.lock()()
 
-	var idx int
-	for i, app := range engine.Applications {
-		if *app.Id == id {
-			idx = i
-			break
-		}
-	}
-
-	engine.Applications[idx] = engine.Applications[len(engine.Applications)-1]
-	engine.Applications = engine.Applications[:len(engine.Applications)-1]
-
+	// engine.Applications, engine.Versionにデータは残るがここでは省略する
+	delete(engine.appVersionRelations, id)
 	return nil
 }
 
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
-	id, err := newId()
+	appId, err := newId()
 	if err != nil {
 		return nil, newError(
 			ErrorTypeUnknown, "application", nil,
-			"IDの生成に失敗しました。")
+			"Application IDの生成に失敗しました。")
 	}
 
 	var components []v1.HandlerApplicationComponent
@@ -161,10 +155,10 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	}
 
 	status := v1.ApplicationStatusSuccess
-	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", id)
+	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", appId)
 	createdAt := time.Now().UTC().Truncate(time.Second)
 	app := &v1.Application{
-		Id:             &id,
+		Id:             &appId,
 		Name:           &reqBody.Name,
 		TimeoutSeconds: &reqBody.TimeoutSeconds,
 		Port:           &reqBody.Port,
@@ -177,80 +171,110 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	}
 	engine.Applications = append(engine.Applications, app)
 
+	err = engine.createVersion(app)
+	if err != nil {
+		return nil, newError(
+			ErrorTypeUnknown, "application", nil,
+			"Version の生成に失敗しました。")
+	}
+
 	return app, nil
 }
 
 func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
 	defer engine.lock()()
-	var patchedApp v1.HandlerPatchApplication
-	for _, app := range engine.Applications {
-		if *app.Id == id {
-			if reqBody.Name != nil {
-				app.Name = reqBody.Name
-			}
-			if reqBody.TimeoutSeconds != nil {
-				app.TimeoutSeconds = reqBody.TimeoutSeconds
-			}
-			if reqBody.Port != nil {
-				app.Port = reqBody.Port
-			}
-			if reqBody.MinScale != nil {
-				app.MinScale = reqBody.MinScale
-			}
-			if reqBody.MaxScale != nil {
-				app.MaxScale = reqBody.MaxScale
-			}
-			if reqBody.Components != nil {
-				var components []v1.HandlerApplicationComponent
-				for _, reqComponent := range *reqBody.Components {
-					var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
-					if reqComponent.Datasource.ContainerRegistry != nil {
-						cr.Image = reqComponent.Datasource.ContainerRegistry.Image
-						cr.Server = reqComponent.Datasource.ContainerRegistry.Server
-						cr.Username = reqComponent.Datasource.ContainerRegistry.Username
-					}
 
-					var env []v1.HandlerApplicationComponentEnv
-					if reqComponent.Env != nil {
-						for _, e := range *reqComponent.Env {
-							env = append(env, (v1.HandlerApplicationComponentEnv)(e))
-						}
-					}
+	app := engine.latestApplication(id)
+	patchedApp := *app
+	now := time.Now().UTC().Truncate(time.Second)
 
-					var component v1.HandlerApplicationComponent
-					component.Name = reqComponent.Name
-					component.MaxCpu = string(reqComponent.MaxCpu)
-					component.MaxMemory = string(reqComponent.MaxMemory)
-					component.Datasource.ContainerRegistry = &cr
-					component.Env = &env
-					component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
-					components = append(components, component)
-				}
+	if reqBody.Name != nil {
+		patchedApp.Name = reqBody.Name
+	}
+	if reqBody.TimeoutSeconds != nil {
+		patchedApp.TimeoutSeconds = reqBody.TimeoutSeconds
+	}
+	if reqBody.Port != nil {
+		patchedApp.Port = reqBody.Port
+	}
+	if reqBody.MinScale != nil {
+		patchedApp.MinScale = reqBody.MinScale
+	}
+	if reqBody.MaxScale != nil {
+		patchedApp.MaxScale = reqBody.MaxScale
+	}
+	if reqBody.Components != nil {
+		var components []v1.HandlerApplicationComponent
+		for _, reqComponent := range *reqBody.Components {
+			var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
+			if reqComponent.Datasource.ContainerRegistry != nil {
+				cr.Image = reqComponent.Datasource.ContainerRegistry.Image
+				cr.Server = reqComponent.Datasource.ContainerRegistry.Server
+				cr.Username = reqComponent.Datasource.ContainerRegistry.Username
+			}
 
-				if len(components) > 0 {
-					app.Components = &components
+			var env []v1.HandlerApplicationComponentEnv
+			if reqComponent.Env != nil {
+				for _, e := range *reqComponent.Env {
+					env = append(env, (v1.HandlerApplicationComponentEnv)(e))
 				}
 			}
 
-			updatedAt := time.Now().UTC().Truncate(time.Second)
-			patchedApp = v1.HandlerPatchApplication{
-				Name:           app.Name,
-				TimeoutSeconds: app.TimeoutSeconds,
-				Port:           app.Port,
-				MinScale:       app.MinScale,
-				MaxScale:       app.MaxScale,
-				Components:     app.Components,
-				Status:         (*v1.HandlerPatchApplicationStatus)(app.Status),
-				PublicUrl:      app.PublicUrl,
-				UpdatedAt:      &updatedAt,
-			}
+			var component v1.HandlerApplicationComponent
+			component.Name = reqComponent.Name
+			component.MaxCpu = string(reqComponent.MaxCpu)
+			component.MaxMemory = string(reqComponent.MaxMemory)
+			component.Datasource.ContainerRegistry = &cr
+			component.Env = &env
+			component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
+			components = append(components, component)
 		}
+
+		if len(components) > 0 {
+			patchedApp.Components = &components
+		}
+		patchedApp.CreatedAt = &now
 	}
 
-	return &patchedApp, nil
+	// TODO: all_traffic_availableの処理
+
+	engine.Applications = append(engine.Applications, &patchedApp)
+	err := engine.createVersion(&patchedApp)
+	if err != nil {
+		return nil, newError(
+			ErrorTypeUnknown, "application", nil,
+			"Version の生成に失敗しました。")
+	}
+
+	return &v1.HandlerPatchApplication{
+		Id:             patchedApp.Id,
+		Name:           patchedApp.Name,
+		TimeoutSeconds: patchedApp.TimeoutSeconds,
+		Port:           patchedApp.Port,
+		MinScale:       patchedApp.MinScale,
+		MaxScale:       patchedApp.MaxScale,
+		Components:     patchedApp.Components,
+		Status:         (*v1.HandlerPatchApplicationStatus)(patchedApp.Status),
+		PublicUrl:      patchedApp.PublicUrl,
+		UpdatedAt:      &now,
+	}, nil
 }
 
 func newId() (string, error) {
 	id, err := uuid.NewRandom()
 	return id.String(), err
+}
+
+func (engine *Engine) latestApplication(id string) *v1.Application {
+	var app *v1.Application
+	if rs, ok := engine.appVersionRelations[id]; ok {
+		// 最新のVersionのApplicationを取得
+		for i, r := range rs {
+			if i == 0 || r.application.CreatedAt.After(*app.CreatedAt) {
+				app = r.application
+			}
+		}
+	}
+
+	return app
 }

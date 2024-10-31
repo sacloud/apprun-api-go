@@ -1118,51 +1118,56 @@ components:
       type: object
       properties:
         meta:
-          type: object
-          properties:
-            page_num:
-              type: integer
-              example: 1
-            page_size:
-              type: integer
-              example: 100
-            object_total:
-              type: integer
-              example: 1000
-            sort_field:
-              type: string
-              example: created_at
-            sort_order:
-              type: string
-              example: asc
-              enum:
-                - asc
-                - desc
+          $ref: "#/components/schemas/handler.listVersionsMeta"
         data:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                description: バージョンID
-                type: string
-                example: BIi7jHVWGjg7NaxcK
-              name:
-                description: バージョン名
-                type: string
-                example: version-001
-              status:
-                description: ステータス
-                type: string
-                example: Success
-                enum:
-                  - Success
-                  - Fail
-                  - Unknown
-              created_at:
-                description: 作成日時
-                type: string
-                format: date-time
+            $ref: "#/components/schemas/Version"
+    # handler.listVersionsから切り出した
+    handler.listVersionsMeta:
+      type: object
+      properties:
+        page_num:
+          type: integer
+          example: 1
+        page_size:
+          type: integer
+          example: 100
+        object_total:
+          type: integer
+          example: 1000
+        sort_field:
+          type: string
+          example: created_at
+        sort_order:
+          type: string
+          example: asc
+          enum:
+            - asc
+            - desc
+    Version:
+      type: object
+      properties:
+        id:
+          description: バージョンID
+          type: string
+          example: BIi7jHVWGjg7NaxcK
+        name:
+          description: バージョン名
+          type: string
+          example: version-001
+        status:
+          description: ステータス
+          type: string
+          example: Success
+          enum:
+            - Success
+            - Fail
+            - Unknown
+        created_at:
+          description: 作成日時
+          type: string
+          format: date-time
     handler.getVersion:
       type: object
       properties:
@@ -1213,97 +1218,7 @@ components:
           description: バージョンのコンポーネント情報
           type: array
           items:
-            type: object
-            required:
-              - name
-              - max_cpu
-              - max_memory
-              - datasource
-            properties:
-              name:
-                description: コンポーネント名
-                type: string
-                example: コンポーネント1
-              max_cpu:
-                description: コンポーネントの最大CPU数
-                type: string
-                example: "0.1"
-              max_memory:
-                description: コンポーネントの最大メモリ
-                type: string
-                example: 256Mi
-              datasource:
-                description: コンポーネントを構成するソース
-                type: object
-                properties:
-                  container_registry:
-                    description: コンテナレジストリ
-                    type: object
-                    required:
-                      - image
-                    properties:
-                      image:
-                        description: コンテナイメージ名
-                        type: string
-                        example: apprun-example.sakuracr.jp/helloworld:latest
-                      server:
-                        description: コンテナレジストリのサーバー名
-                        type: string
-                        example: apprun-example.sakuracr.jp
-                      username:
-                        description: コンテナレジストリの認証情報
-                        type: string
-                        example: apprun
-              env:
-                description: コンポーネントに渡す環境変数
-                type: array
-                items:
-                  type: object
-                  properties:
-                    key:
-                      description: 環境変数名
-                      type: string
-                      example: MY_ENV
-                    value:
-                      description: 環境変数の値
-                      type: string
-                      example: my_value
-              probe:
-                description: コンポーネントのプローブ設定
-                type: object
-                nullable: true
-                properties:
-                  http_get:
-                    description: HTTP Getプローブタイプ
-                    type: object
-                    required:
-                      - path
-                      - port
-                    nullable: true
-                    properties:
-                      path:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-                        type: string
-                        example: /healthz
-                      port:
-                        description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-                        type: integer
-                        example: 8080
-                        minimum: 1
-                        maximum: 65535
-                      headers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              description: ヘッダーフィールド名
-                              type: string
-                              example: Custom-Header
-                            value:
-                              description: ヘッダーフィールド値
-                              type: string
-                              example: Awesome
+            $ref: "#/components/schemas/handler.ApplicationComponent"
         created_at:
           description: 作成日時
           type: string
