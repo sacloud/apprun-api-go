@@ -222,6 +222,8 @@ func TestEngine_Application(t *testing.T) {
 		})
 		require.NoError(t, err)
 		require.Equal(t, n, *patchedApp.Name)
+
+		require.Equal(t, len(engine.Versions), 2)
 	})
 }
 

@@ -234,19 +234,20 @@ func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBo
 			patchedApp.Components = &components
 		}
 		patchedApp.CreatedAt = &now
+	}
 
-		// TODO: all_traffic_availableの処理
+	// TODO: all_traffic_availableの処理
 
-		engine.Applications = append(engine.Applications, &patchedApp)
-		err := engine.createVersion(&patchedApp)
-		if err != nil {
-			return nil, newError(
-				ErrorTypeUnknown, "application", nil,
-				"Version の生成に失敗しました。")
-		}
+	engine.Applications = append(engine.Applications, &patchedApp)
+	err := engine.createVersion(&patchedApp)
+	if err != nil {
+		return nil, newError(
+			ErrorTypeUnknown, "application", nil,
+			"Version の生成に失敗しました。")
 	}
 
 	return &v1.HandlerPatchApplication{
+		Id:             patchedApp.Id,
 		Name:           patchedApp.Name,
 		TimeoutSeconds: patchedApp.TimeoutSeconds,
 		Port:           patchedApp.Port,
