@@ -35,9 +35,3 @@ func (s *Server) PutApplicationTraffic(c *gin.Context, id string) {
 func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
 
 }
-
-// アプリケーションバージョン詳細を取得します。
-// (GET /applications/{id}/versions/{version_id})
-func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
-
-}

@@ -24,6 +24,71 @@ import (
 )
 
 func TestEngine_Version(t *testing.T) {
+	t.Run("read version", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		n := "changedName"
+		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+
+		r := engine.appVersionRelations[*patchedApp.Id][0]
+		resp, err := engine.ReadVersion(*r.application.Id, *r.version.Id)
+		require.NoError(t, err)
+
+		respJson, err := json.Marshal(resp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"id": "` + *r.version.Id + `",
+			"name": "` + *r.version.Name + `",
+			"status": "Success",
+			"timeout_seconds": 20,
+			"port": 8081,
+			"min_scale": 1,
+			"max_scale": 10,
+			"components": [
+				{
+					"name": "component1",
+					"max_cpu": "0.2",
+					"max_memory": "512Mi",
+					"datasource": {
+						"container_registry": {
+							"image": "apprun-example.sakuracr.jp/helloworld:latest",
+							"server": "apprun-example.sakuracr.jp",
+							"username": "apprun"
+						}
+					},
+					"env": [
+						{
+							"key": "envkey",
+							"value": "envvalue"
+						}
+					],
+					"probe": {
+						"http_get": {
+							"path": "/healthz",
+							"port": 8080,
+							"headers": [
+								{
+									"name": "Custom-Header",
+									"value": "Awesome"
+								}
+							]
+						}
+					}
+				}
+			],
+			"created_at": "` + r.application.CreatedAt.Format(time.RFC3339) + `"
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
+
 	t.Run("list versions", func(t *testing.T) {
 		engine := NewEngine()
 		req := postApplicationBody()
