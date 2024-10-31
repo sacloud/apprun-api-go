@@ -29,9 +29,3 @@ func (s *Server) ListApplicationTraffics(c *gin.Context, id string) {
 func (s *Server) PutApplicationTraffic(c *gin.Context, id string) {
 
 }
-
-// アプリケーションバージョンを削除します。
-// (DELETE /applications/{id}/versions/{version_id})
-func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
-
-}

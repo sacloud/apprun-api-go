@@ -107,6 +107,31 @@ func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersion
 	}, nil
 }
 
+func (engine *Engine) DeleteVersion(appId string, versionId string) error {
+	defer engine.lock()()
+
+	if _, ok := engine.appVersionRelations[appId]; !ok {
+		return newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	var idx int
+	rs := engine.appVersionRelations[appId]
+	for i, r := range rs {
+		if *r.version.Id == versionId {
+			idx = i
+			break
+		}
+	}
+
+	rs[idx] = rs[len(rs)-1]
+	rs = rs[:len(rs)-1]
+	engine.appVersionRelations[appId] = rs
+
+	return nil
+}
+
 func (engine *Engine) createVersion(app *v1.Application) error {
 	versionId, err := newId()
 	if err != nil {

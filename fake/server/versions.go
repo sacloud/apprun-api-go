@@ -63,3 +63,14 @@ func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.Li
 
 	c.JSON(http.StatusOK, versions)
 }
+
+// アプリケーションバージョンを削除します。
+// (DELETE /applications/{id}/versions/{version_id})
+func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
+	err := s.Engine.DeleteVersion(id, versionId)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}

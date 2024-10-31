@@ -146,4 +146,23 @@ func TestEngine_Version(t *testing.T) {
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
+
+	t.Run("delete version", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		n := "changedName"
+		_, err = engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+		require.Equal(t, len(engine.appVersionRelations[*createdApp.Id]), 2)
+
+		r := engine.appVersionRelations[*createdApp.Id][0]
+		err = engine.DeleteVersion(*r.application.Id, *r.version.Id)
+		require.NoError(t, err)
+		require.Equal(t, len(engine.appVersionRelations[*createdApp.Id]), 1)
+	})
 }
