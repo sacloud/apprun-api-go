@@ -16,6 +16,24 @@ package fake
 
 import v1 "github.com/sacloud/apprun-api-go/apis/v1"
 
+func (engine *Engine) ListTraffics(appId string) (*v1.HandlerListTraffics, error) {
+	var ts []v1.Traffic
+	if rs, ok := engine.appTrafficRelations[appId]; ok {
+		for _, r := range rs {
+			ts = append(ts, *r.traffic)
+		}
+	} else {
+		return nil, newError(
+			ErrorTypeNotFound, "traffic", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	return &v1.HandlerListTraffics{
+		Meta: nil,
+		Data: &ts,
+	}, nil
+}
+
 func (engine *Engine) initTraffic(app *v1.Application) {
 	isLatestVersion := true
 	percent := 100

@@ -15,13 +15,21 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 // アプリケーショントラフィック分散を取得します。
 // (GET /applications/{id}/traffics)
 func (s *Server) ListApplicationTraffics(c *gin.Context, id string) {
+	ts, err := s.Engine.ListTraffics(id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
 
+	c.JSON(http.StatusOK, ts)
 }
 
 // アプリケーショントラフィック分散を変更します。
