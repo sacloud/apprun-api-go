@@ -275,60 +275,7 @@ type HandlerGetApplicationStatusStatus string
 // HandlerGetVersion defines model for handler.getVersion.
 type HandlerGetVersion struct {
 	// Components バージョンのコンポーネント情報
-	Components *[]struct {
-		// Datasource コンポーネントを構成するソース
-		Datasource struct {
-			// ContainerRegistry コンテナレジストリ
-			ContainerRegistry *struct {
-				// Image コンテナイメージ名
-				Image string `json:"image"`
-
-				// Server コンテナレジストリのサーバー名
-				Server *string `json:"server,omitempty"`
-
-				// Username コンテナレジストリの認証情報
-				Username *string `json:"username,omitempty"`
-			} `json:"container_registry,omitempty"`
-		} `json:"datasource"`
-
-		// Env コンポーネントに渡す環境変数
-		Env *[]struct {
-			// Key 環境変数名
-			Key *string `json:"key,omitempty"`
-
-			// Value 環境変数の値
-			Value *string `json:"value,omitempty"`
-		} `json:"env,omitempty"`
-
-		// MaxCpu コンポーネントの最大CPU数
-		MaxCpu string `json:"max_cpu"`
-
-		// MaxMemory コンポーネントの最大メモリ
-		MaxMemory string `json:"max_memory"`
-
-		// Name コンポーネント名
-		Name string `json:"name"`
-
-		// Probe コンポーネントのプローブ設定
-		Probe *struct {
-			// HttpGet HTTP Getプローブタイプ
-			HttpGet *struct {
-				Headers *[]struct {
-					// Name ヘッダーフィールド名
-					Name *string `json:"name,omitempty"`
-
-					// Value ヘッダーフィールド値
-					Value *string `json:"value,omitempty"`
-				} `json:"headers,omitempty"`
-
-				// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-				Path string `json:"path"`
-
-				// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-				Port int `json:"port"`
-			} `json:"http_get"`
-		} `json:"probe"`
-	} `json:"components,omitempty"`
+	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
 
 	// CreatedAt 作成日時
 	CreatedAt *time.Time `json:"created_at,omitempty"`
