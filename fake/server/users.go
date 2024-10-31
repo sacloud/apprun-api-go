@@ -27,6 +27,7 @@ func (s *Server) GetUser(c *gin.Context) {
 	err := s.Engine.GetUser()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.Status(http.StatusOK)
@@ -39,6 +40,7 @@ func (s *Server) PostUser(c *gin.Context) {
 	err := s.Engine.CreateUser()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.Status(http.StatusCreated)
