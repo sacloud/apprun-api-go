@@ -16,10 +16,69 @@ package fake
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
+
+func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersionsParams) (*v1.HandlerListVersions, error) {
+	defer engine.rLock()()
+
+	var versions []*v1.Version
+	for _, r := range engine.appVersionRelations[appId] {
+		versions = append(versions, r.version)
+	}
+
+	versionsLen := len(versions)
+	if versionsLen == 0 {
+		return nil, newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	sort.Slice(versions, func(i int, j int) bool {
+		switch *param.SortField {
+		case "created_at":
+			if *param.SortOrder == "desc" {
+				return versions[i].CreatedAt.After(*versions[j].CreatedAt)
+			}
+			return versions[i].CreatedAt.Before(*versions[j].CreatedAt)
+		// sort_fieldのデフォルト値であるcreated_at以外は未サポート
+		default:
+			return false
+		}
+	})
+
+	start := (*param.PageNum - 1) * *param.PageSize
+	// 範囲外の場合nilを返す
+	if start > versionsLen {
+		return nil, nil
+	}
+
+	end := start + *param.PageSize
+	if end > versionsLen {
+		end = versionsLen
+	}
+
+	var data []v1.Version
+	for _, v := range versions[start:end] {
+		data = append(data, *v)
+	}
+
+	meta := v1.HandlerListVersionsMeta{
+		PageNum:     param.PageNum,
+		PageSize:    param.PageSize,
+		ObjectTotal: &versionsLen,
+		SortField:   param.SortField,
+		SortOrder:   (*v1.HandlerListVersionsMetaSortOrder)(param.SortOrder),
+	}
+
+	return &v1.HandlerListVersions{
+		Data: &data,
+		Meta: &meta,
+	}, nil
+}
 
 func (engine *Engine) createVersion(app *v1.Application) error {
 	versionId, err := newId()
