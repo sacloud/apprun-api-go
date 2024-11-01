@@ -33,7 +33,7 @@ func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersion
 	versionsLen := len(versions)
 	if versionsLen == 0 {
 		return nil, newError(
-			ErrorTypeNotFound, "application", nil,
+			ErrorTypeNotFound, "version", nil,
 			"アプリケーションが見つかりませんでした。")
 	}
 
@@ -85,7 +85,7 @@ func (engine *Engine) ReadVersion(appId string, versionId string) (*v1.HandlerGe
 
 	if _, ok := engine.appVersionRelations[appId]; !ok {
 		return nil, newError(
-			ErrorTypeNotFound, "application", nil,
+			ErrorTypeNotFound, "version", nil,
 			"アプリケーションが見つかりませんでした。")
 	}
 
@@ -112,7 +112,7 @@ func (engine *Engine) DeleteVersion(appId string, versionId string) error {
 
 	if _, ok := engine.appVersionRelations[appId]; !ok {
 		return newError(
-			ErrorTypeNotFound, "application", nil,
+			ErrorTypeNotFound, "version", nil,
 			"アプリケーションが見つかりませんでした。")
 	}
 
