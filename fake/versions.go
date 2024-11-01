@@ -22,33 +22,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-func (engine *Engine) ReadVersion(appId string, versionId string) (*v1.HandlerGetVersion, error) {
-	defer engine.rLock()()
-
-	if _, ok := engine.appVersionRelations[appId]; !ok {
-		return nil, newError(
-			ErrorTypeNotFound, "application", nil,
-			"アプリケーションが見つかりませんでした。")
-	}
-
-	var v v1.HandlerGetVersion
-	for _, r := range engine.appVersionRelations[appId] {
-		if *r.version.Id == versionId {
-			v.Id = r.version.Id
-			v.Name = r.version.Name
-			v.Status = (*v1.HandlerGetVersionStatus)(r.version.Status)
-			v.TimeoutSeconds = r.application.TimeoutSeconds
-			v.Port = r.application.Port
-			v.MinScale = r.application.MinScale
-			v.MaxScale = r.application.MaxScale
-			v.Components = r.application.Components
-			v.CreatedAt = r.application.CreatedAt
-		}
-	}
-
-	return &v, nil
-}
-
 func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersionsParams) (*v1.HandlerListVersions, error) {
 	defer engine.rLock()()
 
@@ -105,6 +78,33 @@ func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersion
 		Data: &data,
 		Meta: &meta,
 	}, nil
+}
+
+func (engine *Engine) ReadVersion(appId string, versionId string) (*v1.HandlerGetVersion, error) {
+	defer engine.rLock()()
+
+	if _, ok := engine.appVersionRelations[appId]; !ok {
+		return nil, newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	var v v1.HandlerGetVersion
+	for _, r := range engine.appVersionRelations[appId] {
+		if *r.version.Id == versionId {
+			v.Id = r.version.Id
+			v.Name = r.version.Name
+			v.Status = (*v1.HandlerGetVersionStatus)(r.version.Status)
+			v.TimeoutSeconds = r.application.TimeoutSeconds
+			v.Port = r.application.Port
+			v.MinScale = r.application.MinScale
+			v.MaxScale = r.application.MaxScale
+			v.Components = r.application.Components
+			v.CreatedAt = r.application.CreatedAt
+		}
+	}
+
+	return &v, nil
 }
 
 func (engine *Engine) DeleteVersion(appId string, versionId string) error {

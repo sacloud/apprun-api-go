@@ -25,6 +25,19 @@ type User struct {
 	NAME string
 }
 
+func (engine *Engine) GetUser() error {
+	defer engine.rLock()()
+
+	u := engine.User
+	if u == nil {
+		return newError(
+			ErrorTypeNotFound, "user", nil,
+			"さくらのAppRunにユーザーが存在しません。")
+	}
+
+	return nil
+}
+
 func (engine *Engine) CreateUser() error {
 	defer engine.lock()()
 
@@ -39,18 +52,5 @@ func (engine *Engine) CreateUser() error {
 		ID:   USER_ID,
 		NAME: USER_NAME,
 	}
-	return nil
-}
-
-func (engine *Engine) GetUser() error {
-	defer engine.rLock()()
-
-	u := engine.User
-	if u == nil {
-		return newError(
-			ErrorTypeNotFound, "user", nil,
-			"さくらのAppRunにユーザーが存在しません。")
-	}
-
 	return nil
 }
