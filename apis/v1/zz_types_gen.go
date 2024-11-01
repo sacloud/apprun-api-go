@@ -636,16 +636,7 @@ type PostApplicationBodyComponentProbe struct {
 }
 
 // PutTrafficsBody defines model for putTrafficsBody.
-type PutTrafficsBody = []struct {
-	// IsLatestVersion 最新バージョンかどうか
-	IsLatestVersion *bool `json:"is_latest_version,omitempty"`
-
-	// Percent トラフィック分散の割合
-	Percent *int `json:"percent,omitempty"`
-
-	// VersionName バージョン名
-	VersionName *string `json:"version_name,omitempty"`
-}
+type PutTrafficsBody = []Traffic
 
 // ListApplicationsParams defines parameters for ListApplications.
 type ListApplicationsParams struct {

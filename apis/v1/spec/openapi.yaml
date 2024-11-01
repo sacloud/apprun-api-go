@@ -1621,19 +1621,7 @@ components:
     putTrafficsBody:
       type: array
       items:
-        type: object
-        properties:
-          version_name:
-            description: バージョン名
-            type: string
-            example: Version1
-          is_latest_version:
-            description: 最新バージョンかどうか
-            type: boolean
-          percent:
-            description: トラフィック分散の割合
-            type: integer
-
+        $ref: "#/components/schemas/Traffic"
     # handler.postApplication, handler.getApplication, handler.patchApplicationの共通化
     Application:
       type: object
