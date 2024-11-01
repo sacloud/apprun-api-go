@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,6 +43,57 @@ func TestEngine_Traffic(t *testing.T) {
 					"version_name": "",
 					"is_latest_version": true,
 					"percent": 100
+				}
+			]
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
+
+	t.Run("update traffics", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		previousVersionName := engine.Versions[0].Name
+
+		n := "changedName"
+		_, err = engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+
+		isLatestVersion := true
+		latestPercent := 20
+		previousVersionPercent := 100 - latestPercent
+		tb := v1.PutTrafficsBody{
+			v1.Traffic{
+				IsLatestVersion: &isLatestVersion,
+				Percent:         &latestPercent,
+			},
+			v1.Traffic{
+				VersionName: previousVersionName,
+				Percent:     &previousVersionPercent,
+			},
+		}
+
+		resp, err := engine.UpdateTraffic(*createdApp.Id, &tb)
+		require.NoError(t, err)
+
+		respJson, err := json.Marshal(resp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"meta": null,
+			"data": [
+				{
+					"is_latest_version": true,
+					"percent": 20
+				},
+				{
+					"version_name": "` + *previousVersionName + `",
+					"percent": 80
 				}
 			]
 		}`

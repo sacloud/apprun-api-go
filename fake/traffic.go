@@ -34,6 +34,37 @@ func (engine *Engine) ListTraffics(appId string) (*v1.HandlerListTraffics, error
 	}, nil
 }
 
+func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1.HandlerPutTraffics, error) {
+	if _, ok := engine.Traffics[appId]; !ok {
+		return nil, newError(
+			ErrorTypeNotFound, "traffic", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	var ts []*v1.Traffic
+	var data []v1.Traffic
+	total := 0
+	for _, v := range *body {
+		total += *v.Percent
+
+		ts = append(ts, &v)
+		data = append(data, v)
+	}
+
+	if total != 100 {
+		return nil, newError(
+			ErrorTypeInvalidRequest, "traffic", nil,
+			"トラフィック分散の割合が合計100になりません")
+	}
+
+	engine.Traffics[appId] = ts
+
+	return &v1.HandlerPutTraffics{
+		Data: &data,
+		Meta: nil,
+	}, nil
+}
+
 func (engine *Engine) initTraffic(app *v1.Application) {
 	isLatestVersion := true
 	percent := 100

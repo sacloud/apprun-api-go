@@ -18,6 +18,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
 // アプリケーショントラフィック分散を取得します。
@@ -35,5 +36,17 @@ func (s *Server) ListApplicationTraffics(c *gin.Context, id string) {
 // アプリケーショントラフィック分散を変更します。
 // (PUT /applications/{id}/traffics)
 func (s *Server) PutApplicationTraffic(c *gin.Context, id string) {
+	paramJSON := &v1.PutTrafficsBody{}
+	if err := c.ShouldBindJSON(paramJSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	ut, err := s.Engine.UpdateTraffic(id, paramJSON)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, &ut)
 }
