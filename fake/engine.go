@@ -24,10 +24,13 @@ import (
 //
 // Serverに渡した後はDataStore内のデータを外部から操作しないこと
 type Engine struct {
-	// User ユーザー
 	User         *User
 	Applications []*v1.Application
 	Versions     []*v1.Version
+
+	// MapのkeyにApplicationのIDを利用する
+	Traffics map[string][]*v1.Traffic
+
 	// MapのkeyにApplicationのIDを利用する
 	appVersionRelations map[string][]*appVersionRelation
 
@@ -47,6 +50,7 @@ type appVersionRelation struct {
 func NewEngine() *Engine {
 	return &Engine{
 		appVersionRelations: make(map[string][]*appVersionRelation),
+		Traffics:            make(map[string][]*v1.Traffic),
 	}
 }
 

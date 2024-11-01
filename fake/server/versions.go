@@ -34,6 +34,7 @@ func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId stri
 	v, err := s.Engine.ReadVersion(id, versionId)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, v)
@@ -59,6 +60,7 @@ func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.Li
 	versions, err := s.Engine.ListVersions(id, params)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, versions)
@@ -70,6 +72,7 @@ func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId s
 	err := s.Engine.DeleteVersion(id, versionId)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)

@@ -178,6 +178,8 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 			"Version の生成に失敗しました。")
 	}
 
+	engine.initTraffic(app)
+
 	return app, nil
 }
 

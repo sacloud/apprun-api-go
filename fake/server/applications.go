@@ -34,6 +34,7 @@ func (s *Server) GetApplication(c *gin.Context, id string) {
 	application, err := s.Engine.ReadApplication(id)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, &application)
@@ -59,6 +60,7 @@ func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsPara
 	applications, err := s.Engine.ListApplications(params)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, applications)
@@ -70,6 +72,7 @@ func (s *Server) DeleteApplication(c *gin.Context, id string) {
 	err := s.Engine.DeleteApplication(id)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)
@@ -92,6 +95,7 @@ func (s *Server) PostApplication(c *gin.Context) {
 	application, err := s.Engine.CreateApplication(paramJSON)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusCreated, &application)
@@ -109,6 +113,7 @@ func (s *Server) PatchApplication(c *gin.Context, id string) {
 	application, err := s.Engine.PatchApplication(id, paramJSON)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, &application)
@@ -120,6 +125,7 @@ func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
 	application, err := s.Engine.ReadApplication(id)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
 	var status v1.HandlerGetApplicationStatusStatus

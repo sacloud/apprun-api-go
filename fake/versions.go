@@ -149,10 +149,12 @@ func (engine *Engine) createVersion(app *v1.Application) error {
 	engine.Versions = append(engine.Versions, &v)
 
 	// 内部的にVersionとApplicationのリレーションを保持する
-	engine.appVersionRelations[*app.Id] = append(engine.appVersionRelations[*app.Id], &appVersionRelation{
-		application: app,
-		version:     &v,
-	})
+	engine.appVersionRelations[*app.Id] = append(engine.appVersionRelations[*app.Id],
+		&appVersionRelation{
+			application: app,
+			version:     &v,
+		},
+	)
 
 	return nil
 }
