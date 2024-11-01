@@ -23,25 +23,6 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
-	defer engine.rLock()()
-
-	if len(engine.Applications) == 0 {
-		return nil, newError(
-			ErrorTypeNotFound, "application", nil,
-			"アプリケーションが見つかりませんでした。")
-	}
-
-	app := engine.latestApplication(id)
-	if app != nil && app.Id != nil && *app.Id == id {
-		return app, nil
-	}
-
-	return nil, newError(
-		ErrorTypeNotFound, "application", nil,
-		"アプリケーションが見つかりませんでした。")
-}
-
 func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.HandlerListApplications, error) {
 	defer engine.rLock()()
 
@@ -111,17 +92,9 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 	}, nil
 }
 
-func (engine *Engine) DeleteApplication(id string) error {
-	defer engine.lock()()
-
-	// engine.Applications, engine.Versionにデータは残るがここでは省略する
-	delete(engine.appVersionRelations, id)
-	return nil
-}
-
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
-	appId, err := newId()
+	appId, err := engine.newId()
 	if err != nil {
 		return nil, newError(
 			ErrorTypeUnknown, "application", nil,
@@ -183,7 +156,26 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	return app, nil
 }
 
-func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
+func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
+	defer engine.rLock()()
+
+	if len(engine.Applications) == 0 {
+		return nil, newError(
+			ErrorTypeNotFound, "application", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	app := engine.latestApplication(id)
+	if app != nil && app.Id != nil && *app.Id == id {
+		return app, nil
+	}
+
+	return nil, newError(
+		ErrorTypeNotFound, "application", nil,
+		"アプリケーションが見つかりませんでした。")
+}
+
+func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
 	defer engine.lock()()
 
 	app := engine.latestApplication(id)
@@ -262,9 +254,12 @@ func (engine *Engine) PatchApplication(id string, reqBody *v1.PatchApplicationBo
 	}, nil
 }
 
-func newId() (string, error) {
-	id, err := uuid.NewRandom()
-	return id.String(), err
+func (engine *Engine) DeleteApplication(id string) error {
+	defer engine.lock()()
+
+	// engine.Applications, engine.Versionにデータは残るがここでは省略する
+	delete(engine.appVersionRelations, id)
+	return nil
 }
 
 func (engine *Engine) latestApplication(id string) *v1.Application {
@@ -279,4 +274,9 @@ func (engine *Engine) latestApplication(id string) *v1.Application {
 	}
 
 	return app
+}
+
+func (engine *Engine) newId() (string, error) {
+	id, err := uuid.NewRandom()
+	return id.String(), err
 }

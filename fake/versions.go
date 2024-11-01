@@ -133,7 +133,7 @@ func (engine *Engine) DeleteVersion(appId string, versionId string) error {
 }
 
 func (engine *Engine) createVersion(app *v1.Application) error {
-	versionId, err := newId()
+	versionId, err := engine.newId()
 	if err != nil {
 		return err
 	}

@@ -28,18 +28,6 @@ var (
 	versionDefaultSortOrder = v1.ListApplicationVersionsParamsSortOrderDesc
 )
 
-// アプリケーションバージョン詳細を取得します。
-// (GET /applications/{id}/versions/{version_id})
-func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
-	v, err := s.Engine.ReadVersion(id, versionId)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-
-	c.JSON(http.StatusOK, v)
-}
-
 // アプリケーションバージョン一覧を取得します。
 // (GET /applications/{id}/versions)
 func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.ListApplicationVersionsParams) {
@@ -64,6 +52,18 @@ func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.Li
 	}
 
 	c.JSON(http.StatusOK, versions)
+}
+
+// アプリケーションバージョン詳細を取得します。
+// (GET /applications/{id}/versions/{version_id})
+func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
+	v, err := s.Engine.ReadVersion(id, versionId)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, v)
 }
 
 // アプリケーションバージョンを削除します。

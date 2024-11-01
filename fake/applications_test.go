@@ -24,65 +24,6 @@ import (
 )
 
 func TestEngine_Application(t *testing.T) {
-	t.Run("read application", func(t *testing.T) {
-		engine := NewEngine()
-		req := postApplicationBody()
-		createResp, err := engine.CreateApplication(req)
-		require.NoError(t, err)
-
-		readResp, err := engine.ReadApplication(*createResp.Id)
-		require.NoError(t, err)
-
-		respJson, err := json.Marshal(readResp)
-		require.NoError(t, err)
-
-		expectedJSON := `
-		{
-			"id": "` + *readResp.Id + `",
-			"name": "app1",
-			"timeout_seconds": 20,
-			"port": 8081,
-			"min_scale": 1,
-			"max_scale": 10,
-			"components": [
-				{
-					"name": "component1",
-					"max_cpu": "0.2",
-					"max_memory": "512Mi",
-					"datasource": {
-						"container_registry": {
-							"image": "apprun-example.sakuracr.jp/helloworld:latest",
-							"server": "apprun-example.sakuracr.jp",
-							"username": "apprun"
-						}
-					},
-					"env": [
-						{
-							"key": "envkey",
-							"value": "envvalue"
-						}
-					],
-					"probe": {
-						"http_get": {
-							"path": "/healthz",
-							"port": 8080,
-							"headers": [
-								{
-									"name": "Custom-Header",
-									"value": "Awesome"
-								}
-							]
-						}
-					}
-				}
-			],
-			"status": "Success",
-			"public_url": "` + *readResp.PublicUrl + `",
-			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
-		}`
-		require.JSONEq(t, expectedJSON, string(respJson))
-	})
-
 	t.Run("list applications", func(t *testing.T) {
 		engine := NewEngine()
 		for i := 0; i < 3; i++ {
@@ -195,6 +136,81 @@ func TestEngine_Application(t *testing.T) {
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
 
+	t.Run("read application", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createResp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		readResp, err := engine.ReadApplication(*createResp.Id)
+		require.NoError(t, err)
+
+		respJson, err := json.Marshal(readResp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"id": "` + *readResp.Id + `",
+			"name": "app1",
+			"timeout_seconds": 20,
+			"port": 8081,
+			"min_scale": 1,
+			"max_scale": 10,
+			"components": [
+				{
+					"name": "component1",
+					"max_cpu": "0.2",
+					"max_memory": "512Mi",
+					"datasource": {
+						"container_registry": {
+							"image": "apprun-example.sakuracr.jp/helloworld:latest",
+							"server": "apprun-example.sakuracr.jp",
+							"username": "apprun"
+						}
+					},
+					"env": [
+						{
+							"key": "envkey",
+							"value": "envvalue"
+						}
+					],
+					"probe": {
+						"http_get": {
+							"path": "/healthz",
+							"port": 8080,
+							"headers": [
+								{
+									"name": "Custom-Header",
+									"value": "Awesome"
+								}
+							]
+						}
+					}
+				}
+			],
+			"status": "Success",
+			"public_url": "` + *readResp.PublicUrl + `",
+			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
+
+	t.Run("update application", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		n := "changedName"
+		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+		require.Equal(t, n, *patchedApp.Name)
+
+		require.Equal(t, len(engine.Versions), 2)
+	})
+
 	t.Run("delete application", func(t *testing.T) {
 		engine := NewEngine()
 		for i := 0; i < 3; i++ {
@@ -208,22 +224,6 @@ func TestEngine_Application(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, len(engine.appVersionRelations), 2)
-	})
-
-	t.Run("patch application", func(t *testing.T) {
-		engine := NewEngine()
-		req := postApplicationBody()
-		createdApp, err := engine.CreateApplication(req)
-		require.NoError(t, err)
-
-		n := "changedName"
-		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
-		})
-		require.NoError(t, err)
-		require.Equal(t, n, *patchedApp.Name)
-
-		require.Equal(t, len(engine.Versions), 2)
 	})
 }
 

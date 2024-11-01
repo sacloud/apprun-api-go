@@ -31,7 +31,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		n := "changedName"
-		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)
@@ -96,7 +96,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		n := "changedName"
-		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)
@@ -154,7 +154,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		n := "changedName"
-		_, err = engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)
