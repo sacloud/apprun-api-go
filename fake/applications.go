@@ -66,15 +66,13 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 	var data []v1.HandlerListApplicationsData
 	for _, app := range apps[start:end] {
 		if app != nil {
-			d := v1.HandlerListApplicationsData{
+			data = append(data, v1.HandlerListApplicationsData{
 				Id:        app.Id,
 				Name:      app.Name,
 				Status:    (*v1.HandlerListApplicationsDataStatus)(app.Status),
 				PublicUrl: app.PublicUrl,
 				CreatedAt: app.CreatedAt,
-			}
-
-			data = append(data, d)
+			})
 		}
 	}
 
@@ -94,6 +92,7 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 
 func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Application, error) {
 	defer engine.lock()()
+
 	appId, err := engine.newId()
 	if err != nil {
 		return nil, newError(
@@ -180,7 +179,6 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 
 	app := engine.latestApplication(id)
 	patchedApp := *app
-	now := time.Now().UTC().Truncate(time.Second)
 
 	if reqBody.Name != nil {
 		patchedApp.Name = reqBody.Name
@@ -197,7 +195,7 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	if reqBody.MaxScale != nil {
 		patchedApp.MaxScale = reqBody.MaxScale
 	}
-	if reqBody.Components != nil {
+	if reqBody.Components != nil && len(*reqBody.Components) > 0 {
 		var components []v1.HandlerApplicationComponent
 		for _, reqComponent := range *reqBody.Components {
 			var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
@@ -224,11 +222,11 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 			components = append(components, component)
 		}
 
-		if len(components) > 0 {
-			patchedApp.Components = &components
-		}
-		patchedApp.CreatedAt = &now
+		patchedApp.Components = &components
 	}
+
+	now := time.Now().UTC().Truncate(time.Second)
+	patchedApp.CreatedAt = &now
 
 	// TODO: all_traffic_availableの処理
 
