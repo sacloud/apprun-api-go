@@ -17,15 +17,15 @@ package fake
 import v1 "github.com/sacloud/apprun-api-go/apis/v1"
 
 func (engine *Engine) ListTraffics(appId string) (*v1.HandlerListTraffics, error) {
-	var ts []v1.Traffic
-	if rs, ok := engine.appTrafficRelations[appId]; ok {
-		for _, r := range rs {
-			ts = append(ts, *r.traffic)
-		}
-	} else {
+	if _, ok := engine.Traffics[appId]; !ok {
 		return nil, newError(
 			ErrorTypeNotFound, "traffic", nil,
 			"アプリケーションが見つかりませんでした。")
+	}
+
+	var ts []v1.Traffic
+	for _, t := range engine.Traffics[appId] {
+		ts = append(ts, *t)
 	}
 
 	return &v1.HandlerListTraffics{
@@ -43,13 +43,7 @@ func (engine *Engine) initTraffic(app *v1.Application) {
 		Percent:         &percent,
 		VersionName:     &versionName,
 	}
-	engine.Traffics = append(engine.Traffics, &t)
 
 	// 内部的にTrafficとApplicationのリレーションを保持する
-	engine.appTrafficRelations[*app.Id] = append(engine.appTrafficRelations[*app.Id],
-		&appTrafficRelation{
-			application: app,
-			traffic:     &t,
-		},
-	)
+	engine.Traffics[*app.Id] = append(engine.Traffics[*app.Id], &t)
 }

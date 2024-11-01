@@ -27,13 +27,12 @@ type Engine struct {
 	User         *User
 	Applications []*v1.Application
 	Versions     []*v1.Version
-	Traffics     []*v1.Traffic
+
+	// MapのkeyにApplicationのIDを利用する
+	Traffics map[string][]*v1.Traffic
 
 	// MapのkeyにApplicationのIDを利用する
 	appVersionRelations map[string][]*appVersionRelation
-
-	// MapのkeyにApplicationのIDを利用する
-	appTrafficRelations map[string][]*appTrafficRelation
 
 	// GeneratedID 採番済みの最終ID
 	//
@@ -48,15 +47,10 @@ type appVersionRelation struct {
 	version     *v1.Version
 }
 
-type appTrafficRelation struct {
-	application *v1.Application
-	traffic     *v1.Traffic
-}
-
 func NewEngine() *Engine {
 	return &Engine{
 		appVersionRelations: make(map[string][]*appVersionRelation),
-		appTrafficRelations: make(map[string][]*appTrafficRelation),
+		Traffics:            make(map[string][]*v1.Traffic),
 	}
 }
 
