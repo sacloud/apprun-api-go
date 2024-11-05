@@ -28,18 +28,6 @@ var (
 	defaultSortOrder = v1.ListApplicationsParamsSortOrderDesc
 )
 
-// アプリケーション詳細を取得します。
-// (GET /applications/{id})
-func (s *Server) GetApplication(c *gin.Context, id string) {
-	application, err := s.Engine.ReadApplication(id)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-
-	c.JSON(http.StatusOK, &application)
-}
-
 // アプリケーション一覧を取得します。
 // (GET /applications)
 func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsParams) {
@@ -66,18 +54,6 @@ func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsPara
 	c.JSON(http.StatusOK, applications)
 }
 
-// アプリケーションを削除します。
-// (DELETE /applications/{id})
-func (s *Server) DeleteApplication(c *gin.Context, id string) {
-	err := s.Engine.DeleteApplication(id)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-
-	c.JSON(http.StatusNoContent, nil)
-}
-
 // アプリケーションを作成します。
 // (POST /applications)
 func (s *Server) PostApplication(c *gin.Context) {
@@ -101,6 +77,18 @@ func (s *Server) PostApplication(c *gin.Context) {
 	c.JSON(http.StatusCreated, &application)
 }
 
+// アプリケーション詳細を取得します。
+// (GET /applications/{id})
+func (s *Server) GetApplication(c *gin.Context, id string) {
+	application, err := s.Engine.ReadApplication(id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, &application)
+}
+
 // アプリケーションを部分的に変更します。
 // (PATCH /applications/{id})
 func (s *Server) PatchApplication(c *gin.Context, id string) {
@@ -110,13 +98,25 @@ func (s *Server) PatchApplication(c *gin.Context, id string) {
 		return
 	}
 
-	application, err := s.Engine.PatchApplication(id, paramJSON)
+	application, err := s.Engine.UpdateApplication(id, paramJSON)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, &application)
+}
+
+// アプリケーションを削除します。
+// (DELETE /applications/{id})
+func (s *Server) DeleteApplication(c *gin.Context, id string) {
+	err := s.Engine.DeleteApplication(id)
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 }
 
 // アプリケーションステータスを取得します。

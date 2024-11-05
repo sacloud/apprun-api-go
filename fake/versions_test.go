@@ -24,6 +24,64 @@ import (
 )
 
 func TestEngine_Version(t *testing.T) {
+	t.Run("list versions", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		n := "changedName"
+		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+			Name: &n,
+		})
+		require.NoError(t, err)
+
+		pageNum := 1
+		pageSize := 2
+		sortField := "created_at"
+		sortOrder := v1.ListApplicationVersionsParamsSortOrderDesc
+		resp, err := engine.ListVersions(*patchedApp.Id, v1.ListApplicationVersionsParams{
+			PageNum:   &pageNum,
+			PageSize:  &pageSize,
+			SortField: &sortField,
+			SortOrder: &sortOrder,
+		})
+		require.NoError(t, err)
+
+		d := *resp.Data
+		d0 := d[0]
+		d1 := d[1]
+
+		respJson, err := json.Marshal(resp)
+		require.NoError(t, err)
+
+		expectedJSON := `
+		{
+			"meta": {
+				"object_total": 2,
+				"page_num": 1,
+				"page_size": 2,
+				"sort_field": "created_at",
+				"sort_order": "desc"
+			},
+			"data": [
+				{
+					"id": "` + *d0.Id + `",
+					"name": "` + *d0.Name + `",
+					"status": "` + string(*d0.Status) + `",
+					"created_at": "` + d0.CreatedAt.Format(time.RFC3339) + `"
+				},
+				{
+					"id": "` + *d1.Id + `",
+					"name": "` + *d1.Name + `",
+					"status": "` + string(*d1.Status) + `",
+					"created_at": "` + d1.CreatedAt.Format(time.RFC3339) + `"
+				}
+			]
+		}`
+		require.JSONEq(t, expectedJSON, string(respJson))
+	})
+
 	t.Run("read version", func(t *testing.T) {
 		engine := NewEngine()
 		req := postApplicationBody()
@@ -31,7 +89,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		n := "changedName"
-		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)
@@ -89,64 +147,6 @@ func TestEngine_Version(t *testing.T) {
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
 
-	t.Run("list versions", func(t *testing.T) {
-		engine := NewEngine()
-		req := postApplicationBody()
-		createdApp, err := engine.CreateApplication(req)
-		require.NoError(t, err)
-
-		n := "changedName"
-		patchedApp, err := engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
-		})
-		require.NoError(t, err)
-
-		pageNum := 1
-		pageSize := 2
-		sortField := "created_at"
-		sortOrder := v1.ListApplicationVersionsParamsSortOrderDesc
-		resp, err := engine.ListVersions(*patchedApp.Id, v1.ListApplicationVersionsParams{
-			PageNum:   &pageNum,
-			PageSize:  &pageSize,
-			SortField: &sortField,
-			SortOrder: &sortOrder,
-		})
-		require.NoError(t, err)
-
-		d := *resp.Data
-		d0 := d[0]
-		d1 := d[1]
-
-		respJson, err := json.Marshal(resp)
-		require.NoError(t, err)
-
-		expectedJSON := `
-		{
-			"meta": {
-				"object_total": 2,
-				"page_num": 1,
-				"page_size": 2,
-				"sort_field": "created_at",
-				"sort_order": "desc"
-			},
-			"data": [
-				{
-					"id": "` + *d0.Id + `",
-					"name": "` + *d0.Name + `",
-					"status": "` + string(*d0.Status) + `",
-					"created_at": "` + d0.CreatedAt.Format(time.RFC3339) + `"
-				},
-				{
-					"id": "` + *d1.Id + `",
-					"name": "` + *d1.Name + `",
-					"status": "` + string(*d1.Status) + `",
-					"created_at": "` + d1.CreatedAt.Format(time.RFC3339) + `"
-				}
-			]
-		}`
-		require.JSONEq(t, expectedJSON, string(respJson))
-	})
-
 	t.Run("delete version", func(t *testing.T) {
 		engine := NewEngine()
 		req := postApplicationBody()
@@ -154,7 +154,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		n := "changedName"
-		_, err = engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)

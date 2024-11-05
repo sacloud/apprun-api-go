@@ -58,7 +58,7 @@ func TestEngine_Traffic(t *testing.T) {
 		previousVersionName := engine.Versions[0].Name
 
 		n := "changedName"
-		_, err = engine.PatchApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
 			Name: &n,
 		})
 		require.NoError(t, err)
