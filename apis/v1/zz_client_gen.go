@@ -991,49 +991,49 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// ListApplicationsWithResponse request
+	// ListApplications request
 	ListApplicationsWithResponse(ctx context.Context, params *ListApplicationsParams, reqEditors ...RequestEditorFn) (*ListApplicationsResponse, error)
 
-	// PostApplicationWithBodyWithResponse request with any body
+	// PostApplication request with any body
 	PostApplicationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApplicationResponse, error)
 
 	PostApplicationWithResponse(ctx context.Context, body PostApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApplicationResponse, error)
 
-	// DeleteApplicationWithResponse request
+	// DeleteApplication request
 	DeleteApplicationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteApplicationResponse, error)
 
-	// GetApplicationWithResponse request
+	// GetApplication request
 	GetApplicationWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetApplicationResponse, error)
 
-	// PatchApplicationWithBodyWithResponse request with any body
+	// PatchApplication request with any body
 	PatchApplicationWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchApplicationResponse, error)
 
 	PatchApplicationWithResponse(ctx context.Context, id string, body PatchApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchApplicationResponse, error)
 
-	// GetApplicationStatusWithResponse request
+	// GetApplicationStatus request
 	GetApplicationStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetApplicationStatusResponse, error)
 
-	// ListApplicationTrafficsWithResponse request
+	// ListApplicationTraffics request
 	ListApplicationTrafficsWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*ListApplicationTrafficsResponse, error)
 
-	// PutApplicationTrafficWithBodyWithResponse request with any body
+	// PutApplicationTraffic request with any body
 	PutApplicationTrafficWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutApplicationTrafficResponse, error)
 
 	PutApplicationTrafficWithResponse(ctx context.Context, id string, body PutApplicationTrafficJSONRequestBody, reqEditors ...RequestEditorFn) (*PutApplicationTrafficResponse, error)
 
-	// ListApplicationVersionsWithResponse request
+	// ListApplicationVersions request
 	ListApplicationVersionsWithResponse(ctx context.Context, id string, params *ListApplicationVersionsParams, reqEditors ...RequestEditorFn) (*ListApplicationVersionsResponse, error)
 
-	// DeleteApplicationVersionWithResponse request
+	// DeleteApplicationVersion request
 	DeleteApplicationVersionWithResponse(ctx context.Context, id string, versionId string, reqEditors ...RequestEditorFn) (*DeleteApplicationVersionResponse, error)
 
-	// GetApplicationVersionWithResponse request
+	// GetApplicationVersion request
 	GetApplicationVersionWithResponse(ctx context.Context, id string, versionId string, reqEditors ...RequestEditorFn) (*GetApplicationVersionResponse, error)
 
-	// GetUserWithResponse request
+	// GetUser request
 	GetUserWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
 
-	// PostUserWithResponse request
+	// PostUser request
 	PostUserWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostUserResponse, error)
 }
 
@@ -1063,6 +1063,19 @@ func (r ListApplicationsResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r ListApplicationsResponse) Result() (*HandlerListApplications, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r ListApplicationsResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type PostApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1088,6 +1101,19 @@ func (r PostApplicationResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r PostApplicationResponse) Result() (*HandlerPostApplication, error) {
+	return r.JSON201, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON409, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r PostApplicationResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 type DeleteApplicationResponse struct {
@@ -1116,6 +1142,19 @@ func (r DeleteApplicationResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r DeleteApplicationResponse) Result() error {
+	return eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r DeleteApplicationResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type GetApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1141,6 +1180,19 @@ func (r GetApplicationResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r GetApplicationResponse) Result() (*HandlerGetApplication, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r GetApplicationResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 type PatchApplicationResponse struct {
@@ -1171,6 +1223,19 @@ func (r PatchApplicationResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r PatchApplicationResponse) Result() (*HandlerPatchApplication, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON409, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r PatchApplicationResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type GetApplicationStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1196,6 +1261,19 @@ func (r GetApplicationStatusResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r GetApplicationStatusResponse) Result() (*HandlerGetApplicationStatusResponse, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r GetApplicationStatusResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 type ListApplicationTrafficsResponse struct {
@@ -1225,6 +1303,19 @@ func (r ListApplicationTrafficsResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r ListApplicationTrafficsResponse) Result() (*HandlerListTraffics, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r ListApplicationTrafficsResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type PutApplicationTrafficResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1250,6 +1341,19 @@ func (r PutApplicationTrafficResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r PutApplicationTrafficResponse) Result() (*HandlerPutTraffics, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r PutApplicationTrafficResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 type ListApplicationVersionsResponse struct {
@@ -1279,6 +1383,19 @@ func (r ListApplicationVersionsResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r ListApplicationVersionsResponse) Result() (*HandlerListVersions, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r ListApplicationVersionsResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type DeleteApplicationVersionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1303,6 +1420,19 @@ func (r DeleteApplicationVersionResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r DeleteApplicationVersionResponse) Result() error {
+	return eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r DeleteApplicationVersionResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 type GetApplicationVersionResponse struct {
@@ -1332,6 +1462,19 @@ func (r GetApplicationVersionResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r GetApplicationVersionResponse) Result() (*HandlerGetVersion, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r GetApplicationVersionResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1357,6 +1500,19 @@ func (r GetUserResponse) StatusCode() int {
 	return 0
 }
 
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r GetUserResponse) Result() error {
+	return eCoalesce(r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r GetUserResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
 type PostUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1380,6 +1536,19 @@ func (r PostUserResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r PostUserResponse) Result() error {
+	return eCoalesce(r.JSON401, r.JSON403, r.JSON409, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r PostUserResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
 }
 
 // ListApplicationsWithResponse request returning *ListApplicationsResponse

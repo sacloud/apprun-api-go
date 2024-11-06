@@ -1787,6 +1787,7 @@ components:
       type: object
       properties:
         error:
+          x-go-name: Detail
           type: object
           properties:
             code:
@@ -1800,30 +1801,32 @@ components:
     model.errors:
       type: array
       items:
-        type: object
-        properties:
-          domain:
-            type: string
-            example: global
-            nullable: true
-          reason:
-            type: string
-            example: required
-            nullable: true
-          message:
-            type: string
-            example: Login Required
-            nullable: true
-          location_type:
-            type: string
-            example: header
-            enum:
-              - header
-              - body
-              - query
-              - parameter
-            nullable: true
-          location:
-            type: string
-            example: Authorization
-            nullable: true
+        $ref: "#/components/schemas/model.error"
+    model.error:
+      type: object
+      properties:
+        domain:
+          type: string
+          example: global
+          nullable: true
+        reason:
+          type: string
+          example: required
+          nullable: true
+        message:
+          type: string
+          example: Login Required
+          nullable: true
+        location_type:
+          type: string
+          example: header
+          enum:
+            - header
+            - body
+            - query
+            - parameter
+          nullable: true
+        location:
+          type: string
+          example: Authorization
+          nullable: true

@@ -75,12 +75,12 @@ const (
 	HandlerPatchApplicationStatusUnknown HandlerPatchApplicationStatus = "Unknown"
 )
 
-// Defines values for ModelErrorsLocationType.
+// Defines values for ModelErrorLocationType.
 const (
-	ModelErrorsLocationTypeBody      ModelErrorsLocationType = "body"
-	ModelErrorsLocationTypeHeader    ModelErrorsLocationType = "header"
-	ModelErrorsLocationTypeParameter ModelErrorsLocationType = "parameter"
-	ModelErrorsLocationTypeQuery     ModelErrorsLocationType = "query"
+	ModelErrorLocationTypeBody      ModelErrorLocationType = "body"
+	ModelErrorLocationTypeHeader    ModelErrorLocationType = "header"
+	ModelErrorLocationTypeParameter ModelErrorLocationType = "parameter"
+	ModelErrorLocationTypeQuery     ModelErrorLocationType = "query"
 )
 
 // Defines values for PatchApplicationBodyComponentMaxCpu.
@@ -427,24 +427,27 @@ type HandlerPutTraffics struct {
 
 // ModelDefaultError defines model for model.defaultError.
 type ModelDefaultError struct {
-	Error *struct {
+	Detail *struct {
 		Code    *float32     `json:"code,omitempty"`
 		Errors  *ModelErrors `json:"errors,omitempty"`
 		Message *string      `json:"message,omitempty"`
 	} `json:"error,omitempty"`
 }
 
-// ModelErrors defines model for model.errors.
-type ModelErrors = []struct {
-	Domain       *string                  `json:"domain"`
-	Location     *string                  `json:"location"`
-	LocationType *ModelErrorsLocationType `json:"location_type"`
-	Message      *string                  `json:"message"`
-	Reason       *string                  `json:"reason"`
+// ModelError defines model for model.error.
+type ModelError struct {
+	Domain       *string                 `json:"domain"`
+	Location     *string                 `json:"location"`
+	LocationType *ModelErrorLocationType `json:"location_type"`
+	Message      *string                 `json:"message"`
+	Reason       *string                 `json:"reason"`
 }
 
-// ModelErrorsLocationType defines model for ModelErrors.LocationType.
-type ModelErrorsLocationType string
+// ModelErrorLocationType defines model for ModelError.LocationType.
+type ModelErrorLocationType string
+
+// ModelErrors defines model for model.errors.
+type ModelErrors = []ModelError
 
 // PatchApplicationBody defines model for patchApplicationBody.
 type PatchApplicationBody struct {
