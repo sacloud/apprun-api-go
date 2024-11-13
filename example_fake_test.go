@@ -28,8 +28,8 @@ func init() {
 func initFakeServer() {
 	engine := fake.NewEngine()
 	engine.User = &fake.User{
-		ID:   111,
-		NAME: "test-user",
+		Id:   111,
+		Name: "test-user",
 	}
 
 	fakeServer := &server.Server{

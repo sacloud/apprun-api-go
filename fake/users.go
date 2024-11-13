@@ -15,14 +15,14 @@
 package fake
 
 var (
-	USER_ID   = 111
-	USER_NAME = "user_name"
+	UserId   = 111
+	UserName = "user_name"
 )
 
 // API上でUserの定義は存在しないが、ユーザーのサインアップを管理するために定義する
 type User struct {
-	ID   int
-	NAME string
+	Id   int
+	Name string
 }
 
 func (engine *Engine) GetUser() error {
@@ -44,13 +44,13 @@ func (engine *Engine) CreateUser() error {
 	u := engine.User
 	if u != nil {
 		return newError(
-			ErrorTypeConflict, "user", u.ID,
+			ErrorTypeConflict, "user", u.Id,
 			"さくらのAppRunにユーザーが既に存在します。")
 	}
 
 	engine.User = &User{
-		ID:   USER_ID,
-		NAME: USER_NAME,
+		Id:   UserId,
+		Name: UserName,
 	}
 	return nil
 }

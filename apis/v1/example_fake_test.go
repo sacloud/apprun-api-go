@@ -29,8 +29,8 @@ func initFakeServer() {
 	fakeServer := &server.Server{
 		Engine: &fake.Engine{
 			User: &fake.User{
-				ID:   fake.USER_ID,
-				NAME: fake.USER_NAME,
+				Id:   fake.UserId,
+				Name: fake.UserName,
 			},
 		},
 	}
