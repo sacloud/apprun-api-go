@@ -157,10 +157,13 @@ func Example_versionAPI() {
 	// アプリケーションの更新
 	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
-	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
 		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	// バージョン一覧の取得
 	versions, err := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
@@ -243,10 +246,13 @@ func Example_trafficAPI() {
 	// アプリケーションの更新
 	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
-	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
 		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	// バージョン一覧の取得
 	versions, err := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
