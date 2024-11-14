@@ -69,12 +69,11 @@ func (engine *Engine) initTraffic(app *v1.Application) {
 	isLatestVersion := true
 	percent := 100
 	versionName := ""
-	t := v1.Traffic{
+
+	// 内部的にTrafficとApplicationのリレーションを保持する
+	engine.Traffics[*app.Id] = append(engine.Traffics[*app.Id], &v1.Traffic{
 		IsLatestVersion: &isLatestVersion,
 		Percent:         &percent,
 		VersionName:     &versionName,
-	}
-
-	// 内部的にTrafficとApplicationのリレーションを保持する
-	engine.Traffics[*app.Id] = append(engine.Traffics[*app.Id], &t)
+	})
 }

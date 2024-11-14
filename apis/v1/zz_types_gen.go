@@ -251,22 +251,27 @@ type HandlerApplicationComponentEnv struct {
 
 // HandlerApplicationComponentProbe defines model for handler.ApplicationComponentProbe.
 type HandlerApplicationComponentProbe struct {
-	// HttpGet HTTP Getプローブタイプ
-	HttpGet *struct {
-		Headers *[]struct {
-			// Name ヘッダーフィールド名
-			Name *string `json:"name,omitempty"`
+	HttpGet *HandlerApplicationComponentProbeHttpGet `json:"http_get"`
+}
 
-			// Value ヘッダーフィールド値
-			Value *string `json:"value,omitempty"`
-		} `json:"headers,omitempty"`
+// HandlerApplicationComponentProbeHttpGet defines model for handler.ApplicationComponentProbeHttpGet.
+type HandlerApplicationComponentProbeHttpGet struct {
+	Headers *[]HandlerApplicationComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
-		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-		Path string `json:"path"`
+	// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+	Path string `json:"path"`
 
-		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-		Port int `json:"port"`
-	} `json:"http_get"`
+	// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+	Port int `json:"port"`
+}
+
+// HandlerApplicationComponentProbeHttpGetHeader defines model for handler.ApplicationComponentProbeHttpGetHeader.
+type HandlerApplicationComponentProbeHttpGetHeader struct {
+	// Name ヘッダーフィールド名
+	Name *string `json:"name,omitempty"`
+
+	// Value ヘッダーフィールド値
+	Value *string `json:"value,omitempty"`
 }
 
 // HandlerGetApplication defines model for handler.getApplication.
@@ -620,22 +625,27 @@ type PostApplicationBodyComponentEnv struct {
 
 // PostApplicationBodyComponentProbe defines model for postApplicationBodyComponentProbe.
 type PostApplicationBodyComponentProbe struct {
-	// HttpGet HTTP Getプローブタイプ
-	HttpGet *struct {
-		Headers *[]struct {
-			// Name ヘッダーフィールド名
-			Name *string `json:"name,omitempty"`
+	HttpGet *PostApplicationBodyComponentProbeHttpGet `json:"http_get"`
+}
 
-			// Value ヘッダーフィールド値
-			Value *string `json:"value,omitempty"`
-		} `json:"headers,omitempty"`
+// PostApplicationBodyComponentProbeHttpGet defines model for postApplicationBodyComponentProbeHttpGet.
+type PostApplicationBodyComponentProbeHttpGet struct {
+	Headers *[]PostApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
-		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-		Path string `json:"path"`
+	// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+	Path string `json:"path"`
 
-		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-		Port int `json:"port"`
-	} `json:"http_get"`
+	// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+	Port int `json:"port"`
+}
+
+// PostApplicationBodyComponentProbeHttpGetHeader defines model for postApplicationBodyComponentProbeHttpGetHeader.
+type PostApplicationBodyComponentProbeHttpGetHeader struct {
+	// Name ヘッダーフィールド名
+	Name *string `json:"name,omitempty"`
+
+	// Value ヘッダーフィールド値
+	Value *string `json:"value,omitempty"`
 }
 
 // PutTrafficsBody defines model for putTrafficsBody.

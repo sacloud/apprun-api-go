@@ -1413,35 +1413,39 @@ components:
       properties:
         http_get:
           description: HTTP Getプローブタイプ
-          type: object
-          required:
-            - path
-            - port
-          nullable: true
-          properties:
-            path:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-              type: string
-              example: /healthz
-            port:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-              type: integer
-              example: 8080
-              minimum: 1
-              maximum: 65535
-            headers:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: ヘッダーフィールド名
-                    type: string
-                    example: Custom-Header
-                  value:
-                    description: ヘッダーフィールド値
-                    type: string
-                    example: Awesome
+          $ref: "#/components/schemas/postApplicationBodyComponentProbeHttpGet"
+    postApplicationBodyComponentProbeHttpGet:
+      type: object
+      required:
+        - path
+        - port
+      nullable: true
+      properties:
+        path:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のパス
+          type: string
+          example: /healthz
+        port:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+          type: integer
+          example: 8080
+          minimum: 1
+          maximum: 65535
+        headers:
+          type: array
+          items:
+            $ref: "#/components/schemas/postApplicationBodyComponentProbeHttpGetHeader"
+    postApplicationBodyComponentProbeHttpGetHeader:
+      type: object
+      properties:
+        name:
+          description: ヘッダーフィールド名
+          type: string
+          example: Custom-Header
+        value:
+          description: ヘッダーフィールド値
+          type: string
+          example: Awesome
     patchApplicationBody:
       type: object
       properties:
@@ -1753,35 +1757,39 @@ components:
       properties:
         http_get:
           description: HTTP Getプローブタイプ
-          type: object
-          required:
-            - path
-            - port
-          nullable: true
-          properties:
-            path:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-              type: string
-              example: /healthz
-            port:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-              type: integer
-              example: 8080
-              minimum: 1
-              maximum: 65535
-            headers:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: ヘッダーフィールド名
-                    type: string
-                    example: Custom-Header
-                  value:
-                    description: ヘッダーフィールド値
-                    type: string
-                    example: Awesome
+          $ref: "#/components/schemas/handler.ApplicationComponentProbeHttpGet"
+    handler.ApplicationComponentProbeHttpGet:
+      type: object
+      required:
+        - path
+        - port
+      nullable: true
+      properties:
+        path:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のパス
+          type: string
+          example: /healthz
+        port:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+          type: integer
+          example: 8080
+          minimum: 1
+          maximum: 65535
+        headers:
+          type: array
+          items:
+            $ref: "#/components/schemas/handler.ApplicationComponentProbeHttpGetHeader"
+    handler.ApplicationComponentProbeHttpGetHeader:
+      type: object
+      properties:
+        name:
+          description: ヘッダーフィールド名
+          type: string
+          example: Custom-Header
+        value:
+          description: ヘッダーフィールド値
+          type: string
+          example: Awesome
 
     model.defaultError:
       type: object

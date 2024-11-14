@@ -232,25 +232,15 @@ func postApplicationBody() *v1.PostApplicationBody {
 	envKey, envValue := "envkey", "envvalue"
 	headerName, headerValue := "Custom-Header", "Awesome"
 	probe := v1.PostApplicationBodyComponentProbe{
-		HttpGet: &struct {
-			Headers *[]struct {
-				Name  *string "json:\"name,omitempty\""
-				Value *string "json:\"value,omitempty\""
-			} "json:\"headers,omitempty\""
-			Path string "json:\"path\""
-			Port int    "json:\"port\""
-		}{
-			Headers: &[]struct {
-				Name  *string `json:"name,omitempty"`
-				Value *string `json:"value,omitempty"`
-			}{
+		HttpGet: &v1.PostApplicationBodyComponentProbeHttpGet{
+			Path: "/healthz",
+			Port: 8080,
+			Headers: &[]v1.PostApplicationBodyComponentProbeHttpGetHeader{
 				{
 					Name:  &headerName,
 					Value: &headerValue,
 				},
 			},
-			Path: "/healthz",
-			Port: 8080,
 		},
 	}
 	req := &v1.PostApplicationBody{
