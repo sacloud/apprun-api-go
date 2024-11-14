@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: 'v[0-9]+.[0-9]+.[0-9]+'
+    tags: "v[0-9]+.[0-9]+.[0-9]+"
 
 env:
   GOPROXY: https://proxy.golang.org
@@ -20,12 +20,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          go-version-file: "go.mod"
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
-          args: release --rm-dist
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
