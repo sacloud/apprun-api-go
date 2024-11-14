@@ -1,0 +1,24 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/sacloud-apprun-fake-server
+    ldflags:
+      - -s -w
+      - -X github.com/sacloud/apprun-api-go/version.Revision={{.ShortCommit}}
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    binary: "sacloud-apprun-fake-server"
+
+changelog:
+  disable: false
