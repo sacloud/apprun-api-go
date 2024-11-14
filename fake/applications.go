@@ -116,13 +116,31 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 			}
 		}
 
+		var probe v1.HandlerApplicationComponentProbe
+		if reqComponent.Probe != nil && reqComponent.Probe.HttpGet != nil {
+			headers := []v1.HandlerApplicationComponentProbeHttpGetHeader{}
+			if reqComponent.Probe.HttpGet.Headers != nil {
+				for _, header := range *reqComponent.Probe.HttpGet.Headers {
+					headers = append(headers, v1.HandlerApplicationComponentProbeHttpGetHeader(header))
+				}
+			}
+
+			probe = v1.HandlerApplicationComponentProbe{
+				HttpGet: &v1.HandlerApplicationComponentProbeHttpGet{
+					Path:    reqComponent.Probe.HttpGet.Path,
+					Port:    reqComponent.Probe.HttpGet.Port,
+					Headers: &headers,
+				},
+			}
+		}
+
 		var component v1.HandlerApplicationComponent
 		component.Name = reqComponent.Name
 		component.MaxCpu = string(reqComponent.MaxCpu)
 		component.MaxMemory = string(reqComponent.MaxMemory)
 		component.Datasource.ContainerRegistry = &cr
 		component.Env = &env
-		component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
+		component.Probe = &probe
 		components = append(components, component)
 	}
 
@@ -212,13 +230,31 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 				}
 			}
 
+			var probe v1.HandlerApplicationComponentProbe
+			if reqComponent.Probe != nil && reqComponent.Probe.HttpGet != nil {
+				headers := []v1.HandlerApplicationComponentProbeHttpGetHeader{}
+				if reqComponent.Probe.HttpGet.Headers != nil {
+					for _, header := range *reqComponent.Probe.HttpGet.Headers {
+						headers = append(headers, v1.HandlerApplicationComponentProbeHttpGetHeader(header))
+					}
+				}
+
+				probe = v1.HandlerApplicationComponentProbe{
+					HttpGet: &v1.HandlerApplicationComponentProbeHttpGet{
+						Path:    reqComponent.Probe.HttpGet.Path,
+						Port:    reqComponent.Probe.HttpGet.Port,
+						Headers: &headers,
+					},
+				}
+			}
+
 			var component v1.HandlerApplicationComponent
 			component.Name = reqComponent.Name
 			component.MaxCpu = string(reqComponent.MaxCpu)
 			component.MaxMemory = string(reqComponent.MaxMemory)
 			component.Datasource.ContainerRegistry = &cr
 			component.Env = &env
-			component.Probe = (*v1.HandlerApplicationComponentProbe)(reqComponent.Probe)
+			component.Probe = &probe
 			components = append(components, component)
 		}
 

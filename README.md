@@ -49,14 +49,7 @@ func main() {
 					},
 				},
 				Probe: &v1.PostApplicationBodyComponentProbe{
-					HttpGet: &struct {
-						Headers *[]struct {
-							Name  *string "json:\"name,omitempty\""
-							Value *string "json:\"value,omitempty\""
-						} "json:\"headers,omitempty\""
-						Path string "json:\"path\""
-						Port int    "json:\"port\""
-					}{
+					HttpGet: &v1.PostApplicationBodyComponentProbeHttpGet{
 						Path: "/",
 						Port: 80,
 					},
