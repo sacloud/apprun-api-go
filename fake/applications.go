@@ -264,14 +264,16 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	now := time.Now().UTC().Truncate(time.Second)
 	patchedApp.CreatedAt = &now
 
-	// TODO: all_traffic_availableの処理
-
 	engine.Applications = append(engine.Applications, &patchedApp)
 	err := engine.createVersion(&patchedApp)
 	if err != nil {
 		return nil, newError(
 			ErrorTypeUnknown, "application", nil,
 			"Version の生成に失敗しました。")
+	}
+
+	if *reqBody.AllTrafficAvailable {
+		engine.initTraffic(&patchedApp)
 	}
 
 	return &v1.HandlerPatchApplication{
