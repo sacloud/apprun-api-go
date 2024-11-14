@@ -110,8 +110,7 @@ func (s *Server) PatchApplication(c *gin.Context, id string) {
 // アプリケーションを削除します。
 // (DELETE /applications/{id})
 func (s *Server) DeleteApplication(c *gin.Context, id string) {
-	err := s.Engine.DeleteApplication(id)
-	if err != nil {
+	if err := s.Engine.DeleteApplication(id); err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
 	}

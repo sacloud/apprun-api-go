@@ -195,9 +195,7 @@ func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
 func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
 	defer engine.lock()()
 
-	app := engine.latestApplication(id)
-	patchedApp := *app
-
+	patchedApp := *(engine.latestApplication(id))
 	if reqBody.Name != nil {
 		patchedApp.Name = reqBody.Name
 	}
@@ -265,8 +263,7 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	patchedApp.CreatedAt = &now
 
 	engine.Applications = append(engine.Applications, &patchedApp)
-	err := engine.createVersion(&patchedApp)
-	if err != nil {
+	if err := engine.createVersion(&patchedApp); err != nil {
 		return nil, newError(
 			ErrorTypeUnknown, "application", nil,
 			"Version の生成に失敗しました。")

@@ -28,8 +28,7 @@ type User struct {
 func (engine *Engine) GetUser() error {
 	defer engine.rLock()()
 
-	u := engine.User
-	if u == nil {
+	if u := engine.User; u == nil {
 		return newError(
 			ErrorTypeNotFound, "user", nil,
 			"さくらのAppRunにユーザーが存在しません。")
@@ -41,8 +40,7 @@ func (engine *Engine) GetUser() error {
 func (engine *Engine) CreateUser() error {
 	defer engine.lock()()
 
-	u := engine.User
-	if u != nil {
+	if u := engine.User; u != nil {
 		return newError(
 			ErrorTypeConflict, "user", u.Id,
 			"さくらのAppRunにユーザーが既に存在します。")

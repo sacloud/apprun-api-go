@@ -23,8 +23,7 @@ import (
 // GetUser ユーザー情報の取得
 // (GET /user)
 func (s *Server) GetUser(c *gin.Context) {
-	err := s.Engine.GetUser()
-	if err != nil {
+	if err := s.Engine.GetUser(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -35,8 +34,7 @@ func (s *Server) GetUser(c *gin.Context) {
 // PostUser ユーザーの作成
 // (POST /user)
 func (s *Server) PostUser(c *gin.Context) {
-	err := s.Engine.CreateUser()
-	if err != nil {
+	if err := s.Engine.CreateUser(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

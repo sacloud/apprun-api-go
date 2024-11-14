@@ -69,8 +69,7 @@ func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId stri
 // アプリケーションバージョンを削除します。
 // (DELETE /applications/{id}/versions/{version_id})
 func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
-	err := s.Engine.DeleteVersion(id, versionId)
-	if err != nil {
+	if err := s.Engine.DeleteVersion(id, versionId); err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
 	}
