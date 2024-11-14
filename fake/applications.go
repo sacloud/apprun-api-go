@@ -272,7 +272,7 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 			"Version の生成に失敗しました。")
 	}
 
-	if *reqBody.AllTrafficAvailable {
+	if reqBody.AllTrafficAvailable != nil && *reqBody.AllTrafficAvailable {
 		engine.initTraffic(&patchedApp)
 	}
 
