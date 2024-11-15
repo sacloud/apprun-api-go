@@ -102,7 +102,7 @@ func TestEngine_Application(t *testing.T) {
 					"name": "component1",
 					"max_cpu": "0.2",
 					"max_memory": "512Mi",
-					"datasource": {
+					"deploy_source": {
 						"container_registry": {
 							"image": "apprun-example.sakuracr.jp/helloworld:latest",
 							"server": "apprun-example.sakuracr.jp",
@@ -161,7 +161,7 @@ func TestEngine_Application(t *testing.T) {
 					"name": "component1",
 					"max_cpu": "0.2",
 					"max_memory": "512Mi",
-					"datasource": {
+					"deploy_source": {
 						"container_registry": {
 							"image": "apprun-example.sakuracr.jp/helloworld:latest",
 							"server": "apprun-example.sakuracr.jp",
@@ -253,8 +253,8 @@ func postApplicationBody() *v1.PostApplicationBody {
 				Name:      "component1",
 				MaxCpu:    "0.2",
 				MaxMemory: "512Mi",
-				Datasource: v1.PostApplicationBodyComponentDataSource{
-					ContainerRegistry: &v1.PostApplicationBodyComponentDataSourceContainerRegistry{
+				DeploySource: v1.PostApplicationBodyComponentDeploySource{
+					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
 						Image:    "apprun-example.sakuracr.jp/helloworld:latest",
 						Server:   &server,
 						Username: &userName,

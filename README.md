@@ -43,8 +43,8 @@ func main() {
 				Name:      "component1",
 				MaxCpu:    "0.1",
 				MaxMemory: "256Mi",
-				Datasource: v1.PostApplicationBodyComponentDataSource{
-					ContainerRegistry: &v1.PostApplicationBodyComponentDataSourceContainerRegistry{
+				DeploySource: v1.PostApplicationBodyComponentDeploySource{
+					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
 						Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
 					},
 				},

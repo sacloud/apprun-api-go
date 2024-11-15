@@ -115,7 +115,7 @@ func TestEngine_Version(t *testing.T) {
 					"name": "component1",
 					"max_cpu": "0.2",
 					"max_memory": "512Mi",
-					"datasource": {
+					"deploy_source": {
 						"container_registry": {
 							"image": "apprun-example.sakuracr.jp/helloworld:latest",
 							"server": "apprun-example.sakuracr.jp",
