@@ -268,9 +268,11 @@ func Example_trafficAPI() {
 		panic(err)
 	}
 
-	t0 := (*traffics.Data)[0]
-
-	fmt.Printf("is_latest_version: %t, percent: %d", *t0.IsLatestVersion, *t0.Percent)
+	for _, data := range *traffics.Data {
+		if *data.IsLatestVersion == true {
+			fmt.Printf("is_latest_version: %t, percent: %d", *data.IsLatestVersion, *data.Percent)
+		}
+	}
 	// output:
 	// is_latest_version: true, percent: 90
 }
