@@ -47,8 +47,15 @@ func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1
 	for _, v := range *body {
 		total += *v.Percent
 
-		ts = append(ts, &v)
-		data = append(data, v)
+		// vを明示的にコピーして新しいメモリを確保する
+		// Go 1.22以降明示的に行う必要がなくなる
+		t := v1.Traffic{
+			IsLatestVersion: v.IsLatestVersion,
+			Percent:         v.Percent,
+			VersionName:     v.VersionName,
+		}
+		ts = append(ts, &t)
+		data = append(data, t)
 	}
 
 	if total != 100 {
