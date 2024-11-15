@@ -9,7 +9,7 @@
     "license": {
       "name": "Copyright(C) SAKURA internet Inc. all rights reserved."
     },
-    "description": "---\n「さくらのAppRun」が提供するAPIの利用方法とサンプルを公開しております。\n\n# 基本的な使い方\n\n## APIキーの発行\n\nAPIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。  \nAPIキーは「ユーザーID」「パスワード」に相当する「トークン」と呼ばれる認証情報で構成されています。\n\n|   項目名   | APIキー発行時の項目名        | このドキュメント内での例             |\n|------------|------------------------------|--------------------------------------|\n| ユーザーID | アクセストークン(UUID)       | 01234567-89ab-cdef-0123-456789abcdef |\n| パスワード | アクセストークンシークレット | SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM |\n\n<div class=\"warning\">\n<b>操作マニュアル</b><br />\n<ul><li><a href=\"https://manual.sakura.ad.jp/cloud/api/apikey.html\">APIキー | さくらのクラウド ドキュメント</a></li></ul>\n</div>\n\n## 入力パラメータ\n\nAPIの入力には送信先URLに対して、いくつかのヘッダーとAPIキーを送信します。\n\n* 認証方式はHTTP Basic認証です。APIキーのアクセストークンをユーザーID、アクセストークンシークレットをパスワードとして指定します。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     'https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications'\n```\n\n## 出力結果と応答コード（HTTPステータスコード）\n\nAPIからの結果は、「応答コード（HTTPステータスコード）」と、「JSON形式(UTF-8)の結果」として出力されます。\n\n応答コードは、リクエストが成功したのか、失敗したのか大まかな情報を判断することができるもので、例えば失敗したときには、なぜこのような結果になったのかなど、具体的な情報は応答コードと主に返された本文を見ることで把握することができます。\n\n| 結果                                | 応答コード/status   |\n|-------------------------------------|---------------------|\n| 成功（要求を受け付けた）            | 2xx                 |\n| 失敗（要求が受け付けられなかった）  | 4xx, 5xx            |\n\n```\n# 出力結果サンプル（レスポンスヘッダー）\nHTTP/1.1 200 OK\nServer: nginx\nDate: Tue, 16 Nov 2021 12:39:48 GMT\nContent-Type: application/json; charset=UTF-8\nContent-Length: 443\nConnection: keep-alive\nStatus: 200 OK\nPragma: no-cache\nCache-Control: no-cache\nX-Sakura-Proxy-Microtime: 66245\nX-Sakura-Proxy-Decode-Microtime: 62\nX-Sakura-Content-Length: 443\nX-Sakura-Serial: 86ab6c743f72aa5ea6f17e254fd5f803\nX-Content-Type-Options: nosniff\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: DENY\nX-Sakura-Encode-Microtime: 260\nVary: Accept-Encoding\n```\n\n```\n# 出力結果サンプル（レスポンスボディー）\n{\n  \"error\": {\n    \"code\": 401,\n    \"message\": \"Login Required\",\n    \"errors\": [\n      {\n        \"domain\": \"global\",\n        \"reason\": \"required\",\n        \"message\": \"Login Required\",\n        \"location_type\": \"header\",\n        \"location\": \"Authorization\"\n      }\n    ]\n  }\n}\n```\n\n# 利用例\n\n## 1.ユーザーの作成\n\nAppRunの利用を開始するには**ユーザー**を作成します。\n\nユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  \nなお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。\n\nユーザーを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/user\n```\n\nユーザーの作成が完了すると、\n\n* アプリケーションの作成、更新、削除\n* バージョンの確認、削除\n* トラフィック分散の確認、変更\n\nなどの操作が可能になります。\n\n## 2.アプリケーションの作成、取得、更新、削除\n\nユーザーを作成後、**アプリケーション**の作成、更新、削除が可能になります。\n\nアプリケーションを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"name\": \"Application\",\n  \"timeout_seconds\": 60,\n  \"port\": 8080,\n  \"min_scale\": 0,\n  \"max_scale\": 1,\n  \"components\": [\n    {\n      \"name\": \"Component01\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"datasource\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app:latest\"\n        }\n      },\n      \"env\": [\n        {\n          \"key\": \"TARGET\",\n          \"value\": \"World\"\n        }\n      ],\n      \"probe\": {\n        \"http_get\": {\n          \"path\": \"/\",\n          \"port\": 8080,\n          \"headers\": [\n            {\n              \"name\": \"Custom-Header\",\n              \"value\": \"Awesome\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications\n```\n\n上記で作成したアプリケーションを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを更新するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"components\": [\n    {\n      \"name\": \"Component01 updated\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"datasource\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app-v2:latest\"\n        }\n      }\n    }\n  ],\n  \"all_traffic_available\": true\n}\n\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PATCH \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n## 3.バージョンの取得、削除\n\nアプリケーションを作成、更新した際、その設定情報をバージョンとして保存します。\n\nバージョンを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n上記で作成したバージョンを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n## 4.トラフィック分散の確認、変更\n\nアプリケーションは指定のバージョンへトラフィックを分散します。\n\nトラフィック分散を確認するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n\nトラフィック分散を変更するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n[\n  {\n    \"is_latest_version\": true,\n    \"percent\": 50\n  },\n  {\n    \"version_name\": \"Application-861850d6-8240-7c31-9b69-80ea4466918d-1726726814\",\n    \"percent\": 50\n  }\n]\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PUT \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n----"
+    "description": "---\n「さくらのAppRun」が提供するAPIの利用方法とサンプルを公開しております。\n\n# 基本的な使い方\n\n## APIキーの発行\n\nAPIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。  \nAPIキーは「ユーザーID」「パスワード」に相当する「トークン」と呼ばれる認証情報で構成されています。\n\n|   項目名   | APIキー発行時の項目名        | このドキュメント内での例             |\n|------------|------------------------------|--------------------------------------|\n| ユーザーID | アクセストークン(UUID)       | 01234567-89ab-cdef-0123-456789abcdef |\n| パスワード | アクセストークンシークレット | SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM |\n\n<div class=\"warning\">\n<b>操作マニュアル</b><br />\n<ul><li><a href=\"https://manual.sakura.ad.jp/cloud/api/apikey.html\">APIキー | さくらのクラウド ドキュメント</a></li></ul>\n</div>\n\n## 入力パラメータ\n\nAPIの入力には送信先URLに対して、いくつかのヘッダーとAPIキーを送信します。\n\n* 認証方式はHTTP Basic認証です。APIキーのアクセストークンをユーザーID、アクセストークンシークレットをパスワードとして指定します。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     'https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications'\n```\n\n## 出力結果と応答コード（HTTPステータスコード）\n\nAPIからの結果は、「応答コード（HTTPステータスコード）」と、「JSON形式(UTF-8)の結果」として出力されます。\n\n応答コードは、リクエストが成功したのか、失敗したのか大まかな情報を判断することができるもので、例えば失敗したときには、なぜこのような結果になったのかなど、具体的な情報は応答コードと主に返された本文を見ることで把握することができます。\n\n| 結果                                | 応答コード/status   |\n|-------------------------------------|---------------------|\n| 成功（要求を受け付けた）            | 2xx                 |\n| 失敗（要求が受け付けられなかった）  | 4xx, 5xx            |\n\n```\n# 出力結果サンプル（レスポンスヘッダー）\nHTTP/1.1 200 OK\nServer: nginx\nDate: Tue, 16 Nov 2021 12:39:48 GMT\nContent-Type: application/json; charset=UTF-8\nContent-Length: 443\nConnection: keep-alive\nStatus: 200 OK\nPragma: no-cache\nCache-Control: no-cache\nX-Sakura-Proxy-Microtime: 66245\nX-Sakura-Proxy-Decode-Microtime: 62\nX-Sakura-Content-Length: 443\nX-Sakura-Serial: 86ab6c743f72aa5ea6f17e254fd5f803\nX-Content-Type-Options: nosniff\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: DENY\nX-Sakura-Encode-Microtime: 260\nVary: Accept-Encoding\n```\n\n```\n# 出力結果サンプル（レスポンスボディー）\n{\n  \"error\": {\n    \"code\": 401,\n    \"message\": \"Login Required\",\n    \"errors\": [\n      {\n        \"domain\": \"global\",\n        \"reason\": \"required\",\n        \"message\": \"Login Required\",\n        \"location_type\": \"header\",\n        \"location\": \"Authorization\"\n      }\n    ]\n  }\n}\n```\n\n# 利用例\n\n## 1.ユーザーの作成\n\nAppRunの利用を開始するには**ユーザー**を作成します。\n\nユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  \nなお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。\n\nユーザーを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/user\n```\n\nユーザーの作成が完了すると、\n\n* アプリケーションの作成、更新、削除\n* バージョンの確認、削除\n* トラフィック分散の確認、変更\n\nなどの操作が可能になります。\n\n## 2.アプリケーションの作成、取得、更新、削除\n\nユーザーを作成後、**アプリケーション**の作成、更新、削除が可能になります。\n\nアプリケーションを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"name\": \"Application\",\n  \"timeout_seconds\": 60,\n  \"port\": 8080,\n  \"min_scale\": 0,\n  \"max_scale\": 1,\n  \"components\": [\n    {\n      \"name\": \"Component01\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app:latest\"\n        }\n      },\n      \"env\": [\n        {\n          \"key\": \"TARGET\",\n          \"value\": \"World\"\n        }\n      ],\n      \"probe\": {\n        \"http_get\": {\n          \"path\": \"/\",\n          \"port\": 8080,\n          \"headers\": [\n            {\n              \"name\": \"Custom-Header\",\n              \"value\": \"Awesome\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications\n```\n\n上記で作成したアプリケーションを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを更新するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"components\": [\n    {\n      \"name\": \"Component01 updated\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app-v2:latest\"\n        }\n      }\n    }\n  ],\n  \"all_traffic_available\": true\n}\n\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PATCH \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n## 3.バージョンの取得、削除\n\nアプリケーションを作成、更新した際、その設定情報をバージョンとして保存します。\n\nバージョンを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n上記で作成したバージョンを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n## 4.トラフィック分散の確認、変更\n\nアプリケーションは指定のバージョンへトラフィックを分散します。\n\nトラフィック分散を確認するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n\nトラフィック分散を変更するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n[\n  {\n    \"is_latest_version\": true,\n    \"percent\": 50\n  },\n  {\n    \"version_name\": \"Application-861850d6-8240-7c31-9b69-80ea4466918d-1726726814\",\n    \"percent\": 50\n  }\n]\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PUT \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n----"
   },
   "servers": [
     {
@@ -49,7 +49,7 @@
             }
           },
           "404": {
-            "description": "さくらのAppRunにユーザーが存在しません",
+            "description": "さくらのAppRunにユーザーが存在しません。",
             "content": {
               "application/json": {
                 "schema": {
@@ -1262,7 +1262,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -1280,7 +1280,7 @@
                   "type": "string",
                   "example": "256Mi"
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {
@@ -1455,7 +1455,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -1473,7 +1473,7 @@
                   "type": "string",
                   "example": "256Mi"
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {
@@ -1645,7 +1645,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -1663,7 +1663,7 @@
                   "type": "string",
                   "example": "256Mi"
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {
@@ -1935,7 +1935,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -1953,7 +1953,7 @@
                   "type": "string",
                   "example": "256Mi"
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {
@@ -2182,7 +2182,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -2220,7 +2220,7 @@
                     "2Gi"
                   ]
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {
@@ -2386,7 +2386,7 @@
                 "name",
                 "max_cpu",
                 "max_memory",
-                "datasource"
+                "deploy_source"
               ],
               "properties": {
                 "name": {
@@ -2424,7 +2424,7 @@
                     "2Gi"
                   ]
                 },
-                "datasource": {
+                "deploy_source": {
                   "description": "コンポーネントを構成するソース",
                   "type": "object",
                   "properties": {

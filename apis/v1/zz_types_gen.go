@@ -207,7 +207,7 @@ type VersionStatus string
 
 // HandlerApplicationComponent defines model for handler.ApplicationComponent.
 type HandlerApplicationComponent struct {
-	Datasource HandlerApplicationComponentDataSource `json:"datasource"`
+	DeploySource HandlerApplicationComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
 	Env *[]HandlerApplicationComponentEnv `json:"env,omitempty"`
@@ -223,13 +223,13 @@ type HandlerApplicationComponent struct {
 	Probe *HandlerApplicationComponentProbe `json:"probe"`
 }
 
-// HandlerApplicationComponentDataSource defines model for handler.ApplicationComponentDataSource.
-type HandlerApplicationComponentDataSource struct {
-	ContainerRegistry *HandlerApplicationComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+// HandlerApplicationComponentDeploySource defines model for handler.ApplicationComponentDeploySource.
+type HandlerApplicationComponentDeploySource struct {
+	ContainerRegistry *HandlerApplicationComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// HandlerApplicationComponentDataSourceContainerRegistry defines model for handler.ApplicationComponentDataSourceContainerRegistry.
-type HandlerApplicationComponentDataSourceContainerRegistry struct {
+// HandlerApplicationComponentDeploySourceContainerRegistry defines model for handler.ApplicationComponentDeploySourceContainerRegistry.
+type HandlerApplicationComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
 
@@ -480,8 +480,8 @@ type PatchApplicationBody struct {
 
 // PatchApplicationBodyComponent defines model for patchApplicationBodyComponent.
 type PatchApplicationBodyComponent struct {
-	Datasource PatchApplicationBodyComponentDataSource `json:"datasource"`
-	Env        *PatchApplicationBodyComponentEnv       `json:"env"`
+	DeploySource PatchApplicationBodyComponentDeploySource `json:"deploy_source"`
+	Env          *PatchApplicationBodyComponentEnv         `json:"env"`
 
 	// MaxCpu コンポーネントの最大CPU数
 	MaxCpu PatchApplicationBodyComponentMaxCpu `json:"max_cpu"`
@@ -500,13 +500,13 @@ type PatchApplicationBodyComponentMaxCpu string
 // PatchApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PatchApplicationBodyComponentMaxMemory string
 
-// PatchApplicationBodyComponentDataSource defines model for patchApplicationBodyComponentDataSource.
-type PatchApplicationBodyComponentDataSource struct {
-	ContainerRegistry *PatchApplicationBodyComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+// PatchApplicationBodyComponentDeploySource defines model for patchApplicationBodyComponentDeploySource.
+type PatchApplicationBodyComponentDeploySource struct {
+	ContainerRegistry *PatchApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PatchApplicationBodyComponentDataSourceContainerRegistry defines model for patchApplicationBodyComponentDataSourceContainerRegistry.
-type PatchApplicationBodyComponentDataSourceContainerRegistry struct {
+// PatchApplicationBodyComponentDeploySourceContainerRegistry defines model for patchApplicationBodyComponentDeploySourceContainerRegistry.
+type PatchApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
 
@@ -572,7 +572,7 @@ type PostApplicationBody struct {
 
 // PostApplicationBodyComponent defines model for postApplicationBodyComponent.
 type PostApplicationBodyComponent struct {
-	Datasource PostApplicationBodyComponentDataSource `json:"datasource"`
+	DeploySource PostApplicationBodyComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
 	Env *[]PostApplicationBodyComponentEnv `json:"env"`
@@ -594,13 +594,13 @@ type PostApplicationBodyComponentMaxCpu string
 // PostApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PostApplicationBodyComponentMaxMemory string
 
-// PostApplicationBodyComponentDataSource defines model for postApplicationBodyComponentDataSource.
-type PostApplicationBodyComponentDataSource struct {
-	ContainerRegistry *PostApplicationBodyComponentDataSourceContainerRegistry `json:"container_registry,omitempty"`
+// PostApplicationBodyComponentDeploySource defines model for postApplicationBodyComponentDeploySource.
+type PostApplicationBodyComponentDeploySource struct {
+	ContainerRegistry *PostApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PostApplicationBodyComponentDataSourceContainerRegistry defines model for postApplicationBodyComponentDataSourceContainerRegistry.
-type PostApplicationBodyComponentDataSourceContainerRegistry struct {
+// PostApplicationBodyComponentDeploySourceContainerRegistry defines model for postApplicationBodyComponentDeploySourceContainerRegistry.
+type PostApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
 
