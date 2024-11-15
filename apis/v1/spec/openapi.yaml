@@ -138,7 +138,7 @@ info:
           "name": "Component01",
           "max_cpu": "0.1",
           "max_memory": "256Mi",
-          "datasource": {
+          "deploy_source": {
             "container_registry": {
               "image": "my-app.sakuracr.jp/my-app:latest"
             }
@@ -191,7 +191,7 @@ info:
           "name": "Component01 updated",
           "max_cpu": "0.1",
           "max_memory": "256Mi",
-          "datasource": {
+          "deploy_source": {
             "container_registry": {
               "image": "my-app.sakuracr.jp/my-app-v2:latest"
             }
@@ -300,7 +300,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/model.defaultError"
         "404":
-          description: さくらのAppRunにユーザーが存在しません
+          description: さくらのAppRunにユーザーが存在しません。
           content:
             application/json:
               schema:
@@ -1314,7 +1314,7 @@ components:
         - name
         - max_cpu
         - max_memory
-        - datasource
+        - deploy_source
       properties:
         name:
           description: コンポーネント名
@@ -1346,9 +1346,9 @@ components:
             - 512Mi
             - 1Gi
             - 2Gi
-        datasource:
+        deploy_source:
           description: コンポーネントを構成するソース
-          $ref: "#/components/schemas/postApplicationBodyComponentDataSource"
+          $ref: "#/components/schemas/postApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
           type: array
@@ -1358,13 +1358,13 @@ components:
         probe:
           description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/postApplicationBodyComponentProbe"
-    postApplicationBodyComponentDataSource:
+    postApplicationBodyComponentDeploySource:
       type: object
       properties:
         container_registry:
           description: コンテナレジストリ
-          $ref: "#/components/schemas/postApplicationBodyComponentDataSourceContainerRegistry"
-    postApplicationBodyComponentDataSourceContainerRegistry:
+          $ref: "#/components/schemas/postApplicationBodyComponentDeploySourceContainerRegistry"
+    postApplicationBodyComponentDeploySourceContainerRegistry:
       type: object
       required:
         - image
@@ -1494,7 +1494,7 @@ components:
         - name
         - max_cpu
         - max_memory
-        - datasource
+        - deploy_source
       properties:
         name:
           description: コンポーネント名
@@ -1526,22 +1526,22 @@ components:
             - 512Mi
             - 1Gi
             - 2Gi
-        datasource:
+        deploy_source:
           description: コンポーネントを構成するソース
-          $ref: "#/components/schemas/patchApplicationBodyComponentDataSource"
+          $ref: "#/components/schemas/patchApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
           $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
         probe:
           description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/patchApplicationBodyComponentProbe"
-    patchApplicationBodyComponentDataSource:
+    patchApplicationBodyComponentDeploySource:
       type: object
       properties:
         container_registry:
           description: コンテナレジストリ
-          $ref: "#/components/schemas/patchApplicationBodyComponentDataSourceContainerRegistry"
-    patchApplicationBodyComponentDataSourceContainerRegistry:
+          $ref: "#/components/schemas/patchApplicationBodyComponentDeploySourceContainerRegistry"
+    patchApplicationBodyComponentDeploySourceContainerRegistry:
       type: object
       required:
         - image
@@ -1692,7 +1692,7 @@ components:
         - name
         - max_cpu
         - max_memory
-        - datasource
+        - deploy_source
       properties:
         name:
           description: コンポーネント名
@@ -1706,9 +1706,9 @@ components:
           description: コンポーネントの最大メモリ
           type: string
           example: 256Mi
-        datasource:
+        deploy_source:
           description: コンポーネントを構成するソース
-          $ref: "#/components/schemas/handler.ApplicationComponentDataSource"
+          $ref: "#/components/schemas/handler.ApplicationComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
           type: array
@@ -1717,13 +1717,13 @@ components:
         probe:
           description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/handler.ApplicationComponentProbe"
-    handler.ApplicationComponentDataSource:
+    handler.ApplicationComponentDeploySource:
       type: object
       properties:
         container_registry:
           description: コンテナレジストリ
-          $ref: "#/components/schemas/handler.ApplicationComponentDataSourceContainerRegistry"
-    handler.ApplicationComponentDataSourceContainerRegistry:
+          $ref: "#/components/schemas/handler.ApplicationComponentDeploySourceContainerRegistry"
+    handler.ApplicationComponentDeploySourceContainerRegistry:
       type: object
       required:
         - image

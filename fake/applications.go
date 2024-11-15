@@ -102,11 +102,11 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 
 	var components []v1.HandlerApplicationComponent
 	for _, reqComponent := range reqBody.Components {
-		var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
-		if reqComponent.Datasource.ContainerRegistry != nil {
-			cr.Image = reqComponent.Datasource.ContainerRegistry.Image
-			cr.Server = reqComponent.Datasource.ContainerRegistry.Server
-			cr.Username = reqComponent.Datasource.ContainerRegistry.Username
+		var cr v1.HandlerApplicationComponentDeploySourceContainerRegistry
+		if reqComponent.DeploySource.ContainerRegistry != nil {
+			cr.Image = reqComponent.DeploySource.ContainerRegistry.Image
+			cr.Server = reqComponent.DeploySource.ContainerRegistry.Server
+			cr.Username = reqComponent.DeploySource.ContainerRegistry.Username
 		}
 
 		var env []v1.HandlerApplicationComponentEnv
@@ -138,7 +138,7 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 		component.Name = reqComponent.Name
 		component.MaxCpu = string(reqComponent.MaxCpu)
 		component.MaxMemory = string(reqComponent.MaxMemory)
-		component.Datasource.ContainerRegistry = &cr
+		component.DeploySource.ContainerRegistry = &cr
 		component.Env = &env
 		component.Probe = &probe
 		components = append(components, component)
@@ -214,11 +214,11 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	if reqBody.Components != nil && len(*reqBody.Components) > 0 {
 		var components []v1.HandlerApplicationComponent
 		for _, reqComponent := range *reqBody.Components {
-			var cr v1.HandlerApplicationComponentDataSourceContainerRegistry
-			if reqComponent.Datasource.ContainerRegistry != nil {
-				cr.Image = reqComponent.Datasource.ContainerRegistry.Image
-				cr.Server = reqComponent.Datasource.ContainerRegistry.Server
-				cr.Username = reqComponent.Datasource.ContainerRegistry.Username
+			var cr v1.HandlerApplicationComponentDeploySourceContainerRegistry
+			if reqComponent.DeploySource.ContainerRegistry != nil {
+				cr.Image = reqComponent.DeploySource.ContainerRegistry.Image
+				cr.Server = reqComponent.DeploySource.ContainerRegistry.Server
+				cr.Username = reqComponent.DeploySource.ContainerRegistry.Username
 			}
 
 			var env []v1.HandlerApplicationComponentEnv
@@ -250,7 +250,7 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 			component.Name = reqComponent.Name
 			component.MaxCpu = string(reqComponent.MaxCpu)
 			component.MaxMemory = string(reqComponent.MaxMemory)
-			component.Datasource.ContainerRegistry = &cr
+			component.DeploySource.ContainerRegistry = &cr
 			component.Env = &env
 			component.Probe = &probe
 			components = append(components, component)
