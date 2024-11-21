@@ -533,22 +533,27 @@ type PatchApplicationBodyComponentEnv struct {
 
 // PatchApplicationBodyComponentProbe defines model for patchApplicationBodyComponentProbe.
 type PatchApplicationBodyComponentProbe struct {
-	// HttpGet HTTP Getプローブタイプ
-	HttpGet *struct {
-		Headers *[]struct {
-			// Name ヘッダーフィールド名
-			Name *string `json:"name,omitempty"`
+	HttpGet *PatchApplicationBodyComponentProbeHttpGet `json:"http_get"`
+}
 
-			// Value ヘッダーフィールド値
-			Value *string `json:"value,omitempty"`
-		} `json:"headers,omitempty"`
+// PatchApplicationBodyComponentProbeHttpGet defines model for patchApplicationBodyComponentProbeHttpGet.
+type PatchApplicationBodyComponentProbeHttpGet struct {
+	Headers *[]PatchApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
-		// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
-		Path string `json:"path"`
+	// Path HTTPサーバーへアクセスしプローブをチェックする際のパス
+	Path string `json:"path"`
 
-		// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-		Port int `json:"port"`
-	} `json:"http_get"`
+	// Port HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+	Port int `json:"port"`
+}
+
+// PatchApplicationBodyComponentProbeHttpGetHeader defines model for patchApplicationBodyComponentProbeHttpGetHeader.
+type PatchApplicationBodyComponentProbeHttpGetHeader struct {
+	// Name ヘッダーフィールド名
+	Name *string `json:"name,omitempty"`
+
+	// Value ヘッダーフィールド値
+	Value *string `json:"value,omitempty"`
 }
 
 // PostApplicationBody defines model for postApplicationBody.
