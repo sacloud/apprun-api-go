@@ -481,7 +481,9 @@ type PatchApplicationBody struct {
 // PatchApplicationBodyComponent defines model for patchApplicationBodyComponent.
 type PatchApplicationBodyComponent struct {
 	DeploySource PatchApplicationBodyComponentDeploySource `json:"deploy_source"`
-	Env          *PatchApplicationBodyComponentEnv         `json:"env"`
+
+	// Env コンポーネントに渡す環境変数
+	Env *[]PatchApplicationBodyComponentEnv `json:"env"`
 
 	// MaxCpu コンポーネントの最大CPU数
 	MaxCpu PatchApplicationBodyComponentMaxCpu `json:"max_cpu"`
@@ -521,7 +523,7 @@ type PatchApplicationBodyComponentDeploySourceContainerRegistry struct {
 }
 
 // PatchApplicationBodyComponentEnv defines model for patchApplicationBodyComponentEnv.
-type PatchApplicationBodyComponentEnv = []struct {
+type PatchApplicationBodyComponentEnv struct {
 	// Key 環境変数名
 	Key *string `json:"key,omitempty"`
 

@@ -1531,7 +1531,10 @@ components:
           $ref: "#/components/schemas/patchApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
-          $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
         probe:
           description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/patchApplicationBodyComponentProbe"
@@ -1574,19 +1577,16 @@ components:
           maxLength: 63
           nullable: true
     patchApplicationBodyComponentEnv:
-      type: array
-      nullable: true
-      items:
-        type: object
-        properties:
-          key:
-            description: 環境変数名
-            type: string
-            example: MY_ENV
-          value:
-            description: 環境変数の値
-            type: string
-            example: my_value
+      type: object
+      properties:
+        key:
+          description: 環境変数名
+          type: string
+          example: MY_ENV
+        value:
+          description: 環境変数の値
+          type: string
+          example: my_value
     patchApplicationBodyComponentProbe:
       type: object
       nullable: true
