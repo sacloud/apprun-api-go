@@ -1531,7 +1531,10 @@ components:
           $ref: "#/components/schemas/patchApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
-          $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
         probe:
           description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/patchApplicationBodyComponentProbe"
@@ -1574,54 +1577,55 @@ components:
           maxLength: 63
           nullable: true
     patchApplicationBodyComponentEnv:
-      type: array
-      nullable: true
-      items:
-        type: object
-        properties:
-          key:
-            description: 環境変数名
-            type: string
-            example: MY_ENV
-          value:
-            description: 環境変数の値
-            type: string
-            example: my_value
+      type: object
+      properties:
+        key:
+          description: 環境変数名
+          type: string
+          example: MY_ENV
+        value:
+          description: 環境変数の値
+          type: string
+          example: my_value
     patchApplicationBodyComponentProbe:
       type: object
       nullable: true
       properties:
         http_get:
           description: HTTP Getプローブタイプ
-          type: object
-          required:
-            - path
-            - port
-          nullable: true
-          properties:
-            path:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のパス
-              type: string
-              example: /healthz
-            port:
-              description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
-              type: integer
-              example: 8080
-              minimum: 1
-              maximum: 65535
-            headers:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: ヘッダーフィールド名
-                    type: string
-                    example: Custom-Header
-                  value:
-                    description: ヘッダーフィールド値
-                    type: string
-                    example: Awesome
+          $ref: "#/components/schemas/patchApplicationBodyComponentProbeHttpGet"
+    patchApplicationBodyComponentProbeHttpGet:
+      type: object
+      required:
+        - path
+        - port
+      nullable: true
+      properties:
+        path:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のパス
+          type: string
+          example: /healthz
+        port:
+          description: HTTPサーバーへアクセスしプローブをチェックする際のポート番号
+          type: integer
+          example: 8080
+          minimum: 1
+          maximum: 65535
+        headers:
+          type: array
+          items:
+            $ref: "#/components/schemas/patchApplicationBodyComponentProbeHttpGetHeader"
+    patchApplicationBodyComponentProbeHttpGetHeader:
+      type: object
+      properties:
+        name:
+          description: ヘッダーフィールド名
+          type: string
+          example: Custom-Header
+        value:
+          description: ヘッダーフィールド値
+          type: string
+          example: Awesome
     putTrafficsBody:
       type: array
       items:
