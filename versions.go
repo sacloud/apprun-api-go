@@ -20,6 +20,19 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
+// ソート順
+var VersionSortOrders = []string{
+	(string)(v1.ListApplicationVersionsParamsSortOrderAsc),
+	(string)(v1.ListApplicationVersionsParamsSortOrderDesc),
+}
+
+// バージョンステータス
+var VersionStatuses = []string{
+	(string)(v1.VersionStatusFail),
+	(string)(v1.VersionStatusSuccess),
+	(string)(v1.VersionStatusUnknown),
+}
+
 type VersionAPI interface {
 	// List アプリケーションバージョン一覧を取得
 	List(ctx context.Context, appId string, params *v1.ListApplicationVersionsParams) (*v1.HandlerListVersions, error)

@@ -16,7 +16,7 @@ package apprun
 
 var (
 	// Version app version
-	Version = "v0.2.0"
+	Version = "v0.2.1"
 	// Revision git commit short commit hash
 	Revision = "xxxxxx" // set on build time
 )

@@ -20,6 +20,41 @@ import (
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
+// コンポーネントの最大CPU数
+var ApplicationMaxCPUs = []string{
+	(string)(v1.PostApplicationBodyComponentMaxCpuN01),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN02),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN03),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN04),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN05),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN06),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN07),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN08),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN09),
+	(string)(v1.PostApplicationBodyComponentMaxCpuN1),
+}
+
+// コンポーネントの最大メモリ
+var ApplicationMaxMemories = []string{
+	(string)(v1.PostApplicationBodyComponentMaxMemoryN256Mi),
+	(string)(v1.PostApplicationBodyComponentMaxMemoryN512Mi),
+	(string)(v1.PostApplicationBodyComponentMaxMemoryN1Gi),
+	(string)(v1.PostApplicationBodyComponentMaxMemoryN2Gi),
+}
+
+// ソート順
+var ApplicationSortOrders = []string{
+	(string)(v1.ListApplicationsParamsSortOrderAsc),
+	(string)(v1.ListApplicationsParamsSortOrderDesc),
+}
+
+// アプリケーションステータス
+var ApplicationStatuses = []string{
+	(string)(v1.ApplicationStatusFail),
+	(string)(v1.ApplicationStatusSuccess),
+	(string)(v1.ApplicationStatusUnknown),
+}
+
 type ApplicationAPI interface {
 	// List アプリケーション一覧を取得
 	List(ctx context.Context, params *v1.ListApplicationsParams) (*v1.HandlerListApplications, error)
