@@ -57,9 +57,9 @@ func TestEngine_Traffic(t *testing.T) {
 
 		previousVersionName := engine.Versions[0].Name
 
-		n := "changedName"
+		timeoutUpdated := 20
 		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
+			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
 

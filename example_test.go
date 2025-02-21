@@ -141,10 +141,8 @@ func Example_versionAPI() {
 	}
 
 	// アプリケーションの更新
-	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
 	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
-		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
 	if err != nil {
@@ -223,10 +221,8 @@ func Example_trafficAPI() {
 	}
 
 	// アプリケーションの更新
-	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
 	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
-		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
 	if err != nil {

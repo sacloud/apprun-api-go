@@ -468,9 +468,6 @@ type PatchApplicationBody struct {
 	// MinScale アプリケーション全体の最小スケール数
 	MinScale *int `json:"min_scale,omitempty"`
 
-	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
-
 	// Port アプリケーションがリクエストを待ち受けるポート番号
 	Port *int `json:"port,omitempty"`
 

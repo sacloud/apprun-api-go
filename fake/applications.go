@@ -196,9 +196,6 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	defer engine.lock()()
 
 	patchedApp := *(engine.latestApplication(id))
-	if reqBody.Name != nil {
-		patchedApp.Name = reqBody.Name
-	}
 	if reqBody.TimeoutSeconds != nil {
 		patchedApp.TimeoutSeconds = reqBody.TimeoutSeconds
 	}
