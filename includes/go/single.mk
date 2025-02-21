@@ -30,7 +30,7 @@ build: $(BIN)
 
 $(BIN): $(GO_FILES) go.mod go.sum
 	@echo "running 'go build'..."
-	@GOOS=$${OS:-"`$(GO) env GOOS`"} GOARCH=$${ARCH:-"`$(GO) env GOARCH`"} CGO_ENABLED=0 $(GO) build -ldflags=$(BUILD_LDFLAGS) -o $(BIN) $(GO_ENTRY_FILE)
+	GOOS=$${OS:-"`$(GO) env GOOS`"} GOARCH=$${ARCH:-"`$(GO) env GOARCH`"} CGO_ENABLED=0 $(GO) build -ldflags=$(BUILD_LDFLAGS) -o $(BIN) $(GO_ENTRY_FILE)
 
 .PHONY: clean
 clean:

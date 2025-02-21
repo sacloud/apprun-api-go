@@ -1,15 +1,15 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0.0",
-    "title": "さくらのAppRun β APIドキュメント",
+    "version": "1.1.0",
+    "title": "AppRun β APIドキュメント",
     "contact": {
       "name": "SAKURA internet Inc."
     },
     "license": {
       "name": "Copyright(C) SAKURA internet Inc. all rights reserved."
     },
-    "description": "---\n「さくらのAppRun」が提供するAPIの利用方法とサンプルを公開しております。\n\n# 基本的な使い方\n\n## APIキーの発行\n\nAPIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。  \nAPIキーは「ユーザーID」「パスワード」に相当する「トークン」と呼ばれる認証情報で構成されています。\n\n|   項目名   | APIキー発行時の項目名        | このドキュメント内での例             |\n|------------|------------------------------|--------------------------------------|\n| ユーザーID | アクセストークン(UUID)       | 01234567-89ab-cdef-0123-456789abcdef |\n| パスワード | アクセストークンシークレット | SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM |\n\n<div class=\"warning\">\n<b>操作マニュアル</b><br />\n<ul><li><a href=\"https://manual.sakura.ad.jp/cloud/api/apikey.html\">APIキー | さくらのクラウド ドキュメント</a></li></ul>\n</div>\n\n## 入力パラメータ\n\nAPIの入力には送信先URLに対して、いくつかのヘッダーとAPIキーを送信します。\n\n* 認証方式はHTTP Basic認証です。APIキーのアクセストークンをユーザーID、アクセストークンシークレットをパスワードとして指定します。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     'https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications'\n```\n\n## 出力結果と応答コード（HTTPステータスコード）\n\nAPIからの結果は、「応答コード（HTTPステータスコード）」と、「JSON形式(UTF-8)の結果」として出力されます。\n\n応答コードは、リクエストが成功したのか、失敗したのか大まかな情報を判断することができるもので、例えば失敗したときには、なぜこのような結果になったのかなど、具体的な情報は応答コードと主に返された本文を見ることで把握することができます。\n\n| 結果                                | 応答コード/status   |\n|-------------------------------------|---------------------|\n| 成功（要求を受け付けた）            | 2xx                 |\n| 失敗（要求が受け付けられなかった）  | 4xx, 5xx            |\n\n```\n# 出力結果サンプル（レスポンスヘッダー）\nHTTP/1.1 200 OK\nServer: nginx\nDate: Tue, 16 Nov 2021 12:39:48 GMT\nContent-Type: application/json; charset=UTF-8\nContent-Length: 443\nConnection: keep-alive\nStatus: 200 OK\nPragma: no-cache\nCache-Control: no-cache\nX-Sakura-Proxy-Microtime: 66245\nX-Sakura-Proxy-Decode-Microtime: 62\nX-Sakura-Content-Length: 443\nX-Sakura-Serial: 86ab6c743f72aa5ea6f17e254fd5f803\nX-Content-Type-Options: nosniff\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: DENY\nX-Sakura-Encode-Microtime: 260\nVary: Accept-Encoding\n```\n\n```\n# 出力結果サンプル（レスポンスボディー）\n{\n  \"error\": {\n    \"code\": 401,\n    \"message\": \"Login Required\",\n    \"errors\": [\n      {\n        \"domain\": \"global\",\n        \"reason\": \"required\",\n        \"message\": \"Login Required\",\n        \"location_type\": \"header\",\n        \"location\": \"Authorization\"\n      }\n    ]\n  }\n}\n```\n\n# 利用例\n\n## 1.ユーザーの作成\n\nAppRunの利用を開始するには**ユーザー**を作成します。\n\nユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  \nなお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。\n\nユーザーを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/user\n```\n\nユーザーの作成が完了すると、\n\n* アプリケーションの作成、更新、削除\n* バージョンの確認、削除\n* トラフィック分散の確認、変更\n\nなどの操作が可能になります。\n\n## 2.アプリケーションの作成、取得、更新、削除\n\nユーザーを作成後、**アプリケーション**の作成、更新、削除が可能になります。\n\nアプリケーションを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"name\": \"Application\",\n  \"timeout_seconds\": 60,\n  \"port\": 8080,\n  \"min_scale\": 0,\n  \"max_scale\": 1,\n  \"components\": [\n    {\n      \"name\": \"Component01\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app:latest\"\n        }\n      },\n      \"env\": [\n        {\n          \"key\": \"TARGET\",\n          \"value\": \"World\"\n        }\n      ],\n      \"probe\": {\n        \"http_get\": {\n          \"path\": \"/\",\n          \"port\": 8080,\n          \"headers\": [\n            {\n              \"name\": \"Custom-Header\",\n              \"value\": \"Awesome\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications\n```\n\n上記で作成したアプリケーションを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを更新するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"components\": [\n    {\n      \"name\": \"Component01 updated\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app-v2:latest\"\n        }\n      }\n    }\n  ],\n  \"all_traffic_available\": true\n}\n\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PATCH \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n## 3.バージョンの取得、削除\n\nアプリケーションを作成、更新した際、その設定情報をバージョンとして保存します。\n\nバージョンを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n上記で作成したバージョンを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n## 4.トラフィック分散の確認、変更\n\nアプリケーションは指定のバージョンへトラフィックを分散します。\n\nトラフィック分散を確認するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n\nトラフィック分散を変更するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n[\n  {\n    \"is_latest_version\": true,\n    \"percent\": 50\n  },\n  {\n    \"version_name\": \"Application-861850d6-8240-7c31-9b69-80ea4466918d-1726726814\",\n    \"percent\": 50\n  }\n]\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PUT \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n----"
+    "description": "---\n「AppRun」が提供するAPIの利用方法とサンプルを公開しております。\n\n# 基本的な使い方\n\n## APIキーの発行\n\nAPIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。  \nAPIキーは「ユーザーID」「パスワード」に相当する「トークン」と呼ばれる認証情報で構成されています。\n\n|   項目名   | APIキー発行時の項目名        | このドキュメント内での例             |\n|------------|------------------------------|--------------------------------------|\n| ユーザーID | アクセストークン(UUID)       | 01234567-89ab-cdef-0123-456789abcdef |\n| パスワード | アクセストークンシークレット | SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM |\n\n<div class=\"warning\">\n<b>操作マニュアル</b><br />\n<ul><li><a href=\"https://manual.sakura.ad.jp/cloud/api/apikey.html\">APIキー | さくらのクラウド ドキュメント</a></li></ul>\n</div>\n\n## 入力パラメータ\n\nAPIの入力には送信先URLに対して、いくつかのヘッダーとAPIキーを送信します。\n\n* 認証方式はHTTP Basic認証です。APIキーのアクセストークンをユーザーID、アクセストークンシークレットをパスワードとして指定します。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     'https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications'\n```\n\n## 出力結果と応答コード（HTTPステータスコード）\n\nAPIからの結果は、「応答コード（HTTPステータスコード）」と、「JSON形式(UTF-8)の結果」として出力されます。\n\n応答コードは、リクエストが成功したのか、失敗したのか大まかな情報を判断することができるもので、例えば失敗したときには、なぜこのような結果になったのかなど、具体的な情報は応答コードと主に返された本文を見ることで把握することができます。\n\n| 結果                                | 応答コード/status   |\n|-------------------------------------|---------------------|\n| 成功（要求を受け付けた）            | 2xx                 |\n| 失敗（要求が受け付けられなかった）  | 4xx, 5xx            |\n\n```\n# 出力結果サンプル（レスポンスヘッダー）\nHTTP/1.1 200 OK\nServer: nginx\nDate: Tue, 16 Nov 2021 12:39:48 GMT\nContent-Type: application/json; charset=UTF-8\nContent-Length: 443\nConnection: keep-alive\nStatus: 200 OK\nPragma: no-cache\nCache-Control: no-cache\nX-Sakura-Proxy-Microtime: 66245\nX-Sakura-Proxy-Decode-Microtime: 62\nX-Sakura-Content-Length: 443\nX-Sakura-Serial: 86ab6c743f72aa5ea6f17e254fd5f803\nX-Content-Type-Options: nosniff\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: DENY\nX-Sakura-Encode-Microtime: 260\nVary: Accept-Encoding\n```\n\n```\n# 出力結果サンプル（レスポンスボディー）\n{\n  \"error\": {\n    \"code\": 401,\n    \"message\": \"Login Required\",\n    \"errors\": [\n      {\n        \"domain\": \"global\",\n        \"reason\": \"required\",\n        \"message\": \"Login Required\",\n        \"location_type\": \"header\",\n        \"location\": \"Authorization\"\n      }\n    ]\n  }\n}\n```\n\n# 利用例\n\n## 1.ユーザーの作成\n\nAppRunの利用を開始するには**ユーザー**を作成します。\n\nユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  \nなお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。\n\nユーザーを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/user\n```\n\nユーザーの作成が完了すると、\n\n* アプリケーションの作成、更新、削除\n* バージョンの確認、削除\n* トラフィック分散の確認、変更\n\nなどの操作が可能になります。\n\n## 2.アプリケーションの作成、取得、更新、削除\n\nユーザーを作成後、**アプリケーション**の作成、更新、削除が可能になります。\n\nアプリケーションを作成するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"name\": \"Application\",\n  \"timeout_seconds\": 60,\n  \"port\": 8080,\n  \"min_scale\": 0,\n  \"max_scale\": 1,\n  \"components\": [\n    {\n      \"name\": \"Component01\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app:latest\"\n        }\n      },\n      \"env\": [\n        {\n          \"key\": \"TARGET\",\n          \"value\": \"World\"\n        }\n      ],\n      \"probe\": {\n        \"http_get\": {\n          \"path\": \"/\",\n          \"port\": 8080,\n          \"headers\": [\n            {\n              \"name\": \"Custom-Header\",\n              \"value\": \"Awesome\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X POST \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications\n```\n\n上記で作成したアプリケーションを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを更新するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n{\n  \"components\": [\n    {\n      \"name\": \"Component01 updated\",\n      \"max_cpu\": \"0.1\",\n      \"max_memory\": \"256Mi\",\n      \"deploy_source\": {\n        \"container_registry\": {\n          \"image\": \"my-app.sakuracr.jp/my-app-v2:latest\"\n        }\n      }\n    }\n  ],\n  \"all_traffic_available\": true\n}\n\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PATCH \\\n     -d '@request_body.json' \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n上記で作成したアプリケーションを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}\n```\n\n## 3.バージョンの取得、削除\n\nアプリケーションを作成、更新した際、その設定情報をバージョンとして保存します。\n\nバージョンを取得するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n上記で作成したバージョンを削除するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X DELETE \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/versions/{version_id}\n```\n\n## 4.トラフィック分散の確認、変更\n\nアプリケーションは指定のバージョンへトラフィックを分散します。\n\nトラフィック分散を確認するには以下のような入力を行います。\n\n```\n# 入力サンプル\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X GET \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n\nトラフィック分散を変更するには以下のような入力を行います。\n\n```\n# 入力サンプル\nvi request_body.json\ncat request_body.json\n[\n  {\n    \"is_latest_version\": true,\n    \"percent\": 50\n  },\n  {\n    \"version_name\": \"Application-861850d6-8240-7c31-9b69-80ea4466918d-1726726814\",\n    \"percent\": 50\n  }\n]\ncurl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \\\n     -X PUT \\\n     https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics\n```\n----"
   },
   "servers": [
     {
@@ -29,31 +29,52 @@
             "description": "ユーザー情報の取得に成功しました。"
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "404": {
-            "description": "さくらのAppRunにユーザーが存在しません。",
+            "description": "AppRunにユーザーが存在しません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -63,7 +84,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -75,37 +103,58 @@
         "tags": [
           "ユーザー"
         ],
-        "description": "さくらのAppRunにサインアップします。",
+        "description": "AppRunにサインアップします。",
         "responses": {
           "201": {
             "description": "サインアップに成功しました。"
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "409": {
-            "description": "さくらのAppRunにユーザーがすでに存在します。",
+            "description": "AppRunにユーザーがすでに存在します。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -115,7 +164,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -130,7 +186,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーション一覧を取得します。",
-        "description": "さくらのAppRunのアプリケーション一覧を取得します。",
+        "description": "AppRunのアプリケーション一覧を取得します。",
         "parameters": [
           {
             "in": "query",
@@ -200,27 +256,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -230,7 +307,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -243,7 +327,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーションを作成します。",
-        "description": "さくらのAppRunにアプリケーションを作成します。",
+        "description": "AppRunにアプリケーションを作成します。",
         "requestBody": {
           "description": "作成するアプリケーションの情報を入力します。",
           "required": true,
@@ -271,27 +355,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -301,7 +406,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -311,7 +423,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -336,7 +455,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーション詳細を取得します。",
-        "description": "さくらのAppRunのアプリケーション詳細を取得します。",
+        "description": "AppRunのアプリケーション詳細を取得します。",
         "responses": {
           "200": {
             "description": "アプリケーション詳細の取得に成功しました。",
@@ -353,27 +472,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -383,7 +523,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -393,7 +540,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -416,7 +570,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーションを部分的に変更します。",
-        "description": "さくらのAppRunのアプリケーションを部分的に変更します。",
+        "description": "AppRunのアプリケーションを部分的に変更します。",
         "requestBody": {
           "description": "部分的に変更するアプリケーションの情報を入力します。",
           "required": true,
@@ -444,27 +598,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -474,7 +649,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -484,7 +666,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -494,7 +683,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -517,7 +713,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーションを削除します。",
-        "description": "さくらのAppRunのアプリケーションを削除します。",
+        "description": "AppRunのアプリケーションを削除します。",
         "responses": {
           "204": {
             "description": "アプリケーションの削除に成功しました。"
@@ -527,27 +723,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -557,7 +774,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -567,7 +791,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -592,7 +823,7 @@
           "アプリケーション"
         ],
         "summary": "アプリケーションステータスを取得します。",
-        "description": "さくらのAppRunのアプリケーションステータスを取得します。",
+        "description": "AppRunのアプリケーションステータスを取得します。",
         "responses": {
           "200": {
             "description": "アプリケーションステータスの取得に成功しました。",
@@ -609,27 +840,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -639,7 +891,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -649,7 +908,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -674,7 +940,7 @@
           "トラフィック"
         ],
         "summary": "アプリケーショントラフィック分散を取得します。",
-        "description": "さくらのAppRunのアプリケーショントラフィック分散を取得します。",
+        "description": "AppRunのアプリケーショントラフィック分散を取得します。",
         "responses": {
           "200": {
             "description": "アプリケーショントラフィック分散の取得に成功しました。",
@@ -691,27 +957,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -721,7 +1008,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -731,7 +1025,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -754,7 +1055,7 @@
           "トラフィック"
         ],
         "summary": "アプリケーショントラフィック分散を変更します。",
-        "description": "さくらのAppRunのアプリケーショントラフィック分散を変更します。",
+        "description": "AppRunのアプリケーショントラフィック分散を変更します。",
         "requestBody": {
           "description": "トラフィック分散の割合を入力します。\nversion_nameまたはis_latest_versionのどちらかを指定して何％の割合でトラフィックを転送するかを入力します。\n",
           "required": true,
@@ -782,27 +1083,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -812,7 +1134,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -822,7 +1151,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -898,7 +1234,7 @@
           "バージョン"
         ],
         "summary": "アプリケーションバージョン一覧を取得します。",
-        "description": "さくらのAppRunのアプリケーションバージョン一覧を取得します。",
+        "description": "AppRunのアプリケーションバージョン一覧を取得します。",
         "responses": {
           "200": {
             "description": "アプリケーションバージョン一覧の取得に成功しました。",
@@ -915,27 +1251,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -945,7 +1302,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -955,7 +1319,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -988,7 +1359,7 @@
           "バージョン"
         ],
         "summary": "アプリケーションバージョン詳細を取得します。",
-        "description": "さくらのAppRunのアプリケーションバージョン詳細を取得します。",
+        "description": "AppRunのアプリケーションバージョン詳細を取得します。",
         "responses": {
           "200": {
             "description": "アプリケーションバージョン詳細の取得に成功しました。",
@@ -1005,27 +1376,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1035,7 +1427,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1045,7 +1444,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1076,7 +1482,7 @@
           "バージョン"
         ],
         "summary": "アプリケーションバージョンを削除します。",
-        "description": "さくらのAppRunのアプリケーションバージョンを削除します。",
+        "description": "AppRunのアプリケーションバージョンを削除します。",
         "responses": {
           "204": {
             "description": "アプリケーションバージョンの削除に成功しました。"
@@ -1086,27 +1492,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "description": "さくらのAppRunの認証に失敗しました。",
+            "description": "AppRunの認証に失敗しました。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
           },
           "403": {
-            "description": "さくらのAppRunに対する権限がありません。",
+            "description": "AppRunに対する権限がありません。",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1116,7 +1543,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1126,7 +1560,259 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/model.defaultError"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/{id}/packet_filter": {
+      "get": {
+        "operationId": "getPacketFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "パケットフィルタ"
+        ],
+        "summary": "パケットフィルタを取得します。",
+        "description": "AppRunのパケットフィルタを取得します。",
+        "responses": {
+          "200": {
+            "description": "パケットフィルタの取得に成功しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.getPacketFilter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストが不正です。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "AppRunの認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AppRunに対する権限がありません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "アプリケーションが見つかりませんでした。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchPacketFilter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "パケットフィルタ"
+        ],
+        "summary": "パケットフィルタを部分的に変更します。",
+        "description": "AppRunのパケットフィルタを部分的に変更します。",
+        "requestBody": {
+          "required": true,
+          "description": "部分的に変更するパケットフィルタの情報を入力します。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patchPacketFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "パケットフィルタの変更に成功しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/handler.patchPacketFilter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストが不正です。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "AppRunの認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "AppRunに対する権限がありません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "アプリケーションが見つかりませんでした。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/model.defaultError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/model.cloudctrlError"
+                    }
+                  ]
                 }
               }
             }
@@ -1139,9 +1825,20 @@
     "schemas": {
       "handler.listApplications": {
         "type": "object",
+        "required": [
+          "meta",
+          "data"
+        ],
         "properties": {
           "meta": {
             "type": "object",
+            "required": [
+              "page_num",
+              "page_size",
+              "object_total",
+              "sort_field",
+              "sort_order"
+            ],
             "properties": {
               "page_num": {
                 "type": "integer",
@@ -1173,6 +1870,13 @@
             "type": "array",
             "items": {
               "type": "object",
+              "required": [
+                "id",
+                "name",
+                "status",
+                "public_url",
+                "created_at"
+              ],
               "properties": {
                 "id": {
                   "description": "アプリケーションID",
@@ -1187,11 +1891,11 @@
                 "status": {
                   "description": "アプリケーションステータス",
                   "type": "string",
-                  "example": "Success",
+                  "example": "Healthy",
                   "enum": [
-                    "Success",
-                    "Fail",
-                    "Unknown"
+                    "Healthy",
+                    "UnHealthy",
+                    "Deploying"
                   ]
                 },
                 "public_url": {
@@ -1211,6 +1915,18 @@
       },
       "handler.postApplication": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "timeout_seconds",
+          "port",
+          "min_scale",
+          "max_scale",
+          "components",
+          "status",
+          "public_url",
+          "created_at"
+        ],
         "properties": {
           "id": {
             "description": "アプリケーションID",
@@ -1292,12 +2008,12 @@
                       ],
                       "properties": {
                         "image": {
-                          "description": "コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。",
+                          "description": "コンテナイメージ名。コンテナレジストリは さくらのクラウド コンテナレジストリ のみ対応しています。",
                           "type": "string",
                           "example": "apprun-example.sakuracr.jp/helloworld:latest"
                         },
                         "server": {
-                          "description": "コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ(Lab) のみ対応しています。",
+                          "description": "コンテナレジストリのサーバー名。コンテナレジストリは さくらのクラウド コンテナレジストリ のみ対応しています。",
                           "type": "string",
                           "example": "apprun-example.sakuracr.jp"
                         },
@@ -1383,11 +2099,11 @@
           "status": {
             "description": "アプリケーションステータス",
             "type": "string",
-            "example": "Success",
+            "example": "Healthy",
             "enum": [
-              "Success",
-              "Fail",
-              "Unknown"
+              "Healthy",
+              "UnHealthy",
+              "Deploying"
             ]
           },
           "public_url": {
@@ -1404,6 +2120,18 @@
       },
       "handler.getApplication": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "timeout_seconds",
+          "port",
+          "min_scale",
+          "max_scale",
+          "components",
+          "status",
+          "public_url",
+          "created_at"
+        ],
         "properties": {
           "id": {
             "description": "アプリケーションID",
@@ -1576,11 +2304,11 @@
           "status": {
             "description": "アプリケーションステータス",
             "type": "string",
-            "example": "Success",
+            "example": "Healthy",
             "enum": [
-              "Success",
-              "Fail",
-              "Unknown"
+              "Healthy",
+              "UnHealthy",
+              "Deploying"
             ]
           },
           "public_url": {
@@ -1597,6 +2325,18 @@
       },
       "handler.patchApplication": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "timeout_seconds",
+          "port",
+          "min_scale",
+          "max_scale",
+          "components",
+          "status",
+          "public_url",
+          "updated_at"
+        ],
         "properties": {
           "id": {
             "description": "アプリケーションID",
@@ -1766,11 +2506,11 @@
           "status": {
             "description": "アプリケーションステータス",
             "type": "string",
-            "example": "Success",
+            "example": "Healthy",
             "enum": [
-              "Success",
-              "Fail",
-              "Unknown"
+              "Healthy",
+              "UnHealthy",
+              "Deploying"
             ]
           },
           "public_url": {
@@ -1787,15 +2527,19 @@
       },
       "handler.getApplicationStatus": {
         "type": "object",
+        "required": [
+          "status",
+          "message"
+        ],
         "properties": {
           "status": {
             "description": "アプリケーションステータス",
             "type": "string",
-            "example": "Success",
+            "example": "Healthy",
             "enum": [
-              "Success",
-              "Fail",
-              "Unknown"
+              "Healthy",
+              "UnHealthy",
+              "Deploying"
             ]
           },
           "message": {
@@ -1807,9 +2551,20 @@
       },
       "handler.listVersions": {
         "type": "object",
+        "required": [
+          "meta",
+          "data"
+        ],
         "properties": {
           "meta": {
             "type": "object",
+            "required": [
+              "page_num",
+              "page_size",
+              "object_total",
+              "sort_field",
+              "sort_order"
+            ],
             "properties": {
               "page_num": {
                 "type": "integer",
@@ -1841,6 +2596,12 @@
             "type": "array",
             "items": {
               "type": "object",
+              "required": [
+                "id",
+                "name",
+                "status",
+                "created_at"
+              ],
               "properties": {
                 "id": {
                   "description": "バージョンID",
@@ -1855,11 +2616,11 @@
                 "status": {
                   "description": "ステータス",
                   "type": "string",
-                  "example": "Success",
+                  "example": "Healthy",
                   "enum": [
-                    "Success",
-                    "Fail",
-                    "Unknown"
+                    "Healthy",
+                    "UnHealthy",
+                    "Deploying"
                   ]
                 },
                 "created_at": {
@@ -1874,6 +2635,17 @@
       },
       "handler.getVersion": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "min_scale",
+          "max_scale",
+          "timeout_seconds",
+          "port",
+          "status",
+          "created_at",
+          "components"
+        ],
         "properties": {
           "id": {
             "description": "バージョンID",
@@ -1888,11 +2660,11 @@
           "status": {
             "description": "バージョンステータス",
             "type": "string",
-            "example": "Success",
+            "example": "Healthy",
             "enum": [
-              "Success",
-              "Fail",
-              "Unknown"
+              "Healthy",
+              "UnHealthy",
+              "Deploying"
             ]
           },
           "timeout_seconds": {
@@ -2062,6 +2834,9 @@
       },
       "handler.listTraffics": {
         "type": "object",
+        "required": [
+          "data"
+        ],
         "properties": {
           "meta": {
             "type": "object",
@@ -2072,6 +2847,11 @@
             "type": "array",
             "items": {
               "type": "object",
+              "required": [
+                "version_name",
+                "is_latest_version",
+                "percent"
+              ],
               "properties": {
                 "version_name": {
                   "description": "バージョン名",
@@ -2094,6 +2874,10 @@
       },
       "handler.putTraffics": {
         "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
         "properties": {
           "meta": {
             "type": "object",
@@ -2104,6 +2888,11 @@
             "type": "array",
             "items": {
               "type": "object",
+              "required": [
+                "version_name",
+                "is_latest_version",
+                "percent"
+              ],
               "properties": {
                 "version_name": {
                   "description": "バージョン名",
@@ -2118,6 +2907,80 @@
                   "description": "トラフィック分散の割合",
                   "type": "integer",
                   "example": 100
+                }
+              }
+            }
+          }
+        }
+      },
+      "handler.getPacketFilter": {
+        "type": "object",
+        "required": [
+          "is_enabled",
+          "settings"
+        ],
+        "properties": {
+          "is_enabled": {
+            "type": "boolean",
+            "description": "有効フラグ",
+            "example": true
+          },
+          "settings": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "required": [
+                "from_ip",
+                "from_ip_prefix_length"
+              ],
+              "properties": {
+                "from_ip": {
+                  "type": "string",
+                  "description": "送信元IPv4アドレス",
+                  "example": "0.0.0.0"
+                },
+                "from_ip_prefix_length": {
+                  "type": "integer",
+                  "description": "IPv4アドレスprefix長",
+                  "minimum": 0,
+                  "maximum": 32,
+                  "example": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "handler.patchPacketFilter": {
+        "type": "object",
+        "required": [
+          "is_enabled",
+          "settings"
+        ],
+        "properties": {
+          "is_enabled": {
+            "type": "boolean",
+            "description": "有効フラグ",
+            "example": true
+          },
+          "settings": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "required": [
+                "from_ip",
+                "from_ip_prefix_length"
+              ],
+              "properties": {
+                "from_ip": {
+                  "type": "string",
+                  "description": "送信元IPv4アドレス",
+                  "example": "0.0.0.0"
+                },
+                "from_ip_prefix_length": {
+                  "type": "integer",
+                  "description": "IPv4アドレスprefix長",
+                  "example": 0
                 }
               }
             }
@@ -2342,13 +3205,6 @@
       "patchApplicationBody": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "アプリケーション名",
-            "type": "string",
-            "example": "アプリケーション1",
-            "minLength": 1,
-            "maxLength": 255
-          },
           "timeout_seconds": {
             "description": "アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限",
             "type": "integer",
@@ -2550,32 +3406,125 @@
       "putTrafficsBody": {
         "type": "array",
         "items": {
-          "type": "object",
-          "properties": {
-            "version_name": {
-              "description": "バージョン名",
-              "type": "string",
-              "example": "Version1"
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "is_latest_version",
+                "percent"
+              ],
+              "properties": {
+                "is_latest_version": {
+                  "description": "最新バージョンかどうか",
+                  "type": "boolean"
+                },
+                "percent": {
+                  "description": "トラフィック分散の割合",
+                  "type": "integer"
+                }
+              }
             },
-            "is_latest_version": {
-              "description": "最新バージョンかどうか",
-              "type": "boolean"
-            },
-            "percent": {
-              "description": "トラフィック分散の割合",
-              "type": "integer"
+            {
+              "type": "object",
+              "required": [
+                "version_name",
+                "percent"
+              ],
+              "properties": {
+                "version_name": {
+                  "description": "バージョン名",
+                  "type": "string",
+                  "example": "Version1"
+                },
+                "percent": {
+                  "description": "トラフィック分散の割合",
+                  "type": "integer"
+                }
+              }
             }
+          ]
+        }
+      },
+      "patchPacketFilter": {
+        "type": "object",
+        "properties": {
+          "is_enabled": {
+            "type": "boolean",
+            "description": "有効フラグ",
+            "example": true
+          },
+          "settings": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "required": [
+                "from_ip",
+                "from_ip_prefix_length"
+              ],
+              "properties": {
+                "from_ip": {
+                  "type": "string",
+                  "description": "送信元IPv4アドレス",
+                  "example": "0.0.0.0"
+                },
+                "from_ip_prefix_length": {
+                  "type": "integer",
+                  "description": "IPv4アドレスprefix長",
+                  "example": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "model.cloudctrlError": {
+        "type": "object",
+        "required": [
+          "is_fatal",
+          "serial",
+          "status",
+          "error_code",
+          "error_msg"
+        ],
+        "properties": {
+          "is_fatal": {
+            "type": "boolean",
+            "example": true
+          },
+          "serial": {
+            "type": "string",
+            "example": "abcdefghijklmnopqrstuvwxyz0123456789"
+          },
+          "status": {
+            "type": "string",
+            "example": "403 Forbidden"
+          },
+          "error_code": {
+            "type": "string",
+            "example": "access_no_permission"
+          },
+          "error_msg": {
+            "type": "string",
+            "example": "要求された操作は許可されていません。このユーザに設定されたアクセス権限により、このゾーンまたは機能へのアクセスは禁止されています。"
           }
         }
       },
       "model.defaultError": {
         "type": "object",
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "object",
+            "required": [
+              "code",
+              "message",
+              "errors"
+            ],
             "properties": {
               "code": {
-                "type": "number",
+                "type": "integer",
                 "example": 401
               },
               "message": {
@@ -2593,6 +3542,13 @@
         "type": "array",
         "items": {
           "type": "object",
+          "required": [
+            "domain",
+            "reason",
+            "message",
+            "location_type",
+            "location"
+          ],
           "properties": {
             "domain": {
               "type": "string",

@@ -1449,12 +1449,6 @@ components:
     patchApplicationBody:
       type: object
       properties:
-        name:
-          description: アプリケーション名
-          type: string
-          example: アプリケーション1
-          minLength: 1
-          maxLength: 255
         timeout_seconds:
           description: アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
           type: integer

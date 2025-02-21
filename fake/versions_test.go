@@ -30,9 +30,9 @@ func TestEngine_Version(t *testing.T) {
 		createdApp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
-		n := "changedName"
+		timeoutUpdated := 20
 		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
+			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
 
@@ -88,9 +88,9 @@ func TestEngine_Version(t *testing.T) {
 		createdApp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
-		n := "changedName"
+		timeoutUpdated := 20
 		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
+			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
 
@@ -153,9 +153,9 @@ func TestEngine_Version(t *testing.T) {
 		createdApp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
-		n := "changedName"
+		timeoutUpdated := 20
 		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
-			Name: &n,
+			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
 		require.Equal(t, len(engine.appVersionRelations[*createdApp.Id]), 2)

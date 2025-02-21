@@ -94,15 +94,15 @@ func TestApplicationAPI(t *testing.T) {
 	require.Equal(t, *application.Name, "app-for-acceptance")
 
 	// Update
-	name := "patched-app-for-acceptance"
+	timeoutUpdated := 20
 	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
-		Name: &name,
+		TimeoutSeconds: &timeoutUpdated,
 	})
 
 	// Read
 	application, err = appOp.Read(ctx, *application.Id)
 	require.NoError(t, err)
-	require.Equal(t, *application.Name, "patched-app-for-acceptance")
+	require.Equal(t, *application.TimeoutSeconds, timeoutUpdated)
 
 	// Read Status
 	// ヘルスチェックが完了するまでタイムラグがあるため暫く待つ
@@ -161,10 +161,8 @@ func TestVersionAPI(t *testing.T) {
 	})
 
 	// Update Application
-	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
 	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
-		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
 
@@ -229,10 +227,8 @@ func TestTrafficAPI(t *testing.T) {
 	})
 
 	// Update Application
-	name := "patched-app-for-acceptance"
 	timeoutSeconds := 10
 	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
-		Name:           &name,
 		TimeoutSeconds: &timeoutSeconds,
 	})
 

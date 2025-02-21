@@ -2,8 +2,8 @@
 AUTHOR         ?= The sacloud/apprun-api-go authors
 COPYRIGHT_YEAR ?= 2021-2024
 
-BIN            ?= dist/apprun-api-go-fake-server
-GO_ENTRY_FILE  ?= cmd/apprun-api-go-fake-server/*.go
+BIN            ?= dist/sacloud-apprun-fake-server
+GO_ENTRY_FILE  ?= cmd/sacloud-apprun-fake-server/*.go
 BUILD_LDFLAGS  ?=
 
 include includes/go/common.mk
