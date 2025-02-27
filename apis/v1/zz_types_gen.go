@@ -18,42 +18,45 @@
 package v1
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 // Defines values for ApplicationStatus.
 const (
-	ApplicationStatusFail    ApplicationStatus = "Fail"
-	ApplicationStatusSuccess ApplicationStatus = "Success"
-	ApplicationStatusUnknown ApplicationStatus = "Unknown"
+	ApplicationStatusDeploying ApplicationStatus = "Deploying"
+	ApplicationStatusHealthy   ApplicationStatus = "Healthy"
+	ApplicationStatusUnHealthy ApplicationStatus = "UnHealthy"
 )
 
 // Defines values for VersionStatus.
 const (
-	VersionStatusFail    VersionStatus = "Fail"
-	VersionStatusSuccess VersionStatus = "Success"
-	VersionStatusUnknown VersionStatus = "Unknown"
+	VersionStatusDeploying VersionStatus = "Deploying"
+	VersionStatusHealthy   VersionStatus = "Healthy"
+	VersionStatusUnHealthy VersionStatus = "UnHealthy"
 )
 
 // Defines values for HandlerGetApplicationStatusStatus.
 const (
-	HandlerGetApplicationStatusStatusFail    HandlerGetApplicationStatusStatus = "Fail"
-	HandlerGetApplicationStatusStatusSuccess HandlerGetApplicationStatusStatus = "Success"
-	HandlerGetApplicationStatusStatusUnknown HandlerGetApplicationStatusStatus = "Unknown"
+	HandlerGetApplicationStatusStatusDeploying HandlerGetApplicationStatusStatus = "Deploying"
+	HandlerGetApplicationStatusStatusHealthy   HandlerGetApplicationStatusStatus = "Healthy"
+	HandlerGetApplicationStatusStatusUnHealthy HandlerGetApplicationStatusStatus = "UnHealthy"
 )
 
 // Defines values for HandlerGetVersionStatus.
 const (
-	HandlerGetVersionStatusFail    HandlerGetVersionStatus = "Fail"
-	HandlerGetVersionStatusSuccess HandlerGetVersionStatus = "Success"
-	HandlerGetVersionStatusUnknown HandlerGetVersionStatus = "Unknown"
+	HandlerGetVersionStatusDeploying HandlerGetVersionStatus = "Deploying"
+	HandlerGetVersionStatusHealthy   HandlerGetVersionStatus = "Healthy"
+	HandlerGetVersionStatusUnHealthy HandlerGetVersionStatus = "UnHealthy"
 )
 
 // Defines values for HandlerListApplicationsDataStatus.
 const (
-	HandlerListApplicationsDataStatusFail    HandlerListApplicationsDataStatus = "Fail"
-	HandlerListApplicationsDataStatusSuccess HandlerListApplicationsDataStatus = "Success"
-	HandlerListApplicationsDataStatusUnknown HandlerListApplicationsDataStatus = "Unknown"
+	HandlerListApplicationsDataStatusDeploying HandlerListApplicationsDataStatus = "Deploying"
+	HandlerListApplicationsDataStatusHealthy   HandlerListApplicationsDataStatus = "Healthy"
+	HandlerListApplicationsDataStatusUnHealthy HandlerListApplicationsDataStatus = "UnHealthy"
 )
 
 // Defines values for HandlerListApplicationsMetaSortOrder.
@@ -70,9 +73,9 @@ const (
 
 // Defines values for HandlerPatchApplicationStatus.
 const (
-	HandlerPatchApplicationStatusFail    HandlerPatchApplicationStatus = "Fail"
-	HandlerPatchApplicationStatusSuccess HandlerPatchApplicationStatus = "Success"
-	HandlerPatchApplicationStatusUnknown HandlerPatchApplicationStatus = "Unknown"
+	HandlerPatchApplicationStatusDeploying HandlerPatchApplicationStatus = "Deploying"
+	HandlerPatchApplicationStatusHealthy   HandlerPatchApplicationStatus = "Healthy"
+	HandlerPatchApplicationStatusUnHealthy HandlerPatchApplicationStatus = "UnHealthy"
 )
 
 // Defines values for ModelErrorLocationType.
@@ -142,34 +145,34 @@ const (
 // Application defines model for Application.
 type Application struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale アプリケーション全体の最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale アプリケーション全体の最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *ApplicationStatus `json:"status,omitempty"`
+	Status ApplicationStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 }
 
 // ApplicationStatus アプリケーションステータス
@@ -178,28 +181,28 @@ type ApplicationStatus string
 // Traffic defines model for Traffic.
 type Traffic struct {
 	// IsLatestVersion 最新バージョンかどうか
-	IsLatestVersion *bool `json:"is_latest_version,omitempty"`
+	IsLatestVersion bool `json:"is_latest_version"`
 
 	// Percent トラフィック分散の割合
-	Percent *int `json:"percent,omitempty"`
+	Percent int `json:"percent"`
 
 	// VersionName バージョン名
-	VersionName *string `json:"version_name,omitempty"`
+	VersionName string `json:"version_name"`
 }
 
 // Version defines model for Version.
 type Version struct {
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id バージョンID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// Name バージョン名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Status ステータス
-	Status *VersionStatus `json:"status,omitempty"`
+	Status VersionStatus `json:"status"`
 }
 
 // VersionStatus ステータス
@@ -207,6 +210,7 @@ type VersionStatus string
 
 // HandlerApplicationComponent defines model for handler.ApplicationComponent.
 type HandlerApplicationComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource HandlerApplicationComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -219,16 +223,19 @@ type HandlerApplicationComponent struct {
 	MaxMemory string `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                            `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *HandlerApplicationComponentProbe `json:"probe"`
 }
 
-// HandlerApplicationComponentDeploySource defines model for handler.ApplicationComponentDeploySource.
+// HandlerApplicationComponentDeploySource コンポーネントを構成するソース
 type HandlerApplicationComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *HandlerApplicationComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// HandlerApplicationComponentDeploySourceContainerRegistry defines model for handler.ApplicationComponentDeploySourceContainerRegistry.
+// HandlerApplicationComponentDeploySourceContainerRegistry コンテナレジストリ
 type HandlerApplicationComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -249,12 +256,13 @@ type HandlerApplicationComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// HandlerApplicationComponentProbe defines model for handler.ApplicationComponentProbe.
+// HandlerApplicationComponentProbe コンポーネントのプローブ設定
 type HandlerApplicationComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *HandlerApplicationComponentProbeHttpGet `json:"http_get"`
 }
 
-// HandlerApplicationComponentProbeHttpGet defines model for handler.ApplicationComponentProbeHttpGet.
+// HandlerApplicationComponentProbeHttpGet HTTP Getプローブタイプ
 type HandlerApplicationComponentProbeHttpGet struct {
 	Headers *[]HandlerApplicationComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
@@ -280,10 +288,10 @@ type HandlerGetApplication = Application
 // HandlerGetApplicationStatusResponse defines model for handler.getApplicationStatus.
 type HandlerGetApplicationStatusResponse struct {
 	// Message ステータス失敗時のメッセージ
-	Message *string `json:"message,omitempty"`
+	Message string `json:"message"`
 
 	// Status アプリケーションステータス
-	Status *HandlerGetApplicationStatusStatus `json:"status,omitempty"`
+	Status HandlerGetApplicationStatusStatus `json:"status"`
 }
 
 // HandlerGetApplicationStatusStatus アプリケーションステータス
@@ -292,31 +300,31 @@ type HandlerGetApplicationStatusStatus string
 // HandlerGetVersion defines model for handler.getVersion.
 type HandlerGetVersion struct {
 	// Components バージョンのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id バージョンID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale バージョンの最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale バージョンの最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name バージョン名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// Status バージョンステータス
-	Status *HandlerGetVersionStatus `json:"status,omitempty"`
+	Status HandlerGetVersionStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 }
 
 // HandlerGetVersionStatus バージョンステータス
@@ -324,26 +332,26 @@ type HandlerGetVersionStatus string
 
 // HandlerListApplications defines model for handler.listApplications.
 type HandlerListApplications struct {
-	Data *[]HandlerListApplicationsData `json:"data,omitempty"`
-	Meta *HandlerListApplicationsMeta   `json:"meta,omitempty"`
+	Data []HandlerListApplicationsData `json:"data"`
+	Meta HandlerListApplicationsMeta   `json:"meta"`
 }
 
 // HandlerListApplicationsData defines model for handler.listApplicationsData.
 type HandlerListApplicationsData struct {
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *HandlerListApplicationsDataStatus `json:"status,omitempty"`
+	Status HandlerListApplicationsDataStatus `json:"status"`
 }
 
 // HandlerListApplicationsDataStatus アプリケーションステータス
@@ -351,11 +359,11 @@ type HandlerListApplicationsDataStatus string
 
 // HandlerListApplicationsMeta defines model for handler.listApplicationsMeta.
 type HandlerListApplicationsMeta struct {
-	ObjectTotal *int                                  `json:"object_total,omitempty"`
-	PageNum     *int                                  `json:"page_num,omitempty"`
-	PageSize    *int                                  `json:"page_size,omitempty"`
-	SortField   *string                               `json:"sort_field,omitempty"`
-	SortOrder   *HandlerListApplicationsMetaSortOrder `json:"sort_order,omitempty"`
+	ObjectTotal int                                  `json:"object_total"`
+	PageNum     int                                  `json:"page_num"`
+	PageSize    int                                  `json:"page_size"`
+	SortField   string                               `json:"sort_field"`
+	SortOrder   HandlerListApplicationsMetaSortOrder `json:"sort_order"`
 }
 
 // HandlerListApplicationsMetaSortOrder defines model for HandlerListApplicationsMeta.SortOrder.
@@ -363,23 +371,23 @@ type HandlerListApplicationsMetaSortOrder string
 
 // HandlerListTraffics defines model for handler.listTraffics.
 type HandlerListTraffics struct {
-	Data *[]Traffic              `json:"data,omitempty"`
+	Data []Traffic               `json:"data"`
 	Meta *map[string]interface{} `json:"meta"`
 }
 
 // HandlerListVersions defines model for handler.listVersions.
 type HandlerListVersions struct {
-	Data *[]Version               `json:"data,omitempty"`
-	Meta *HandlerListVersionsMeta `json:"meta,omitempty"`
+	Data []Version               `json:"data"`
+	Meta HandlerListVersionsMeta `json:"meta"`
 }
 
 // HandlerListVersionsMeta defines model for handler.listVersionsMeta.
 type HandlerListVersionsMeta struct {
-	ObjectTotal *int                              `json:"object_total,omitempty"`
-	PageNum     *int                              `json:"page_num,omitempty"`
-	PageSize    *int                              `json:"page_size,omitempty"`
-	SortField   *string                           `json:"sort_field,omitempty"`
-	SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
+	ObjectTotal int                              `json:"object_total"`
+	PageNum     int                              `json:"page_num"`
+	PageSize    int                              `json:"page_size"`
+	SortField   string                           `json:"sort_field"`
+	SortOrder   HandlerListVersionsMetaSortOrder `json:"sort_order"`
 }
 
 // HandlerListVersionsMetaSortOrder defines model for HandlerListVersionsMeta.SortOrder.
@@ -388,34 +396,34 @@ type HandlerListVersionsMetaSortOrder string
 // HandlerPatchApplication defines model for handler.patchApplication.
 type HandlerPatchApplication struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale アプリケーション全体の最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale アプリケーション全体の最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *HandlerPatchApplicationStatus `json:"status,omitempty"`
+	Status HandlerPatchApplicationStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 
 	// UpdatedAt 更新日時
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // HandlerPatchApplicationStatus アプリケーションステータス
@@ -426,17 +434,31 @@ type HandlerPostApplication = Application
 
 // HandlerPutTraffics defines model for handler.putTraffics.
 type HandlerPutTraffics struct {
-	Data *[]Traffic              `json:"data,omitempty"`
+	Data []Traffic               `json:"data"`
 	Meta *map[string]interface{} `json:"meta"`
+}
+
+// ModelAppRunError defines model for model.appRunError.
+type ModelAppRunError struct {
+	union json.RawMessage
+}
+
+// ModelCloudctrlError defines model for model.cloudctrlError.
+type ModelCloudctrlError struct {
+	ErrorCode string `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+	IsFatal   bool   `json:"is_fatal"`
+	Serial    string `json:"serial"`
+	Status    string `json:"status"`
 }
 
 // ModelDefaultError defines model for model.defaultError.
 type ModelDefaultError struct {
-	Detail *struct {
-		Code    *float32     `json:"code,omitempty"`
-		Errors  *ModelErrors `json:"errors,omitempty"`
-		Message *string      `json:"message,omitempty"`
-	} `json:"error,omitempty"`
+	Detail struct {
+		Code    int         `json:"code"`
+		Errors  ModelErrors `json:"errors"`
+		Message string      `json:"message"`
+	} `json:"error"`
 }
 
 // ModelError defines model for model.error.
@@ -477,6 +499,7 @@ type PatchApplicationBody struct {
 
 // PatchApplicationBodyComponent defines model for patchApplicationBodyComponent.
 type PatchApplicationBodyComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource PatchApplicationBodyComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -489,7 +512,9 @@ type PatchApplicationBodyComponent struct {
 	MaxMemory PatchApplicationBodyComponentMaxMemory `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                              `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *PatchApplicationBodyComponentProbe `json:"probe"`
 }
 
@@ -499,12 +524,13 @@ type PatchApplicationBodyComponentMaxCpu string
 // PatchApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PatchApplicationBodyComponentMaxMemory string
 
-// PatchApplicationBodyComponentDeploySource defines model for patchApplicationBodyComponentDeploySource.
+// PatchApplicationBodyComponentDeploySource コンポーネントを構成するソース
 type PatchApplicationBodyComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *PatchApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PatchApplicationBodyComponentDeploySourceContainerRegistry defines model for patchApplicationBodyComponentDeploySourceContainerRegistry.
+// PatchApplicationBodyComponentDeploySourceContainerRegistry コンテナレジストリ
 type PatchApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -528,12 +554,13 @@ type PatchApplicationBodyComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// PatchApplicationBodyComponentProbe defines model for patchApplicationBodyComponentProbe.
+// PatchApplicationBodyComponentProbe コンポーネントのプローブ設定
 type PatchApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *PatchApplicationBodyComponentProbeHttpGet `json:"http_get"`
 }
 
-// PatchApplicationBodyComponentProbeHttpGet defines model for patchApplicationBodyComponentProbeHttpGet.
+// PatchApplicationBodyComponentProbeHttpGet HTTP Getプローブタイプ
 type PatchApplicationBodyComponentProbeHttpGet struct {
 	Headers *[]PatchApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
@@ -576,6 +603,7 @@ type PostApplicationBody struct {
 
 // PostApplicationBodyComponent defines model for postApplicationBodyComponent.
 type PostApplicationBodyComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource PostApplicationBodyComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -588,7 +616,9 @@ type PostApplicationBodyComponent struct {
 	MaxMemory PostApplicationBodyComponentMaxMemory `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                             `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *PostApplicationBodyComponentProbe `json:"probe"`
 }
 
@@ -598,12 +628,13 @@ type PostApplicationBodyComponentMaxCpu string
 // PostApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PostApplicationBodyComponentMaxMemory string
 
-// PostApplicationBodyComponentDeploySource defines model for postApplicationBodyComponentDeploySource.
+// PostApplicationBodyComponentDeploySource コンポーネントを構成するソース
 type PostApplicationBodyComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *PostApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PostApplicationBodyComponentDeploySourceContainerRegistry defines model for postApplicationBodyComponentDeploySourceContainerRegistry.
+// PostApplicationBodyComponentDeploySourceContainerRegistry コンテナレジストリ
 type PostApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -627,12 +658,13 @@ type PostApplicationBodyComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// PostApplicationBodyComponentProbe defines model for postApplicationBodyComponentProbe.
+// PostApplicationBodyComponentProbe コンポーネントのプローブ設定
 type PostApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *PostApplicationBodyComponentProbeHttpGet `json:"http_get"`
 }
 
-// PostApplicationBodyComponentProbeHttpGet defines model for postApplicationBodyComponentProbeHttpGet.
+// PostApplicationBodyComponentProbeHttpGet HTTP Getプローブタイプ
 type PostApplicationBodyComponentProbeHttpGet struct {
 	Headers *[]PostApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
@@ -699,3 +731,65 @@ type PatchApplicationJSONRequestBody = PatchApplicationBody
 
 // PutApplicationTrafficJSONRequestBody defines body for PutApplicationTraffic for application/json ContentType.
 type PutApplicationTrafficJSONRequestBody = PutTrafficsBody
+
+// AsModelDefaultError returns the union data inside the ModelAppRunError as a ModelDefaultError
+func (t ModelAppRunError) AsModelDefaultError() (ModelDefaultError, error) {
+	var body ModelDefaultError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromModelDefaultError overwrites any union data inside the ModelAppRunError as the provided ModelDefaultError
+func (t *ModelAppRunError) FromModelDefaultError(v ModelDefaultError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeModelDefaultError performs a merge with any union data inside the ModelAppRunError, using the provided ModelDefaultError
+func (t *ModelAppRunError) MergeModelDefaultError(v ModelDefaultError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsModelCloudctrlError returns the union data inside the ModelAppRunError as a ModelCloudctrlError
+func (t ModelAppRunError) AsModelCloudctrlError() (ModelCloudctrlError, error) {
+	var body ModelCloudctrlError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromModelCloudctrlError overwrites any union data inside the ModelAppRunError as the provided ModelCloudctrlError
+func (t *ModelAppRunError) FromModelCloudctrlError(v ModelCloudctrlError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeModelCloudctrlError performs a merge with any union data inside the ModelAppRunError, using the provided ModelCloudctrlError
+func (t *ModelAppRunError) MergeModelCloudctrlError(v ModelCloudctrlError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ModelAppRunError) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ModelAppRunError) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}

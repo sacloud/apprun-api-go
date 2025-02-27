@@ -41,9 +41,9 @@ func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersion
 		switch *param.SortField {
 		case "created_at":
 			if *param.SortOrder == "desc" {
-				return versions[i].CreatedAt.After(*versions[j].CreatedAt)
+				return versions[i].CreatedAt.After(versions[j].CreatedAt)
 			}
-			return versions[i].CreatedAt.Before(*versions[j].CreatedAt)
+			return versions[i].CreatedAt.Before(versions[j].CreatedAt)
 		// sort_fieldのデフォルト値であるcreated_at以外は未サポート
 		default:
 			return false
@@ -67,16 +67,25 @@ func (engine *Engine) ListVersions(appId string, param v1.ListApplicationVersion
 	}
 
 	meta := v1.HandlerListVersionsMeta{
-		PageNum:     param.PageNum,
-		PageSize:    param.PageSize,
-		ObjectTotal: &versionsLen,
-		SortField:   param.SortField,
-		SortOrder:   (*v1.HandlerListVersionsMetaSortOrder)(param.SortOrder),
+		ObjectTotal: versionsLen,
+	}
+	if param.PageNum != nil {
+		meta.PageNum = *param.PageNum
+	}
+	if param.PageSize != nil {
+		meta.PageSize = *param.PageSize
+	}
+	if param.SortField != nil {
+		meta.SortField = *param.SortField
+	}
+	if param.SortOrder != nil {
+		so := (*v1.HandlerListVersionsMetaSortOrder)(param.SortOrder)
+		meta.SortOrder = *so
 	}
 
 	return &v1.HandlerListVersions{
-		Data: &data,
-		Meta: &meta,
+		Data: data,
+		Meta: meta,
 	}, nil
 }
 
@@ -91,10 +100,10 @@ func (engine *Engine) ReadVersion(appId string, versionId string) (*v1.HandlerGe
 
 	var v v1.HandlerGetVersion
 	for _, r := range engine.appVersionRelations[appId] {
-		if *r.version.Id == versionId {
+		if r.version.Id == versionId {
 			v.Id = r.version.Id
 			v.Name = r.version.Name
-			v.Status = (*v1.HandlerGetVersionStatus)(r.version.Status)
+			v.Status = (v1.HandlerGetVersionStatus)(r.version.Status)
 			v.TimeoutSeconds = r.application.TimeoutSeconds
 			v.Port = r.application.Port
 			v.MinScale = r.application.MinScale
@@ -119,7 +128,7 @@ func (engine *Engine) DeleteVersion(appId string, versionId string) error {
 	var idx int
 	rs := engine.appVersionRelations[appId]
 	for i, r := range rs {
-		if *r.version.Id == versionId {
+		if r.version.Id == versionId {
 			idx = i
 			break
 		}
@@ -141,15 +150,15 @@ func (engine *Engine) createVersion(app *v1.Application) error {
 	createdAt := time.Now().UTC().Truncate(time.Second)
 
 	v := v1.Version{
-		Id:        &versionId,
-		Name:      &name,
-		Status:    (*v1.VersionStatus)(app.Status),
-		CreatedAt: &createdAt,
+		Id:        versionId,
+		Name:      name,
+		Status:    (v1.VersionStatus)(app.Status),
+		CreatedAt: createdAt,
 	}
 	engine.Versions = append(engine.Versions, &v)
 
 	// 内部的にVersionとApplicationのリレーションを保持する
-	engine.appVersionRelations[*app.Id] = append(engine.appVersionRelations[*app.Id],
+	engine.appVersionRelations[app.Id] = append(engine.appVersionRelations[app.Id],
 		&appVersionRelation{
 			application: app,
 			version:     &v,

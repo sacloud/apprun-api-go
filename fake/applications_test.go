@@ -44,7 +44,7 @@ func TestEngine_Application(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		d := *resp.Data
+		d := resp.Data
 		d0 := d[0]
 		d1 := d[1]
 
@@ -62,17 +62,17 @@ func TestEngine_Application(t *testing.T) {
 			},
 			"data": [
 				{
-					"id": "` + *d0.Id + `",
-					"name": "` + *d0.Name + `",
-					"status": "` + string(*d0.Status) + `",
-					"public_url": "` + *d0.PublicUrl + `",
+					"id": "` + d0.Id + `",
+					"name": "` + d0.Name + `",
+					"status": "` + string(d0.Status) + `",
+					"public_url": "` + d0.PublicUrl + `",
 					"created_at": "` + d0.CreatedAt.Format(time.RFC3339) + `"
 				},
 				{
-					"id": "` + *d1.Id + `",
-					"name": "` + *d1.Name + `",
-					"status": "` + string(*d1.Status) + `",
-					"public_url": "` + *d1.PublicUrl + `",
+					"id": "` + d1.Id + `",
+					"name": "` + d1.Name + `",
+					"status": "` + string(d1.Status) + `",
+					"public_url": "` + d1.PublicUrl + `",
 					"created_at": "` + d1.CreatedAt.Format(time.RFC3339) + `"
 				}
 			]
@@ -91,7 +91,7 @@ func TestEngine_Application(t *testing.T) {
 
 		expectedJSON := `
 		{
-			"id": "` + *resp.Id + `",
+			"id": "` + resp.Id + `",
 			"name": "app1",
 			"timeout_seconds": 20,
 			"port": 8081,
@@ -129,8 +129,8 @@ func TestEngine_Application(t *testing.T) {
 					}
 				}
 			],
-			"status": "Success",
-			"public_url": "` + *resp.PublicUrl + `",
+			"status": "Healthy",
+			"public_url": "` + resp.PublicUrl + `",
 			"created_at": "` + resp.CreatedAt.Format(time.RFC3339) + `"
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
@@ -142,7 +142,7 @@ func TestEngine_Application(t *testing.T) {
 		createResp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
-		readResp, err := engine.ReadApplication(*createResp.Id)
+		readResp, err := engine.ReadApplication(createResp.Id)
 		require.NoError(t, err)
 
 		respJson, err := json.Marshal(readResp)
@@ -150,7 +150,7 @@ func TestEngine_Application(t *testing.T) {
 
 		expectedJSON := `
 		{
-			"id": "` + *readResp.Id + `",
+			"id": "` + readResp.Id + `",
 			"name": "app1",
 			"timeout_seconds": 20,
 			"port": 8081,
@@ -188,8 +188,8 @@ func TestEngine_Application(t *testing.T) {
 					}
 				}
 			],
-			"status": "Success",
-			"public_url": "` + *readResp.PublicUrl + `",
+			"status": "Healthy",
+			"public_url": "` + readResp.PublicUrl + `",
 			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
@@ -202,11 +202,11 @@ func TestEngine_Application(t *testing.T) {
 		require.NoError(t, err)
 
 		timeoutUpdated := 20
-		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(createdApp.Id, &v1.PatchApplicationBody{
 			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
-		require.Equal(t, timeoutUpdated, *patchedApp.TimeoutSeconds)
+		require.Equal(t, timeoutUpdated, patchedApp.TimeoutSeconds)
 
 		require.Equal(t, len(engine.Versions), 2)
 	})
@@ -219,7 +219,7 @@ func TestEngine_Application(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		id := *engine.Applications[0].Id
+		id := engine.Applications[0].Id
 		err := engine.DeleteApplication(id)
 		require.NoError(t, err)
 
