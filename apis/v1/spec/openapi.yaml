@@ -1,20 +1,20 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: さくらのAppRun β APIドキュメント
+  version: 1.1.0
+  title: AppRun β APIドキュメント
   contact:
     name: SAKURA internet Inc.
   license:
     name: Copyright(C) SAKURA internet Inc. all rights reserved.
   description: |-
     ---
-    「さくらのAppRun」が提供するAPIの利用方法とサンプルを公開しております。
+    「AppRun」が提供するAPIの利用方法とサンプルを公開しております。
 
     # 基本的な使い方
 
     ## APIキーの発行
 
-    APIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。
+    APIを利用するためには、認証のための「APIキー」が必要です。事前にキーを発行しておきます。  
     APIキーは「ユーザーID」「パスワード」に相当する「トークン」と呼ばれる認証情報で構成されています。
 
     |   項目名   | APIキー発行時の項目名        | このドキュメント内での例             |
@@ -97,7 +97,7 @@ info:
 
     AppRunの利用を開始するには**ユーザー**を作成します。
 
-    ユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。
+    ユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  
     なお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。
 
     ユーザーを作成するには以下のような入力を行います。
@@ -285,71 +285,71 @@ paths:
         - ユーザー
       description: ログイン中のユーザー情報を取得します。
       responses:
-        "200":
+        '200':
           description: ユーザー情報の取得に成功しました。
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
-          description: さくらのAppRunにユーザーが存在しません。
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
+          description: AppRunにユーザーが存在しません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     post:
       operationId: postUser
       tags:
         - ユーザー
-      description: さくらのAppRunにサインアップします。
+      description: AppRunにサインアップします。
       responses:
-        "201":
+        '201':
           description: サインアップに成功しました。
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "409":
-          description: さくらのAppRunにユーザーがすでに存在します。
+                $ref: '#/components/schemas/model.defaultError'
+        '409':
+          description: AppRunにユーザーがすでに存在します。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications:
     get:
       operationId: listApplications
       tags:
         - アプリケーション
       summary: アプリケーション一覧を取得します。
-      description: さくらのAppRunのアプリケーション一覧を取得します。
+      description: AppRunのアプリケーション一覧を取得します。
       parameters:
         - in: query
           name: page_num
@@ -390,86 +390,86 @@ paths:
           required: false
           example: asc
       responses:
-        "200":
+        '200':
           description: アプリケーション一覧の取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.listApplications"
-        "400":
+                $ref: '#/components/schemas/handler.listApplications'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     post:
       operationId: postApplication
       tags:
         - アプリケーション
       summary: アプリケーションを作成します。
-      description: さくらのAppRunにアプリケーションを作成します。
+      description: AppRunにアプリケーションを作成します。
       requestBody:
         description: 作成するアプリケーションの情報を入力します。
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/postApplicationBody"
+              $ref: '#/components/schemas/postApplicationBody'
       responses:
-        "201":
+        '201':
           description: アプリケーションの作成に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.postApplication"
-        "400":
+                $ref: '#/components/schemas/handler.postApplication'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "409":
+                $ref: '#/components/schemas/model.defaultError'
+        '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications/{id}:
     get:
       operationId: getApplication
@@ -482,44 +482,44 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーション詳細を取得します。
-      description: さくらのAppRunのアプリケーション詳細を取得します。
+      description: AppRunのアプリケーション詳細を取得します。
       responses:
-        "200":
+        '200':
           description: アプリケーション詳細の取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.getApplication"
-        "400":
+                $ref: '#/components/schemas/handler.getApplication'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     patch:
       operationId: patchApplication
       parameters:
@@ -531,57 +531,57 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションを部分的に変更します。
-      description: さくらのAppRunのアプリケーションを部分的に変更します。
+      description: AppRunのアプリケーションを部分的に変更します。
       requestBody:
         description: 部分的に変更するアプリケーションの情報を入力します。
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/patchApplicationBody"
+              $ref: '#/components/schemas/patchApplicationBody'
       responses:
-        "200":
+        '200':
           description: アプリケーションの変更に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.patchApplication"
-        "400":
+                $ref: '#/components/schemas/handler.patchApplication'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "409":
+                $ref: '#/components/schemas/model.defaultError'
+        '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     delete:
       operationId: deleteApplication
       parameters:
@@ -593,40 +593,40 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションを削除します。
-      description: さくらのAppRunのアプリケーションを削除します。
+      description: AppRunのアプリケーションを削除します。
       responses:
-        "204":
+        '204':
           description: アプリケーションの削除に成功しました。
-        "400":
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications/{id}/status:
     get:
       operationId: getApplicationStatus
@@ -639,44 +639,44 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションステータスを取得します。
-      description: さくらのAppRunのアプリケーションステータスを取得します。
+      description: AppRunのアプリケーションステータスを取得します。
       responses:
-        "200":
+        '200':
           description: アプリケーションステータスの取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.getApplicationStatus"
-        "400":
+                $ref: '#/components/schemas/handler.getApplicationStatus'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications/{id}/traffics:
     get:
       operationId: listApplicationTraffics
@@ -689,44 +689,44 @@ paths:
       tags:
         - トラフィック
       summary: アプリケーショントラフィック分散を取得します。
-      description: さくらのAppRunのアプリケーショントラフィック分散を取得します。
+      description: AppRunのアプリケーショントラフィック分散を取得します。
       responses:
-        "200":
+        '200':
           description: アプリケーショントラフィック分散の取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.listTraffics"
-        "400":
+                $ref: '#/components/schemas/handler.listTraffics'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     put:
       operationId: putApplicationTraffic
       parameters:
@@ -738,7 +738,7 @@ paths:
       tags:
         - トラフィック
       summary: アプリケーショントラフィック分散を変更します。
-      description: さくらのAppRunのアプリケーショントラフィック分散を変更します。
+      description: AppRunのアプリケーショントラフィック分散を変更します。
       requestBody:
         description: |
           トラフィック分散の割合を入力します。
@@ -747,44 +747,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/putTrafficsBody"
+              $ref: '#/components/schemas/putTrafficsBody'
       responses:
-        "200":
+        '200':
           description: アプリケーショントラフィック分散の変更に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.putTraffics"
-        "400":
+                $ref: '#/components/schemas/handler.putTraffics'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications/{id}/versions:
     get:
       operationId: listApplicationVersions
@@ -835,44 +835,44 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョン一覧を取得します。
-      description: さくらのAppRunのアプリケーションバージョン一覧を取得します。
+      description: AppRunのアプリケーションバージョン一覧を取得します。
       responses:
-        "200":
+        '200':
           description: アプリケーションバージョン一覧の取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.listVersions"
-        "400":
+                $ref: '#/components/schemas/handler.listVersions'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
   /applications/{id}/versions/{version_id}:
     get:
       operationId: getApplicationVersion
@@ -890,44 +890,44 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョン詳細を取得します。
-      description: さくらのAppRunのアプリケーションバージョン詳細を取得します。
+      description: AppRunのアプリケーションバージョン詳細を取得します。
       responses:
-        "200":
+        '200':
           description: アプリケーションバージョン詳細の取得に成功しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/handler.getVersion"
-        "400":
+                $ref: '#/components/schemas/handler.getVersion'
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
     delete:
       operationId: deleteApplicationVersion
       parameters:
@@ -944,40 +944,40 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョンを削除します。
-      description: さくらのAppRunのアプリケーションバージョンを削除します。
+      description: AppRunのアプリケーションバージョンを削除します。
       responses:
-        "204":
+        '204':
           description: アプリケーションバージョンの削除に成功しました。
-        "400":
+        '400':
           description: リクエストが不正です。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "401":
-          description: さくらのAppRunの認証に失敗しました。
+                $ref: '#/components/schemas/model.defaultError'
+        '401':
+          description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "403":
-          description: さくらのAppRunに対する権限がありません。
+                $ref: '#/components/schemas/model.defaultError'
+        '403':
+          description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "404":
+                $ref: '#/components/schemas/model.defaultError'
+        '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
-        "500":
+                $ref: '#/components/schemas/model.defaultError'
+        '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.defaultError"
+                $ref: '#/components/schemas/model.defaultError'
 components:
   schemas:
     handler.listApplications:
@@ -1347,7 +1347,7 @@ components:
             - 1Gi
             - 2Gi
         deploy_source:
-          description: コンポーネントを構成するソース
+
           $ref: "#/components/schemas/postApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
@@ -1356,16 +1356,16 @@ components:
           items:
             $ref: "#/components/schemas/postApplicationBodyComponentEnv"
         probe:
-          description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/postApplicationBodyComponentProbe"
     postApplicationBodyComponentDeploySource:
       type: object
+      description: コンポーネントを構成するソース
       properties:
         container_registry:
-          description: コンテナレジストリ
           $ref: "#/components/schemas/postApplicationBodyComponentDeploySourceContainerRegistry"
     postApplicationBodyComponentDeploySourceContainerRegistry:
       type: object
+      description: コンテナレジストリ
       required:
         - image
       properties:
@@ -1410,12 +1410,13 @@ components:
     postApplicationBodyComponentProbe:
       type: object
       nullable: true
+      description: コンポーネントのプローブ設定
       properties:
         http_get:
-          description: HTTP Getプローブタイプ
           $ref: "#/components/schemas/postApplicationBodyComponentProbeHttpGet"
     postApplicationBodyComponentProbeHttpGet:
       type: object
+      description: HTTP Getプローブタイプ
       required:
         - path
         - port
@@ -1521,7 +1522,6 @@ components:
             - 1Gi
             - 2Gi
         deploy_source:
-          description: コンポーネントを構成するソース
           $ref: "#/components/schemas/patchApplicationBodyComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
@@ -1530,16 +1530,16 @@ components:
           items:
             $ref: "#/components/schemas/patchApplicationBodyComponentEnv"
         probe:
-          description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/patchApplicationBodyComponentProbe"
     patchApplicationBodyComponentDeploySource:
       type: object
+      description: コンポーネントを構成するソース
       properties:
         container_registry:
-          description: コンテナレジストリ
           $ref: "#/components/schemas/patchApplicationBodyComponentDeploySourceContainerRegistry"
     patchApplicationBodyComponentDeploySourceContainerRegistry:
       type: object
+      description: コンテナレジストリ
       required:
         - image
       properties:
@@ -1583,13 +1583,14 @@ components:
           example: my_value
     patchApplicationBodyComponentProbe:
       type: object
+      description: コンポーネントのプローブ設定
       nullable: true
       properties:
         http_get:
-          description: HTTP Getプローブタイプ
           $ref: "#/components/schemas/patchApplicationBodyComponentProbeHttpGet"
     patchApplicationBodyComponentProbeHttpGet:
       type: object
+      description: HTTP Getプローブタイプ
       required:
         - path
         - port
@@ -1705,7 +1706,6 @@ components:
           type: string
           example: 256Mi
         deploy_source:
-          description: コンポーネントを構成するソース
           $ref: "#/components/schemas/handler.ApplicationComponentDeploySource"
         env:
           description: コンポーネントに渡す環境変数
@@ -1713,16 +1713,16 @@ components:
           items:
             $ref: "#/components/schemas/handler.ApplicationComponentEnv"
         probe:
-          description: コンポーネントのプローブ設定
           $ref: "#/components/schemas/handler.ApplicationComponentProbe"
     handler.ApplicationComponentDeploySource:
       type: object
+      description: コンポーネントを構成するソース
       properties:
         container_registry:
-          description: コンテナレジストリ
           $ref: "#/components/schemas/handler.ApplicationComponentDeploySourceContainerRegistry"
     handler.ApplicationComponentDeploySourceContainerRegistry:
       type: object
+      description: コンテナレジストリ
       required:
         - image
       properties:
@@ -1751,13 +1751,14 @@ components:
           example: my_value
     handler.ApplicationComponentProbe:
       type: object
+      description: コンポーネントのプローブ設定
       nullable: true
       properties:
         http_get:
-          description: HTTP Getプローブタイプ
           $ref: "#/components/schemas/handler.ApplicationComponentProbeHttpGet"
     handler.ApplicationComponentProbeHttpGet:
       type: object
+      description: HTTP Getプローブタイプ
       required:
         - path
         - port
@@ -1797,17 +1798,17 @@ components:
           type: object
           properties:
             code:
-              type: number
+              type: integer
               example: 401
             message:
               type: string
               example: Login Required
             errors:
-              $ref: "#/components/schemas/model.errors"
+              $ref: '#/components/schemas/model.errors'
     model.errors:
       type: array
       items:
-        $ref: "#/components/schemas/model.error"
+        $ref: '#/components/schemas/model.error'
     model.error:
       type: object
       properties:
