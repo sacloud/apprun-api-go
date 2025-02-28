@@ -50,7 +50,17 @@ jobs:
           GOROOT=$(go env GOROOT)
           export GOROOT
           make lint-go
+  lint-def:
+    runs-on: ubuntu-latest
+    container:
+      image: stoplight/spectral:6
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: lint
+        working-directory: .
+        run: spectral lint --ruleset .spectral.yaml apis/v1/spec/openapi.yaml
   test:
     name: test
     runs-on: ubuntu-latest
