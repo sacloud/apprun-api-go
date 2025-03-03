@@ -30,7 +30,7 @@ func (engine *Engine) ListTraffics(appId string) (*v1.HandlerListTraffics, error
 
 	return &v1.HandlerListTraffics{
 		Meta: nil,
-		Data: &ts,
+		Data: ts,
 	}, nil
 }
 
@@ -45,7 +45,7 @@ func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1
 	var data []v1.Traffic
 	total := 0
 	for _, v := range *body {
-		total += *v.Percent
+		total += v.Percent
 
 		// vを明示的にコピーして新しいメモリを確保する
 		// Go 1.22以降明示的に行う必要がなくなる
@@ -67,7 +67,7 @@ func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1
 	engine.Traffics[appId] = ts
 
 	return &v1.HandlerPutTraffics{
-		Data: &data,
+		Data: data,
 		Meta: nil,
 	}, nil
 }
@@ -78,9 +78,9 @@ func (engine *Engine) initTraffic(app *v1.Application) {
 	versionName := ""
 
 	// 内部的にTrafficとApplicationのリレーションを保持する
-	engine.Traffics[*app.Id] = append(engine.Traffics[*app.Id], &v1.Traffic{
-		IsLatestVersion: &isLatestVersion,
-		Percent:         &percent,
-		VersionName:     &versionName,
+	engine.Traffics[app.Id] = append(engine.Traffics[app.Id], &v1.Traffic{
+		IsLatestVersion: isLatestVersion,
+		Percent:         percent,
+		VersionName:     versionName,
 	})
 }

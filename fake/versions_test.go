@@ -31,7 +31,7 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		timeoutUpdated := 20
-		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(createdApp.Id, &v1.PatchApplicationBody{
 			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
@@ -40,7 +40,7 @@ func TestEngine_Version(t *testing.T) {
 		pageSize := 2
 		sortField := "created_at"
 		sortOrder := v1.ListApplicationVersionsParamsSortOrderDesc
-		resp, err := engine.ListVersions(*patchedApp.Id, v1.ListApplicationVersionsParams{
+		resp, err := engine.ListVersions(patchedApp.Id, v1.ListApplicationVersionsParams{
 			PageNum:   &pageNum,
 			PageSize:  &pageSize,
 			SortField: &sortField,
@@ -48,7 +48,7 @@ func TestEngine_Version(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		d := *resp.Data
+		d := resp.Data
 		d0 := d[0]
 		d1 := d[1]
 
@@ -66,15 +66,15 @@ func TestEngine_Version(t *testing.T) {
 			},
 			"data": [
 				{
-					"id": "` + *d0.Id + `",
-					"name": "` + *d0.Name + `",
-					"status": "` + string(*d0.Status) + `",
+					"id": "` + d0.Id + `",
+					"name": "` + d0.Name + `",
+					"status": "` + string(d0.Status) + `",
 					"created_at": "` + d0.CreatedAt.Format(time.RFC3339) + `"
 				},
 				{
-					"id": "` + *d1.Id + `",
-					"name": "` + *d1.Name + `",
-					"status": "` + string(*d1.Status) + `",
+					"id": "` + d1.Id + `",
+					"name": "` + d1.Name + `",
+					"status": "` + string(d1.Status) + `",
 					"created_at": "` + d1.CreatedAt.Format(time.RFC3339) + `"
 				}
 			]
@@ -89,13 +89,13 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		timeoutUpdated := 20
-		patchedApp, err := engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		patchedApp, err := engine.UpdateApplication(createdApp.Id, &v1.PatchApplicationBody{
 			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
 
-		r := engine.appVersionRelations[*patchedApp.Id][0]
-		resp, err := engine.ReadVersion(*r.application.Id, *r.version.Id)
+		r := engine.appVersionRelations[patchedApp.Id][0]
+		resp, err := engine.ReadVersion(r.application.Id, r.version.Id)
 		require.NoError(t, err)
 
 		respJson, err := json.Marshal(resp)
@@ -103,8 +103,8 @@ func TestEngine_Version(t *testing.T) {
 
 		expectedJSON := `
 		{
-			"id": "` + *r.version.Id + `",
-			"name": "` + *r.version.Name + `",
+			"id": "` + r.version.Id + `",
+			"name": "` + r.version.Name + `",
 			"status": "Success",
 			"timeout_seconds": 20,
 			"port": 8081,
@@ -154,15 +154,15 @@ func TestEngine_Version(t *testing.T) {
 		require.NoError(t, err)
 
 		timeoutUpdated := 20
-		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		_, err = engine.UpdateApplication(createdApp.Id, &v1.PatchApplicationBody{
 			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
-		require.Equal(t, len(engine.appVersionRelations[*createdApp.Id]), 2)
+		require.Equal(t, len(engine.appVersionRelations[createdApp.Id]), 2)
 
-		r := engine.appVersionRelations[*createdApp.Id][0]
-		err = engine.DeleteVersion(*r.application.Id, *r.version.Id)
+		r := engine.appVersionRelations[createdApp.Id][0]
+		err = engine.DeleteVersion(r.application.Id, r.version.Id)
 		require.NoError(t, err)
-		require.Equal(t, len(engine.appVersionRelations[*createdApp.Id]), 1)
+		require.Equal(t, len(engine.appVersionRelations[createdApp.Id]), 1)
 	})
 }

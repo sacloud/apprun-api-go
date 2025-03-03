@@ -982,6 +982,9 @@ components:
   schemas:
     handler.listApplications:
       type: object
+      required:
+        - meta
+        - data
       properties:
         meta:
           $ref: "#/components/schemas/handler.listApplicationsMeta"
@@ -992,6 +995,12 @@ components:
     # handler.listApplicationsから切り出した
     handler.listApplicationsMeta:
       type: object
+      required:
+        - page_num
+        - page_size
+        - object_total
+        - sort_field
+        - sort_order
       properties:
         page_num:
           type: integer
@@ -1013,6 +1022,12 @@ components:
             - desc
     handler.listApplicationsData:
       type: object
+      required:
+        - id
+        - name
+        - status
+        - public_url
+        - created_at
       properties:
         id:
           description: アプリケーションID
@@ -1044,6 +1059,17 @@ components:
       $ref: "#/components/schemas/Application"
     handler.patchApplication:
       type: object
+      required:
+        - id
+        - name
+        - timeout_seconds
+        - port
+        - min_scale
+        - max_scale
+        - components
+        - status
+        - public_url
+        - updated_at
       properties:
         id:
           description: アプリケーションID
@@ -1100,6 +1126,9 @@ components:
           format: date-time
     handler.getApplicationStatus:
       type: object
+      required:
+        - status
+        - message
       x-go-name: HandlerGetApplicationStatusResponse
       properties:
         status:
@@ -1116,6 +1145,9 @@ components:
           example: Failed to authenticate with the registry
     handler.listVersions:
       type: object
+      required:
+        - meta
+        - data
       properties:
         meta:
           $ref: "#/components/schemas/handler.listVersionsMeta"
@@ -1126,6 +1158,12 @@ components:
     # handler.listVersionsから切り出した
     handler.listVersionsMeta:
       type: object
+      required:
+        - page_num
+        - page_size
+        - object_total
+        - sort_field
+        - sort_order
       properties:
         page_num:
           type: integer
@@ -1147,6 +1185,11 @@ components:
             - desc
     Version:
       type: object
+      required:
+        - id
+        - name
+        - status
+        - created_at
       properties:
         id:
           description: バージョンID
@@ -1170,6 +1213,16 @@ components:
           format: date-time
     handler.getVersion:
       type: object
+      required:
+        - id
+        - name
+        - min_scale
+        - max_scale
+        - timeout_seconds
+        - port
+        - status
+        - created_at
+        - components
       properties:
         id:
           description: バージョンID
@@ -1225,6 +1278,8 @@ components:
           format: date-time
     handler.listTraffics:
       type: object
+      required:
+        - data
       properties:
         meta:
           type: object
@@ -1236,6 +1291,9 @@ components:
             $ref: "#/components/schemas/Traffic"
     handler.putTraffics:
       type: object
+      required:
+        - data
+        - meta
       properties:
         meta:
           type: object
@@ -1247,6 +1305,10 @@ components:
             $ref: "#/components/schemas/Traffic"
     Traffic:
       type: object
+      required:
+        - version_name
+        - is_latest_version
+        - percent
       properties:
         version_name:
           description: バージョン名
@@ -1628,6 +1690,17 @@ components:
     # handler.postApplication, handler.getApplication, handler.patchApplicationの共通化
     Application:
       type: object
+      required:
+        - id
+        - name
+        - timeout_seconds
+        - port
+        - min_scale
+        - max_scale
+        - components
+        - status
+        - public_url
+        - created_at
       properties:
         id:
           description: アプリケーションID
@@ -1792,10 +1865,16 @@ components:
 
     model.defaultError:
       type: object
+      required:
+        - error
       properties:
         error:
           x-go-name: Detail
           type: object
+          required:
+            - code
+            - message
+            - errors
           properties:
             code:
               type: integer
@@ -1810,30 +1889,36 @@ components:
       items:
         $ref: '#/components/schemas/model.error'
     model.error:
-      type: object
-      properties:
-        domain:
-          type: string
-          example: global
-          nullable: true
-        reason:
-          type: string
-          example: required
-          nullable: true
-        message:
-          type: string
-          example: Login Required
-          nullable: true
-        location_type:
-          type: string
-          example: header
-          enum:
-            - header
-            - body
-            - query
-            - parameter
-          nullable: true
-        location:
-          type: string
-          example: Authorization
-          nullable: true
+        type: object
+        required:
+          - domain
+          - reason
+          - message
+          - location_type
+          - location
+        properties:
+          domain:
+            type: string
+            example: global
+            nullable: true
+          reason:
+            type: string
+            example: required
+            nullable: true
+          message:
+            type: string
+            example: Login Required
+            nullable: true
+          location_type:
+            type: string
+            example: header
+            enum:
+              - header
+              - body
+              - query
+              - parameter
+            nullable: true
+          location:
+            type: string
+            example: Authorization
+            nullable: true

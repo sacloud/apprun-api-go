@@ -142,34 +142,34 @@ const (
 // Application defines model for Application.
 type Application struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale アプリケーション全体の最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale アプリケーション全体の最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *ApplicationStatus `json:"status,omitempty"`
+	Status ApplicationStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 }
 
 // ApplicationStatus アプリケーションステータス
@@ -178,28 +178,28 @@ type ApplicationStatus string
 // Traffic defines model for Traffic.
 type Traffic struct {
 	// IsLatestVersion 最新バージョンかどうか
-	IsLatestVersion *bool `json:"is_latest_version,omitempty"`
+	IsLatestVersion bool `json:"is_latest_version"`
 
 	// Percent トラフィック分散の割合
-	Percent *int `json:"percent,omitempty"`
+	Percent int `json:"percent"`
 
 	// VersionName バージョン名
-	VersionName *string `json:"version_name,omitempty"`
+	VersionName string `json:"version_name"`
 }
 
 // Version defines model for Version.
 type Version struct {
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id バージョンID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// Name バージョン名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Status ステータス
-	Status *VersionStatus `json:"status,omitempty"`
+	Status VersionStatus `json:"status"`
 }
 
 // VersionStatus ステータス
@@ -285,10 +285,10 @@ type HandlerGetApplication = Application
 // HandlerGetApplicationStatusResponse defines model for handler.getApplicationStatus.
 type HandlerGetApplicationStatusResponse struct {
 	// Message ステータス失敗時のメッセージ
-	Message *string `json:"message,omitempty"`
+	Message string `json:"message"`
 
 	// Status アプリケーションステータス
-	Status *HandlerGetApplicationStatusStatus `json:"status,omitempty"`
+	Status HandlerGetApplicationStatusStatus `json:"status"`
 }
 
 // HandlerGetApplicationStatusStatus アプリケーションステータス
@@ -297,31 +297,31 @@ type HandlerGetApplicationStatusStatus string
 // HandlerGetVersion defines model for handler.getVersion.
 type HandlerGetVersion struct {
 	// Components バージョンのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id バージョンID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale バージョンの最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale バージョンの最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name バージョン名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// Status バージョンステータス
-	Status *HandlerGetVersionStatus `json:"status,omitempty"`
+	Status HandlerGetVersionStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 }
 
 // HandlerGetVersionStatus バージョンステータス
@@ -329,26 +329,26 @@ type HandlerGetVersionStatus string
 
 // HandlerListApplications defines model for handler.listApplications.
 type HandlerListApplications struct {
-	Data *[]HandlerListApplicationsData `json:"data,omitempty"`
-	Meta *HandlerListApplicationsMeta   `json:"meta,omitempty"`
+	Data []HandlerListApplicationsData `json:"data"`
+	Meta HandlerListApplicationsMeta   `json:"meta"`
 }
 
 // HandlerListApplicationsData defines model for handler.listApplicationsData.
 type HandlerListApplicationsData struct {
 	// CreatedAt 作成日時
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *HandlerListApplicationsDataStatus `json:"status,omitempty"`
+	Status HandlerListApplicationsDataStatus `json:"status"`
 }
 
 // HandlerListApplicationsDataStatus アプリケーションステータス
@@ -356,11 +356,11 @@ type HandlerListApplicationsDataStatus string
 
 // HandlerListApplicationsMeta defines model for handler.listApplicationsMeta.
 type HandlerListApplicationsMeta struct {
-	ObjectTotal *int                                  `json:"object_total,omitempty"`
-	PageNum     *int                                  `json:"page_num,omitempty"`
-	PageSize    *int                                  `json:"page_size,omitempty"`
-	SortField   *string                               `json:"sort_field,omitempty"`
-	SortOrder   *HandlerListApplicationsMetaSortOrder `json:"sort_order,omitempty"`
+	ObjectTotal int                                  `json:"object_total"`
+	PageNum     int                                  `json:"page_num"`
+	PageSize    int                                  `json:"page_size"`
+	SortField   string                               `json:"sort_field"`
+	SortOrder   HandlerListApplicationsMetaSortOrder `json:"sort_order"`
 }
 
 // HandlerListApplicationsMetaSortOrder defines model for HandlerListApplicationsMeta.SortOrder.
@@ -368,23 +368,23 @@ type HandlerListApplicationsMetaSortOrder string
 
 // HandlerListTraffics defines model for handler.listTraffics.
 type HandlerListTraffics struct {
-	Data *[]Traffic              `json:"data,omitempty"`
+	Data []Traffic               `json:"data"`
 	Meta *map[string]interface{} `json:"meta"`
 }
 
 // HandlerListVersions defines model for handler.listVersions.
 type HandlerListVersions struct {
-	Data *[]Version               `json:"data,omitempty"`
-	Meta *HandlerListVersionsMeta `json:"meta,omitempty"`
+	Data []Version               `json:"data"`
+	Meta HandlerListVersionsMeta `json:"meta"`
 }
 
 // HandlerListVersionsMeta defines model for handler.listVersionsMeta.
 type HandlerListVersionsMeta struct {
-	ObjectTotal *int                              `json:"object_total,omitempty"`
-	PageNum     *int                              `json:"page_num,omitempty"`
-	PageSize    *int                              `json:"page_size,omitempty"`
-	SortField   *string                           `json:"sort_field,omitempty"`
-	SortOrder   *HandlerListVersionsMetaSortOrder `json:"sort_order,omitempty"`
+	ObjectTotal int                              `json:"object_total"`
+	PageNum     int                              `json:"page_num"`
+	PageSize    int                              `json:"page_size"`
+	SortField   string                           `json:"sort_field"`
+	SortOrder   HandlerListVersionsMetaSortOrder `json:"sort_order"`
 }
 
 // HandlerListVersionsMetaSortOrder defines model for HandlerListVersionsMeta.SortOrder.
@@ -393,34 +393,34 @@ type HandlerListVersionsMetaSortOrder string
 // HandlerPatchApplication defines model for handler.patchApplication.
 type HandlerPatchApplication struct {
 	// Components アプリケーションのコンポーネント情報
-	Components *[]HandlerApplicationComponent `json:"components,omitempty"`
+	Components []HandlerApplicationComponent `json:"components"`
 
 	// Id アプリケーションID
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// MaxScale アプリケーション全体の最大スケール数
-	MaxScale *int `json:"max_scale,omitempty"`
+	MaxScale int `json:"max_scale"`
 
 	// MinScale アプリケーション全体の最小スケール数
-	MinScale *int `json:"min_scale,omitempty"`
+	MinScale int `json:"min_scale"`
 
 	// Name アプリケーション名
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Port アプリケーションがリクエストを待ち受けるポート番号
-	Port *int `json:"port,omitempty"`
+	Port int `json:"port"`
 
 	// PublicUrl 公開URL
-	PublicUrl *string `json:"public_url,omitempty"`
+	PublicUrl string `json:"public_url"`
 
 	// Status アプリケーションステータス
-	Status *HandlerPatchApplicationStatus `json:"status,omitempty"`
+	Status HandlerPatchApplicationStatus `json:"status"`
 
 	// TimeoutSeconds アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
-	TimeoutSeconds *int `json:"timeout_seconds,omitempty"`
+	TimeoutSeconds int `json:"timeout_seconds"`
 
 	// UpdatedAt 更新日時
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // HandlerPatchApplicationStatus アプリケーションステータス
@@ -431,17 +431,17 @@ type HandlerPostApplication = Application
 
 // HandlerPutTraffics defines model for handler.putTraffics.
 type HandlerPutTraffics struct {
-	Data *[]Traffic              `json:"data,omitempty"`
+	Data []Traffic               `json:"data"`
 	Meta *map[string]interface{} `json:"meta"`
 }
 
 // ModelDefaultError defines model for model.defaultError.
 type ModelDefaultError struct {
-	Detail *struct {
-		Code    *int         `json:"code,omitempty"`
-		Errors  *ModelErrors `json:"errors,omitempty"`
-		Message *string      `json:"message,omitempty"`
-	} `json:"error,omitempty"`
+	Detail struct {
+		Code    int         `json:"code"`
+		Errors  ModelErrors `json:"errors"`
+		Message string      `json:"message"`
+	} `json:"error"`
 }
 
 // ModelError defines model for model.error.

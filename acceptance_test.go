@@ -89,31 +89,31 @@ func TestApplicationAPI(t *testing.T) {
 	require.NoError(t, err)
 
 	// Read
-	application, err = appOp.Read(ctx, *application.Id)
+	application, err = appOp.Read(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, *application.Name, "app-for-acceptance")
+	require.Equal(t, application.Name, "app-for-acceptance")
 
 	// Update
 	timeoutUpdated := 20
-	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	appOp.Update(ctx, application.Id, &v1.PatchApplicationBody{
 		TimeoutSeconds: &timeoutUpdated,
 	})
 
 	// Read
-	application, err = appOp.Read(ctx, *application.Id)
+	application, err = appOp.Read(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, *application.TimeoutSeconds, timeoutUpdated)
+	require.Equal(t, application.TimeoutSeconds, timeoutUpdated)
 
 	// Read Status
 	// ヘルスチェックが完了するまでタイムラグがあるため暫く待つ
-	time.Sleep(5 * time.Second)
+	time.Sleep(30 * time.Second)
 
-	res, err := appOp.ReadStatus(ctx, *application.Id)
+	res, err := appOp.ReadStatus(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, *res.Status, v1.HandlerGetApplicationStatusStatusSuccess)
+	require.Equal(t, res.Status, v1.HandlerGetApplicationStatusStatusHealthy)
 
 	// Delete
-	err = appOp.Delete(ctx, *application.Id)
+	err = appOp.Delete(ctx, application.Id)
 	require.NoError(t, err)
 }
 
@@ -162,26 +162,26 @@ func TestVersionAPI(t *testing.T) {
 
 	// Update Application
 	timeoutSeconds := 10
-	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	appOp.Update(ctx, application.Id, &v1.PatchApplicationBody{
 		TimeoutSeconds: &timeoutSeconds,
 	})
 
 	// List Version
-	versions, err := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
+	versions, err := versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 	require.NoError(t, err)
-	require.Equal(t, len(*versions.Data), 2)
+	require.Equal(t, len(versions.Data), 2)
 
 	// Delete Version
-	err = versionOp.Delete(ctx, *application.Id, *(*versions.Data)[1].Id)
+	err = versionOp.Delete(ctx, application.Id, versions.Data[1].Id)
 	require.NoError(t, err)
 
 	// List Version
-	versions, err = versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
+	versions, err = versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 	require.NoError(t, err)
-	require.Equal(t, len(*versions.Data), 1)
+	require.Equal(t, len(versions.Data), 1)
 
 	// Delete Application
-	appOp.Delete(ctx, *application.Id)
+	appOp.Delete(ctx, application.Id)
 }
 
 // TestTrafficAPI アプリケーショントラフィックの一連の操作テスト
@@ -228,52 +228,52 @@ func TestTrafficAPI(t *testing.T) {
 
 	// Update Application
 	timeoutSeconds := 10
-	appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	appOp.Update(ctx, application.Id, &v1.PatchApplicationBody{
 		TimeoutSeconds: &timeoutSeconds,
 	})
 
 	// Update Application Traffic
-	versions, _ := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
+	versions, _ := versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 
 	v0IsLatestVersion := true
 	v0Percent := 90
 
-	v1Name := *(*versions.Data)[1].Name
+	v1Name := versions.Data[1].Name
 	v1IsLatestVersion := false
 	v1Percent := 10
 
-	_, err := trafficOp.Update(ctx, *application.Id, &[]v1.Traffic{
+	_, err := trafficOp.Update(ctx, application.Id, &[]v1.Traffic{
 		{
-			IsLatestVersion: &v0IsLatestVersion,
-			Percent:         &v0Percent,
+			IsLatestVersion: v0IsLatestVersion,
+			Percent:         v0Percent,
 		},
 		{
-			VersionName:     &v1Name,
-			IsLatestVersion: &v1IsLatestVersion,
-			Percent:         &v1Percent,
+			VersionName:     v1Name,
+			IsLatestVersion: v1IsLatestVersion,
+			Percent:         v1Percent,
 		},
 	})
 	require.NoError(t, err)
 
 	// List Application Traffic
 	blankName := ""
-	traffics, err := trafficOp.List(ctx, *application.Id)
+	traffics, err := trafficOp.List(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, *traffics.Data, []v1.Traffic{
+	require.Equal(t, traffics.Data, []v1.Traffic{
 		{
-			VersionName:     &blankName,
-			IsLatestVersion: &v0IsLatestVersion,
-			Percent:         &v0Percent,
+			VersionName:     blankName,
+			IsLatestVersion: v0IsLatestVersion,
+			Percent:         v0Percent,
 		},
 		{
-			VersionName:     &v1Name,
-			IsLatestVersion: &v1IsLatestVersion,
-			Percent:         &v1Percent,
+			VersionName:     v1Name,
+			IsLatestVersion: v1IsLatestVersion,
+			Percent:         v1Percent,
 		},
 	})
 
 	// Delete Application
-	appOp.Delete(ctx, *application.Id)
+	appOp.Delete(ctx, application.Id)
 }
 
 var client = &apprun.Client{}
