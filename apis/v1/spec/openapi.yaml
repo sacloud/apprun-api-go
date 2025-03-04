@@ -1040,11 +1040,11 @@ components:
         status:
           description: アプリケーションステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         public_url:
           description: 公開URL
           type: string
@@ -1111,11 +1111,11 @@ components:
         status:
           description: アプリケーションステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         public_url:
           description: 公開URL
           type: string
@@ -1134,11 +1134,11 @@ components:
         status:
           description: アプリケーションステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         message:
           description: ステータス失敗時のメッセージ
           type: string
@@ -1202,11 +1202,11 @@ components:
         status:
           description: ステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         created_at:
           description: 作成日時
           type: string
@@ -1235,11 +1235,11 @@ components:
         status:
           description: バージョンステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         timeout_seconds:
           description: アプリケーションの公開URLにアクセスして、インスタンスが起動してからレスポンスが返るまでの時間制限
           type: integer
@@ -1745,11 +1745,11 @@ components:
         status:
           description: アプリケーションステータス
           type: string
-          example: Success
+          example: Healthy
           enum:
-            - Success
-            - Fail
-            - Unknown
+            - Healthy
+            - UnHealthy
+            - Deploying
         public_url:
           description: 公開URL
           type: string

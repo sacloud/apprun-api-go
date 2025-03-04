@@ -153,7 +153,7 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 		components = append(components, component)
 	}
 
-	status := v1.ApplicationStatusSuccess
+	status := v1.ApplicationStatusHealthy
 	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", appId)
 	createdAt := time.Now().UTC().Truncate(time.Second)
 	app := &v1.Application{

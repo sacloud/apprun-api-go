@@ -176,7 +176,7 @@ func Example_versionAPI() {
 
 	fmt.Printf("version status: %s", version.Status)
 	// output:
-	// version status: Success
+	// version status: Healthy
 }
 
 // Example_trafficAPI アプリケーショントラフィックAPIの利用例
