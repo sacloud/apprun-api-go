@@ -23,37 +23,37 @@ import (
 
 // Defines values for ApplicationStatus.
 const (
-	ApplicationStatusFail    ApplicationStatus = "Fail"
-	ApplicationStatusSuccess ApplicationStatus = "Success"
-	ApplicationStatusUnknown ApplicationStatus = "Unknown"
+	ApplicationStatusDeploying ApplicationStatus = "Deploying"
+	ApplicationStatusHealthy   ApplicationStatus = "Healthy"
+	ApplicationStatusUnHealthy ApplicationStatus = "UnHealthy"
 )
 
 // Defines values for VersionStatus.
 const (
-	VersionStatusFail    VersionStatus = "Fail"
-	VersionStatusSuccess VersionStatus = "Success"
-	VersionStatusUnknown VersionStatus = "Unknown"
+	VersionStatusDeploying VersionStatus = "Deploying"
+	VersionStatusHealthy   VersionStatus = "Healthy"
+	VersionStatusUnHealthy VersionStatus = "UnHealthy"
 )
 
 // Defines values for HandlerGetApplicationStatusStatus.
 const (
-	HandlerGetApplicationStatusStatusFail    HandlerGetApplicationStatusStatus = "Fail"
-	HandlerGetApplicationStatusStatusSuccess HandlerGetApplicationStatusStatus = "Success"
-	HandlerGetApplicationStatusStatusUnknown HandlerGetApplicationStatusStatus = "Unknown"
+	HandlerGetApplicationStatusStatusDeploying HandlerGetApplicationStatusStatus = "Deploying"
+	HandlerGetApplicationStatusStatusHealthy   HandlerGetApplicationStatusStatus = "Healthy"
+	HandlerGetApplicationStatusStatusUnHealthy HandlerGetApplicationStatusStatus = "UnHealthy"
 )
 
 // Defines values for HandlerGetVersionStatus.
 const (
-	HandlerGetVersionStatusFail    HandlerGetVersionStatus = "Fail"
-	HandlerGetVersionStatusSuccess HandlerGetVersionStatus = "Success"
-	HandlerGetVersionStatusUnknown HandlerGetVersionStatus = "Unknown"
+	HandlerGetVersionStatusDeploying HandlerGetVersionStatus = "Deploying"
+	HandlerGetVersionStatusHealthy   HandlerGetVersionStatus = "Healthy"
+	HandlerGetVersionStatusUnHealthy HandlerGetVersionStatus = "UnHealthy"
 )
 
 // Defines values for HandlerListApplicationsDataStatus.
 const (
-	HandlerListApplicationsDataStatusFail    HandlerListApplicationsDataStatus = "Fail"
-	HandlerListApplicationsDataStatusSuccess HandlerListApplicationsDataStatus = "Success"
-	HandlerListApplicationsDataStatusUnknown HandlerListApplicationsDataStatus = "Unknown"
+	HandlerListApplicationsDataStatusDeploying HandlerListApplicationsDataStatus = "Deploying"
+	HandlerListApplicationsDataStatusHealthy   HandlerListApplicationsDataStatus = "Healthy"
+	HandlerListApplicationsDataStatusUnHealthy HandlerListApplicationsDataStatus = "UnHealthy"
 )
 
 // Defines values for HandlerListApplicationsMetaSortOrder.
@@ -70,9 +70,9 @@ const (
 
 // Defines values for HandlerPatchApplicationStatus.
 const (
-	HandlerPatchApplicationStatusFail    HandlerPatchApplicationStatus = "Fail"
-	HandlerPatchApplicationStatusSuccess HandlerPatchApplicationStatus = "Success"
-	HandlerPatchApplicationStatusUnknown HandlerPatchApplicationStatus = "Unknown"
+	HandlerPatchApplicationStatusDeploying HandlerPatchApplicationStatus = "Deploying"
+	HandlerPatchApplicationStatusHealthy   HandlerPatchApplicationStatus = "Healthy"
+	HandlerPatchApplicationStatusUnHealthy HandlerPatchApplicationStatus = "UnHealthy"
 )
 
 // Defines values for ModelErrorLocationType.

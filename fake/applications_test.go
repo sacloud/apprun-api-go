@@ -129,7 +129,7 @@ func TestEngine_Application(t *testing.T) {
 					}
 				}
 			],
-			"status": "Success",
+			"status": "Healthy",
 			"public_url": "` + resp.PublicUrl + `",
 			"created_at": "` + resp.CreatedAt.Format(time.RFC3339) + `"
 		}`
@@ -188,7 +188,7 @@ func TestEngine_Application(t *testing.T) {
 					}
 				}
 			],
-			"status": "Success",
+			"status": "Healthy",
 			"public_url": "` + readResp.PublicUrl + `",
 			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
 		}`

@@ -50,9 +50,9 @@ var ApplicationSortOrders = []string{
 
 // アプリケーションステータス
 var ApplicationStatuses = []string{
-	(string)(v1.ApplicationStatusFail),
-	(string)(v1.ApplicationStatusSuccess),
-	(string)(v1.ApplicationStatusUnknown),
+	(string)(v1.ApplicationStatusHealthy),
+	(string)(v1.ApplicationStatusDeploying),
+	(string)(v1.ApplicationStatusUnHealthy),
 }
 
 type ApplicationAPI interface {
