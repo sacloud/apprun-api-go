@@ -207,6 +207,7 @@ type VersionStatus string
 
 // HandlerApplicationComponent defines model for handler.ApplicationComponent.
 type HandlerApplicationComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource HandlerApplicationComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -219,16 +220,19 @@ type HandlerApplicationComponent struct {
 	MaxMemory string `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                            `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *HandlerApplicationComponentProbe `json:"probe"`
 }
 
-// HandlerApplicationComponentDeploySource defines model for handler.ApplicationComponentDeploySource.
+// HandlerApplicationComponentDeploySource コンポーネントを構成するソース
 type HandlerApplicationComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *HandlerApplicationComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// HandlerApplicationComponentDeploySourceContainerRegistry defines model for handler.ApplicationComponentDeploySourceContainerRegistry.
+// HandlerApplicationComponentDeploySourceContainerRegistry コンテナレジストリ
 type HandlerApplicationComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -249,12 +253,13 @@ type HandlerApplicationComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// HandlerApplicationComponentProbe defines model for handler.ApplicationComponentProbe.
+// HandlerApplicationComponentProbe コンポーネントのプローブ設定
 type HandlerApplicationComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *HandlerApplicationComponentProbeHttpGet `json:"http_get"`
 }
 
-// HandlerApplicationComponentProbeHttpGet defines model for handler.ApplicationComponentProbeHttpGet.
+// HandlerApplicationComponentProbeHttpGet HTTP Getプローブタイプ
 type HandlerApplicationComponentProbeHttpGet struct {
 	Headers *[]HandlerApplicationComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
@@ -433,7 +438,7 @@ type HandlerPutTraffics struct {
 // ModelDefaultError defines model for model.defaultError.
 type ModelDefaultError struct {
 	Detail *struct {
-		Code    *float32     `json:"code,omitempty"`
+		Code    *int         `json:"code,omitempty"`
 		Errors  *ModelErrors `json:"errors,omitempty"`
 		Message *string      `json:"message,omitempty"`
 	} `json:"error,omitempty"`
@@ -477,6 +482,7 @@ type PatchApplicationBody struct {
 
 // PatchApplicationBodyComponent defines model for patchApplicationBodyComponent.
 type PatchApplicationBodyComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource PatchApplicationBodyComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -489,7 +495,9 @@ type PatchApplicationBodyComponent struct {
 	MaxMemory PatchApplicationBodyComponentMaxMemory `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                              `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *PatchApplicationBodyComponentProbe `json:"probe"`
 }
 
@@ -499,12 +507,13 @@ type PatchApplicationBodyComponentMaxCpu string
 // PatchApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PatchApplicationBodyComponentMaxMemory string
 
-// PatchApplicationBodyComponentDeploySource defines model for patchApplicationBodyComponentDeploySource.
+// PatchApplicationBodyComponentDeploySource コンポーネントを構成するソース
 type PatchApplicationBodyComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *PatchApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PatchApplicationBodyComponentDeploySourceContainerRegistry defines model for patchApplicationBodyComponentDeploySourceContainerRegistry.
+// PatchApplicationBodyComponentDeploySourceContainerRegistry コンテナレジストリ
 type PatchApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -528,12 +537,13 @@ type PatchApplicationBodyComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// PatchApplicationBodyComponentProbe defines model for patchApplicationBodyComponentProbe.
+// PatchApplicationBodyComponentProbe コンポーネントのプローブ設定
 type PatchApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *PatchApplicationBodyComponentProbeHttpGet `json:"http_get"`
 }
 
-// PatchApplicationBodyComponentProbeHttpGet defines model for patchApplicationBodyComponentProbeHttpGet.
+// PatchApplicationBodyComponentProbeHttpGet HTTP Getプローブタイプ
 type PatchApplicationBodyComponentProbeHttpGet struct {
 	Headers *[]PatchApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
@@ -576,6 +586,7 @@ type PostApplicationBody struct {
 
 // PostApplicationBodyComponent defines model for postApplicationBodyComponent.
 type PostApplicationBodyComponent struct {
+	// DeploySource コンポーネントを構成するソース
 	DeploySource PostApplicationBodyComponentDeploySource `json:"deploy_source"`
 
 	// Env コンポーネントに渡す環境変数
@@ -588,7 +599,9 @@ type PostApplicationBodyComponent struct {
 	MaxMemory PostApplicationBodyComponentMaxMemory `json:"max_memory"`
 
 	// Name コンポーネント名
-	Name  string                             `json:"name"`
+	Name string `json:"name"`
+
+	// Probe コンポーネントのプローブ設定
 	Probe *PostApplicationBodyComponentProbe `json:"probe"`
 }
 
@@ -598,12 +611,13 @@ type PostApplicationBodyComponentMaxCpu string
 // PostApplicationBodyComponentMaxMemory コンポーネントの最大メモリ
 type PostApplicationBodyComponentMaxMemory string
 
-// PostApplicationBodyComponentDeploySource defines model for postApplicationBodyComponentDeploySource.
+// PostApplicationBodyComponentDeploySource コンポーネントを構成するソース
 type PostApplicationBodyComponentDeploySource struct {
+	// ContainerRegistry コンテナレジストリ
 	ContainerRegistry *PostApplicationBodyComponentDeploySourceContainerRegistry `json:"container_registry,omitempty"`
 }
 
-// PostApplicationBodyComponentDeploySourceContainerRegistry defines model for postApplicationBodyComponentDeploySourceContainerRegistry.
+// PostApplicationBodyComponentDeploySourceContainerRegistry コンテナレジストリ
 type PostApplicationBodyComponentDeploySourceContainerRegistry struct {
 	// Image コンテナイメージ名
 	Image string `json:"image"`
@@ -627,12 +641,13 @@ type PostApplicationBodyComponentEnv struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// PostApplicationBodyComponentProbe defines model for postApplicationBodyComponentProbe.
+// PostApplicationBodyComponentProbe コンポーネントのプローブ設定
 type PostApplicationBodyComponentProbe struct {
+	// HttpGet HTTP Getプローブタイプ
 	HttpGet *PostApplicationBodyComponentProbeHttpGet `json:"http_get"`
 }
 
-// PostApplicationBodyComponentProbeHttpGet defines model for postApplicationBodyComponentProbeHttpGet.
+// PostApplicationBodyComponentProbeHttpGet HTTP Getプローブタイプ
 type PostApplicationBodyComponentProbeHttpGet struct {
 	Headers *[]PostApplicationBodyComponentProbeHttpGetHeader `json:"headers,omitempty"`
 
