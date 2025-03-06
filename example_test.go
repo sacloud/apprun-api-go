@@ -84,18 +84,18 @@ func Example_applicationAPI() {
 	}
 
 	// アプリケーションの参照
-	application, err = appOp.Read(ctx, *application.Id)
+	application, err = appOp.Read(ctx, application.Id)
 	if err != nil {
 		panic(err)
 	}
 
 	// アプリケーションの削除
-	err = appOp.Delete(ctx, *application.Id)
+	err = appOp.Delete(ctx, application.Id)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(*application.Name)
+	fmt.Println(application.Name)
 	// output:
 	// example-app
 }
@@ -142,7 +142,7 @@ func Example_versionAPI() {
 
 	// アプリケーションの更新
 	timeoutSeconds := 10
-	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	_, err = appOp.Update(ctx, application.Id, &v1.PatchApplicationBody{
 		TimeoutSeconds: &timeoutSeconds,
 	})
 	if err != nil {
@@ -150,31 +150,31 @@ func Example_versionAPI() {
 	}
 
 	// バージョン一覧の取得
-	versions, err := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
+	versions, err := versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 	if err != nil {
 		panic(err)
 	}
-	if len(*versions.Data) != 2 {
-		fmt.Println(len(*versions.Data))
+	if len(versions.Data) != 2 {
+		fmt.Println(len(versions.Data))
 		panic("ListVersions failed")
 	}
 
-	d0 := (*versions.Data)[0]
-	d1 := (*versions.Data)[1]
+	d0 := versions.Data[0]
+	d1 := versions.Data[1]
 
 	// バージョンの削除
-	err = versionOp.Delete(ctx, *application.Id, *d0.Id)
+	err = versionOp.Delete(ctx, application.Id, d0.Id)
 	if err != nil {
 		panic(err)
 	}
 
 	// バージョンの参照
-	version, err := versionOp.Read(ctx, *application.Id, *d1.Id)
+	version, err := versionOp.Read(ctx, application.Id, d1.Id)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("version status: %s", *version.Status)
+	fmt.Printf("version status: %s", version.Status)
 	// output:
 	// version status: Success
 }
@@ -222,7 +222,7 @@ func Example_trafficAPI() {
 
 	// アプリケーションの更新
 	timeoutSeconds := 10
-	_, err = appOp.Update(ctx, *application.Id, &v1.PatchApplicationBody{
+	_, err = appOp.Update(ctx, application.Id, &v1.PatchApplicationBody{
 		TimeoutSeconds: &timeoutSeconds,
 	})
 	if err != nil {
@@ -230,7 +230,7 @@ func Example_trafficAPI() {
 	}
 
 	// バージョン一覧の取得
-	versions, err := versionOp.List(ctx, *application.Id, &v1.ListApplicationVersionsParams{})
+	versions, err := versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 	if err != nil {
 		panic(err)
 	}
@@ -239,19 +239,19 @@ func Example_trafficAPI() {
 	v0IsLatestVersion := true
 	v0Percent := 90
 
-	v1Name := *(*versions.Data)[1].Name
+	v1Name := versions.Data[1].Name
 	v1IsLatestVersion := false
 	v1Percent := 10
 
-	_, err = trafficOp.Update(ctx, *application.Id, &[]v1.Traffic{
+	_, err = trafficOp.Update(ctx, application.Id, &[]v1.Traffic{
 		{
-			IsLatestVersion: &v0IsLatestVersion,
-			Percent:         &v0Percent,
+			IsLatestVersion: v0IsLatestVersion,
+			Percent:         v0Percent,
 		},
 		{
-			VersionName:     &v1Name,
-			IsLatestVersion: &v1IsLatestVersion,
-			Percent:         &v1Percent,
+			VersionName:     v1Name,
+			IsLatestVersion: v1IsLatestVersion,
+			Percent:         v1Percent,
 		},
 	})
 	if err != nil {
@@ -259,14 +259,14 @@ func Example_trafficAPI() {
 	}
 
 	// トラフィック分散を取得
-	traffics, err := trafficOp.List(ctx, *application.Id)
+	traffics, err := trafficOp.List(ctx, application.Id)
 	if err != nil {
 		panic(err)
 	}
 
-	for _, data := range *traffics.Data {
-		if *data.IsLatestVersion == true {
-			fmt.Printf("is_latest_version: %t, percent: %d", *data.IsLatestVersion, *data.Percent)
+	for _, data := range traffics.Data {
+		if data.IsLatestVersion == true {
+			fmt.Printf("is_latest_version: %t, percent: %d", data.IsLatestVersion, data.Percent)
 		}
 	}
 	// output:
