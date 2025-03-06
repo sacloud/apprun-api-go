@@ -46,4 +46,5 @@ apis/v1/zz_server_gen.go: apis/v1/spec/openapi.yaml apis/v1/spec/codegen/gin.yam
 	oapi-codegen --old-config-style -config apis/v1/spec/codegen/gin.yaml apis/v1/spec/openapi.yaml
 
 lint-def:
-	docker run --rm -v $$PWD:$$PWD -w $$PWD stoplight/spectral:latest lint -F warn apis/v1/spec/openapi.yaml
+	# NOTE: 上流側のOpenAPI定義ではtag周りの警告が出るため "-F warn"の指定を外しておく
+	docker run --rm -v $$PWD:$$PWD -w $$PWD stoplight/spectral:latest lint apis/v1/spec/openapi.yaml
