@@ -25,18 +25,18 @@ var (
 
 func (e ModelDefaultError) Error() string {
 	var in string
-	if len(*e.Detail.Errors) == 0 {
+	if len(e.Detail.Errors) == 0 {
 		in = "(empty)"
 	} else {
 		var errorStrings []string
-		for _, err := range *e.Detail.Errors {
+		for _, err := range e.Detail.Errors {
 			errorStrings = append(errorStrings, fmt.Sprintf("{%s}", err.String()))
 		}
 
 		in = strings.Join(errorStrings, ", ")
 	}
 
-	return fmt.Sprintf("code: %d, message: %s, inner_error: %s", e.Detail.Code, *e.Detail.Message, in)
+	return fmt.Sprintf("code: %d, message: %s, inner_error: %s", e.Detail.Code, e.Detail.Message, in)
 }
 
 // String Stringer実装
