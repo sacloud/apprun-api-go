@@ -29,7 +29,7 @@ func TestEngine_Traffic(t *testing.T) {
 		createdApp, err := engine.CreateApplication(req)
 		require.NoError(t, err)
 
-		resp, err := engine.ListTraffics(*createdApp.Id)
+		resp, err := engine.ListTraffics(createdApp.Id)
 		require.NoError(t, err)
 
 		respJson, err := json.Marshal(resp)
@@ -58,7 +58,7 @@ func TestEngine_Traffic(t *testing.T) {
 		previousVersionName := engine.Versions[0].Name
 
 		timeoutUpdated := 20
-		_, err = engine.UpdateApplication(*createdApp.Id, &v1.PatchApplicationBody{
+		_, err = engine.UpdateApplication(createdApp.Id, &v1.PatchApplicationBody{
 			TimeoutSeconds: &timeoutUpdated,
 		})
 		require.NoError(t, err)
@@ -68,16 +68,16 @@ func TestEngine_Traffic(t *testing.T) {
 		previousVersionPercent := 100 - latestPercent
 		tb := v1.PutTrafficsBody{
 			v1.Traffic{
-				IsLatestVersion: &isLatestVersion,
-				Percent:         &latestPercent,
+				IsLatestVersion: isLatestVersion,
+				Percent:         latestPercent,
 			},
 			v1.Traffic{
 				VersionName: previousVersionName,
-				Percent:     &previousVersionPercent,
+				Percent:     previousVersionPercent,
 			},
 		}
 
-		resp, err := engine.UpdateTraffic(*createdApp.Id, &tb)
+		resp, err := engine.UpdateTraffic(createdApp.Id, &tb)
 		require.NoError(t, err)
 
 		respJson, err := json.Marshal(resp)
@@ -88,11 +88,13 @@ func TestEngine_Traffic(t *testing.T) {
 			"meta": null,
 			"data": [
 				{
+					"version_name": "",
 					"is_latest_version": true,
 					"percent": 20
 				},
 				{
-					"version_name": "` + *previousVersionName + `",
+					"version_name": "` + previousVersionName + `",
+					"is_latest_version": false,
 					"percent": 80
 				}
 			]

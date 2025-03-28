@@ -42,9 +42,9 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 		switch *param.SortField {
 		case "created_at":
 			if *param.SortOrder == "desc" {
-				return apps[i].CreatedAt.After(*apps[j].CreatedAt)
+				return apps[i].CreatedAt.After(apps[j].CreatedAt)
 			}
-			return apps[i].CreatedAt.Before(*apps[j].CreatedAt)
+			return apps[i].CreatedAt.Before(apps[j].CreatedAt)
 		// sort_fieldのデフォルト値であるcreated_at以外は未サポート
 		default:
 			return false
@@ -69,7 +69,7 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 			data = append(data, v1.HandlerListApplicationsData{
 				Id:        app.Id,
 				Name:      app.Name,
-				Status:    (*v1.HandlerListApplicationsDataStatus)(app.Status),
+				Status:    (v1.HandlerListApplicationsDataStatus)(app.Status),
 				PublicUrl: app.PublicUrl,
 				CreatedAt: app.CreatedAt,
 			})
@@ -77,16 +77,25 @@ func (engine *Engine) ListApplications(param v1.ListApplicationsParams) (*v1.Han
 	}
 
 	meta := v1.HandlerListApplicationsMeta{
-		PageNum:     param.PageNum,
-		PageSize:    param.PageSize,
-		ObjectTotal: &appsLen,
-		SortField:   param.SortField,
-		SortOrder:   (*v1.HandlerListApplicationsMetaSortOrder)(param.SortOrder),
+		ObjectTotal: appsLen,
+	}
+	if param.PageNum != nil {
+		meta.PageNum = *param.PageNum
+	}
+	if param.PageSize != nil {
+		meta.PageSize = *param.PageSize
+	}
+	if param.SortField != nil {
+		meta.SortField = *param.SortField
+	}
+	if param.SortOrder != nil {
+		so := (*v1.HandlerListApplicationsMetaSortOrder)(param.SortOrder)
+		meta.SortOrder = *so
 	}
 
 	return &v1.HandlerListApplications{
-		Data: &data,
-		Meta: &meta,
+		Data: data,
+		Meta: meta,
 	}, nil
 }
 
@@ -148,16 +157,16 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", appId)
 	createdAt := time.Now().UTC().Truncate(time.Second)
 	app := &v1.Application{
-		Id:             &appId,
-		Name:           &reqBody.Name,
-		TimeoutSeconds: &reqBody.TimeoutSeconds,
-		Port:           &reqBody.Port,
-		MinScale:       &reqBody.MinScale,
-		MaxScale:       &reqBody.MaxScale,
-		Components:     &components,
-		Status:         &status,
-		PublicUrl:      &url,
-		CreatedAt:      &createdAt,
+		Id:             appId,
+		Name:           reqBody.Name,
+		TimeoutSeconds: reqBody.TimeoutSeconds,
+		Port:           reqBody.Port,
+		MinScale:       reqBody.MinScale,
+		MaxScale:       reqBody.MaxScale,
+		Components:     components,
+		Status:         status,
+		PublicUrl:      url,
+		CreatedAt:      createdAt,
 	}
 	engine.Applications = append(engine.Applications, app)
 
@@ -183,7 +192,7 @@ func (engine *Engine) ReadApplication(id string) (*v1.Application, error) {
 	}
 
 	app := engine.latestApplication(id)
-	if app != nil && app.Id != nil && *app.Id == id {
+	if app != nil && app.Id == id {
 		return app, nil
 	}
 
@@ -197,16 +206,16 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 
 	patchedApp := *(engine.latestApplication(id))
 	if reqBody.TimeoutSeconds != nil {
-		patchedApp.TimeoutSeconds = reqBody.TimeoutSeconds
+		patchedApp.TimeoutSeconds = *reqBody.TimeoutSeconds
 	}
 	if reqBody.Port != nil {
-		patchedApp.Port = reqBody.Port
+		patchedApp.Port = *reqBody.Port
 	}
 	if reqBody.MinScale != nil {
-		patchedApp.MinScale = reqBody.MinScale
+		patchedApp.MinScale = *reqBody.MinScale
 	}
 	if reqBody.MaxScale != nil {
-		patchedApp.MaxScale = reqBody.MaxScale
+		patchedApp.MaxScale = *reqBody.MaxScale
 	}
 	if reqBody.Components != nil && len(*reqBody.Components) > 0 {
 		var components []v1.HandlerApplicationComponent
@@ -253,11 +262,11 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 			components = append(components, component)
 		}
 
-		patchedApp.Components = &components
+		patchedApp.Components = components
 	}
 
 	now := time.Now().UTC().Truncate(time.Second)
-	patchedApp.CreatedAt = &now
+	patchedApp.CreatedAt = now
 
 	engine.Applications = append(engine.Applications, &patchedApp)
 	if err := engine.createVersion(&patchedApp); err != nil {
@@ -278,9 +287,9 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 		MinScale:       patchedApp.MinScale,
 		MaxScale:       patchedApp.MaxScale,
 		Components:     patchedApp.Components,
-		Status:         (*v1.HandlerPatchApplicationStatus)(patchedApp.Status),
+		Status:         (v1.HandlerPatchApplicationStatus)(patchedApp.Status),
 		PublicUrl:      patchedApp.PublicUrl,
-		UpdatedAt:      &now,
+		UpdatedAt:      now,
 	}, nil
 }
 
@@ -297,7 +306,7 @@ func (engine *Engine) latestApplication(id string) *v1.Application {
 	if rs, ok := engine.appVersionRelations[id]; ok {
 		// 最新のVersionのApplicationを取得
 		for i, r := range rs {
-			if i == 0 || r.application.CreatedAt.After(*app.CreatedAt) {
+			if i == 0 || r.application.CreatedAt.After(app.CreatedAt) {
 				app = r.application
 			}
 		}

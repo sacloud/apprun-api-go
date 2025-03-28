@@ -129,7 +129,7 @@ func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
 
 	var status v1.HandlerGetApplicationStatusStatus
 	message := ""
-	switch *application.Status {
+	switch application.Status {
 	case v1.ApplicationStatusSuccess:
 		status = v1.HandlerGetApplicationStatusStatusSuccess
 	case v1.ApplicationStatusFail:
@@ -138,7 +138,7 @@ func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
 		status = v1.HandlerGetApplicationStatusStatusFail
 	}
 	c.JSON(http.StatusOK, v1.HandlerGetApplicationStatusResponse{
-		Status:  &status,
-		Message: &message,
+		Status:  status,
+		Message: message,
 	})
 }
