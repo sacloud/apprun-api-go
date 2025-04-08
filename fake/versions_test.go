@@ -105,7 +105,7 @@ func TestEngine_Version(t *testing.T) {
 		{
 			"id": "` + r.version.Id + `",
 			"name": "` + r.version.Name + `",
-			"status": "Success",
+			"status": "Healthy",
 			"timeout_seconds": 20,
 			"port": 8081,
 			"min_scale": 1,

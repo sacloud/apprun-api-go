@@ -28,9 +28,9 @@ var VersionSortOrders = []string{
 
 // バージョンステータス
 var VersionStatuses = []string{
-	(string)(v1.VersionStatusFail),
-	(string)(v1.VersionStatusSuccess),
-	(string)(v1.VersionStatusUnknown),
+	(string)(v1.VersionStatusHealthy),
+	(string)(v1.VersionStatusDeploying),
+	(string)(v1.VersionStatusUnHealthy),
 }
 
 type VersionAPI interface {
