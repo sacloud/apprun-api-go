@@ -18,7 +18,10 @@
 package v1
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 // Defines values for ApplicationStatus.
@@ -435,6 +438,20 @@ type HandlerPutTraffics struct {
 	Meta *map[string]interface{} `json:"meta"`
 }
 
+// ModelAppRunError defines model for model.appRunError.
+type ModelAppRunError struct {
+	union json.RawMessage
+}
+
+// ModelCloudctrlError defines model for model.cloudctrlError.
+type ModelCloudctrlError struct {
+	ErrorCode string `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+	IsFatal   bool   `json:"is_fatal"`
+	Serial    string `json:"serial"`
+	Status    string `json:"status"`
+}
+
 // ModelDefaultError defines model for model.defaultError.
 type ModelDefaultError struct {
 	Detail struct {
@@ -714,3 +731,65 @@ type PatchApplicationJSONRequestBody = PatchApplicationBody
 
 // PutApplicationTrafficJSONRequestBody defines body for PutApplicationTraffic for application/json ContentType.
 type PutApplicationTrafficJSONRequestBody = PutTrafficsBody
+
+// AsModelDefaultError returns the union data inside the ModelAppRunError as a ModelDefaultError
+func (t ModelAppRunError) AsModelDefaultError() (ModelDefaultError, error) {
+	var body ModelDefaultError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromModelDefaultError overwrites any union data inside the ModelAppRunError as the provided ModelDefaultError
+func (t *ModelAppRunError) FromModelDefaultError(v ModelDefaultError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeModelDefaultError performs a merge with any union data inside the ModelAppRunError, using the provided ModelDefaultError
+func (t *ModelAppRunError) MergeModelDefaultError(v ModelDefaultError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsModelCloudctrlError returns the union data inside the ModelAppRunError as a ModelCloudctrlError
+func (t ModelAppRunError) AsModelCloudctrlError() (ModelCloudctrlError, error) {
+	var body ModelCloudctrlError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromModelCloudctrlError overwrites any union data inside the ModelAppRunError as the provided ModelCloudctrlError
+func (t *ModelAppRunError) FromModelCloudctrlError(v ModelCloudctrlError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeModelCloudctrlError performs a merge with any union data inside the ModelAppRunError, using the provided ModelCloudctrlError
+func (t *ModelAppRunError) MergeModelCloudctrlError(v ModelCloudctrlError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ModelAppRunError) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ModelAppRunError) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
