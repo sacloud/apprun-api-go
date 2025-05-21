@@ -72,10 +72,10 @@ github.com/pelletier/go-toml/v2 v2.2.2/go.mod h1:1t835xjRzz80PqgE6HHgN2JOsmgYu/h
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
-github.com/sacloud/api-client-go v0.2.10 h1:+rv3jDohD+pkdYwOTBiB+jZsM0xK3AxadXRzhp3q66c=
-github.com/sacloud/api-client-go v0.2.10/go.mod h1:Jj3CTy2+O4bcMedVDXlbHuqqche85HEPuVXoQFhLaRc=
-github.com/sacloud/go-http v0.1.8 h1:ynreWA/vnM8G2ksbMlmefBHsXURKPz49qlPRqQ9IQdw=
-github.com/sacloud/go-http v0.1.8/go.mod h1:7TL7TN1fnPKHsMifIqURDkGujnKViCgEz5Ei/LQdFK8=
+github.com/sacloud/api-client-go v0.3.0 h1:NLA2BpZ5welAXBPxgmXSCjgn/k0ShDB0x5kmUHl7TJ4=
+github.com/sacloud/api-client-go v0.3.0/go.mod h1:v8ke3pxVQ9TCWEbMkfbLX8NMeGiPpE+uDwlgcUWfMgM=
+github.com/sacloud/go-http v0.1.9 h1:Xa5PY8/pb7XWhwG9nAeXSrYXPbtfBWqawgzxD5co3VE=
+github.com/sacloud/go-http v0.1.9/go.mod h1:DpDG+MSyxYaBwPJ7l3aKLMzwYdTVtC5Bo63HActcgoE=
 github.com/sacloud/packages-go v0.0.10 h1:UiQGjy8LretewkRhsuna1TBM9Vz/l9FoYpQx+D+AOck=
 github.com/sacloud/packages-go v0.0.10/go.mod h1:f8QITBh9z4IZc4yE9j21Q8b0sXEMwRlRmhhjWeDVTYs=
 github.com/spf13/cobra v1.9.1 h1:CXSaggrXdbHK9CF+8ywj8Amf7PBRmPCOJugH954Nnlo=
