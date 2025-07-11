@@ -1303,6 +1303,60 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Traffic"
+    handler.getPacketFilter:
+      type: object
+      required:
+        - is_enabled
+        - settings
+      properties:
+        is_enabled:
+          type: boolean
+          description: 有効フラグ
+          example: true
+        settings:
+          type: array
+          maxItems: 5
+          items:
+            required:
+              - from_ip
+              - from_ip_prefix_length
+            properties:
+              from_ip:
+                type: string
+                description: 送信元IPv4アドレス
+                example: 0.0.0.0
+              from_ip_prefix_length:
+                type: integer
+                description: IPv4アドレスprefix長
+                minimum: 0
+                maximum: 32
+                example: 0
+    handler.patchPacketFilter:
+      type: object
+      required:
+        - is_enabled
+        - settings
+      properties:
+        is_enabled:
+          type: boolean
+          description: 有効フラグ
+          example: true
+        settings:
+          type: array
+          maxItems: 5
+          items:
+            required:
+              - from_ip
+              - from_ip_prefix_length
+            properties:
+              from_ip:
+                type: string
+                description: 送信元IPv4アドレス
+                example: 0.0.0.0
+              from_ip_prefix_length:
+                type: integer
+                description: IPv4アドレスprefix長
+                example: 0
     Traffic:
       type: object
       required:
@@ -1687,6 +1741,29 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Traffic"
+    patchPacketFilter:
+      type: object
+      properties:
+        is_enabled:
+          type: boolean
+          description: 有効フラグ
+          example: true
+        settings:
+          type: array
+          maxItems: 5
+          items:
+            required:
+              - from_ip
+              - from_ip_prefix_length
+            properties:
+              from_ip:
+                type: string
+                description: 送信元IPv4アドレス
+                example: 0.0.0.0
+              from_ip_prefix_length:
+                type: integer
+                description: IPv4アドレスprefix長
+                example: 0
     # handler.postApplication, handler.getApplication, handler.patchApplicationの共通化
     Application:
       type: object
