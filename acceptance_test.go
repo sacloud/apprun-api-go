@@ -28,6 +28,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const appName = "app-for-acceptance"
+
 // TestUserAPI ユーザー関連APIの操作テスト
 // ユーザーは削除もできないため、2回目以降は既にユーザーが存在する状態でのテストとなってしまうことに注意する。
 func TestUserAPI(t *testing.T) {
@@ -57,12 +59,16 @@ func TestUserAPI(t *testing.T) {
 func TestApplicationAPI(t *testing.T) {
 	skipIfNoAPIKey(t)
 
+	if err := cleanupTestApplication(); err != nil {
+		t.Fatal(err)
+	}
+
 	ctx := context.Background()
 	appOp := apprun.NewApplicationOp(client)
 
 	// Create
 	application, err := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           "app-for-acceptance",
+		Name:           appName,
 		TimeoutSeconds: 100,
 		Port:           80,
 		MinScale:       0,
@@ -91,7 +97,7 @@ func TestApplicationAPI(t *testing.T) {
 	// Read
 	application, err = appOp.Read(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, application.Name, "app-for-acceptance")
+	require.Equal(t, application.Name, appName)
 
 	// Update
 	timeoutUpdated := 20
@@ -128,13 +134,17 @@ func TestApplicationAPI(t *testing.T) {
 func TestVersionAPI(t *testing.T) {
 	skipIfNoAPIKey(t)
 
+	if err := cleanupTestApplication(); err != nil {
+		t.Fatal(err)
+	}
+
 	ctx := context.Background()
 	appOp := apprun.NewApplicationOp(client)
 	versionOp := apprun.NewVersionOp(client)
 
 	// Application Create
 	application, _ := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           "app-for-acceptance",
+		Name:           appName,
 		TimeoutSeconds: 100,
 		Port:           80,
 		MinScale:       0,
@@ -194,6 +204,10 @@ func TestVersionAPI(t *testing.T) {
 func TestTrafficAPI(t *testing.T) {
 	skipIfNoAPIKey(t)
 
+	if err := cleanupTestApplication(); err != nil {
+		t.Fatal(err)
+	}
+
 	ctx := context.Background()
 	appOp := apprun.NewApplicationOp(client)
 	versionOp := apprun.NewVersionOp(client)
@@ -201,7 +215,7 @@ func TestTrafficAPI(t *testing.T) {
 
 	// Application Create
 	application, _ := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           "app-for-acceptance",
+		Name:           appName,
 		TimeoutSeconds: 100,
 		Port:           80,
 		MinScale:       0,
@@ -296,4 +310,27 @@ func skipIfNoEnv(t *testing.T, envs ...string) {
 
 func skipIfNoAPIKey(t *testing.T) {
 	skipIfNoEnv(t, "SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET")
+}
+
+func cleanupTestApplication() error {
+	ctx := context.Background()
+	appOp := apprun.NewApplicationOp(client)
+
+	apps, err := appOp.List(ctx, &v1.ListApplicationsParams{})
+	if err != nil {
+		return err
+	}
+	if apps.Data == nil {
+		return nil
+	}
+
+	for _, app := range apps.Data {
+		if app.Name == appName {
+			if err := appOp.Delete(ctx, app.Id); err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+	return nil
 }
