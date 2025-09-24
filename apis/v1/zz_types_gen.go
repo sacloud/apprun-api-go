@@ -178,6 +178,15 @@ type Application struct {
 // ApplicationStatus アプリケーションステータス
 type ApplicationStatus string
 
+// PacketFilterSetting defines model for PacketFilterSetting.
+type PacketFilterSetting struct {
+	// FromIp 送信元IPv4アドレス
+	FromIp string `json:"from_ip"`
+
+	// FromIpPrefixLength IPv4アドレスprefix長
+	FromIpPrefixLength int `json:"from_ip_prefix_length"`
+}
+
 // Traffic defines model for Traffic.
 type Traffic struct {
 	union json.RawMessage
@@ -289,6 +298,13 @@ type HandlerGetApplicationStatusResponse struct {
 
 // HandlerGetApplicationStatusStatus アプリケーションステータス
 type HandlerGetApplicationStatusStatus string
+
+// HandlerGetPacketFilter defines model for handler.getPacketFilter.
+type HandlerGetPacketFilter struct {
+	// IsEnabled 有効フラグ
+	IsEnabled bool                  `json:"is_enabled"`
+	Settings  []PacketFilterSetting `json:"settings"`
+}
 
 // HandlerGetVersion defines model for handler.getVersion.
 type HandlerGetVersion struct {
@@ -421,6 +437,13 @@ type HandlerPatchApplication struct {
 
 // HandlerPatchApplicationStatus アプリケーションステータス
 type HandlerPatchApplicationStatus string
+
+// HandlerPatchPacketFilter defines model for handler.patchPacketFilter.
+type HandlerPatchPacketFilter struct {
+	// IsEnabled 有効フラグ
+	IsEnabled bool                  `json:"is_enabled"`
+	Settings  []PacketFilterSetting `json:"settings"`
+}
 
 // HandlerPostApplication defines model for handler.postApplication.
 type HandlerPostApplication = Application
@@ -571,6 +594,13 @@ type PatchApplicationBodyComponentProbeHttpGetHeader struct {
 
 	// Value ヘッダーフィールド値
 	Value *string `json:"value,omitempty"`
+}
+
+// PatchPacketFilter defines model for patchPacketFilter.
+type PatchPacketFilter struct {
+	// IsEnabled 有効フラグ
+	IsEnabled *bool                  `json:"is_enabled,omitempty"`
+	Settings  *[]PacketFilterSetting `json:"settings,omitempty"`
 }
 
 // PostApplicationBody defines model for postApplicationBody.
@@ -739,6 +769,9 @@ type PostApplicationJSONRequestBody = PostApplicationBody
 
 // PatchApplicationJSONRequestBody defines body for PatchApplication for application/json ContentType.
 type PatchApplicationJSONRequestBody = PatchApplicationBody
+
+// PatchPacketFilterJSONRequestBody defines body for PatchPacketFilter for application/json ContentType.
+type PatchPacketFilterJSONRequestBody = PatchPacketFilter
 
 // PutApplicationTrafficJSONRequestBody defines body for PutApplicationTraffic for application/json ContentType.
 type PutApplicationTrafficJSONRequestBody = PutTrafficsBody

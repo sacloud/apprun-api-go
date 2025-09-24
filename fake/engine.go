@@ -34,6 +34,9 @@ type Engine struct {
 	// MapのkeyにApplicationのIDを利用する
 	appVersionRelations map[string][]*appVersionRelation
 
+	// MapのkeyにApplicationのIDを利用する
+	appPacketFilterRelations map[string]*v1.HandlerGetPacketFilter
+
 	// GeneratedID 採番済みの最終ID
 	//
 	// DataStoreの各フィールドの値との整合性は確認されないため利用者側が管理する必要がある
@@ -49,8 +52,9 @@ type appVersionRelation struct {
 
 func NewEngine() *Engine {
 	return &Engine{
-		appVersionRelations: make(map[string][]*appVersionRelation),
-		Traffics:            make(map[string][]*v1.Traffic),
+		appVersionRelations:      make(map[string][]*appVersionRelation),
+		appPacketFilterRelations: make(map[string]*v1.HandlerGetPacketFilter),
+		Traffics:                 make(map[string][]*v1.Traffic),
 	}
 }
 

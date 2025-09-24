@@ -23,6 +23,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // ServerInterface represents all server handlers.
@@ -42,6 +43,12 @@ type ServerInterface interface {
 	// アプリケーションを部分的に変更します。
 	// (PATCH /applications/{id})
 	PatchApplication(c *gin.Context, id string)
+	// パケットフィルタを取得します。
+	// (GET /applications/{id}/packet_filter)
+	GetPacketFilter(c *gin.Context, id openapi_types.UUID)
+	// パケットフィルタを部分的に変更します。
+	// (PATCH /applications/{id}/packet_filter)
+	PatchPacketFilter(c *gin.Context, id openapi_types.UUID)
 	// アプリケーションステータスを取得します。
 	// (GET /applications/{id}/status)
 	GetApplicationStatus(c *gin.Context, id string)
@@ -210,6 +217,54 @@ func (siw *ServerInterfaceWrapper) PatchApplication(c *gin.Context) {
 	}
 
 	siw.Handler.PatchApplication(c, id)
+}
+
+// GetPacketFilter operation middleware
+func (siw *ServerInterfaceWrapper) GetPacketFilter(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetPacketFilter(c, id)
+}
+
+// PatchPacketFilter operation middleware
+func (siw *ServerInterfaceWrapper) PatchPacketFilter(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PatchPacketFilter(c, id)
 }
 
 // GetApplicationStatus operation middleware
@@ -467,6 +522,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/applications/:id", wrapper.DeleteApplication)
 	router.GET(options.BaseURL+"/applications/:id", wrapper.GetApplication)
 	router.PATCH(options.BaseURL+"/applications/:id", wrapper.PatchApplication)
+	router.GET(options.BaseURL+"/applications/:id/packet_filter", wrapper.GetPacketFilter)
+	router.PATCH(options.BaseURL+"/applications/:id/packet_filter", wrapper.PatchPacketFilter)
 	router.GET(options.BaseURL+"/applications/:id/status", wrapper.GetApplicationStatus)
 	router.GET(options.BaseURL+"/applications/:id/traffics", wrapper.ListApplicationTraffics)
 	router.PUT(options.BaseURL+"/applications/:id/traffics", wrapper.PutApplicationTraffic)

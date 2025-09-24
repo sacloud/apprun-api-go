@@ -978,6 +978,135 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
+
+  /applications/{id}/packet_filter:
+    get:
+      operationId: getPacketFilter
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      tags:
+        - パケットフィルタ
+      summary: パケットフィルタを取得します。
+      description: AppRunのパケットフィルタを取得します。
+      responses:
+        '200':
+          description: パケットフィルタの取得に成功しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handler.getPacketFilter'
+        '400':
+          description: リクエストが不正です。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '401':
+          description: AppRunの認証に失敗しました。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '403':
+          description: AppRunに対する権限がありません。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '404':
+          description: アプリケーションが見つかりませんでした。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+    patch:
+      operationId: patchPacketFilter
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      tags:
+        - パケットフィルタ
+      summary: パケットフィルタを部分的に変更します。
+      description: AppRunのパケットフィルタを部分的に変更します。
+      requestBody:
+        required: true
+        description: 部分的に変更するパケットフィルタの情報を入力します。
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/patchPacketFilter'
+      responses:
+        '200':
+          description: パケットフィルタの変更に成功しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handler.patchPacketFilter'
+        '400':
+          description: リクエストが不正です。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '401':
+          description: AppRunの認証に失敗しました。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '403':
+          description: AppRunに対する権限がありません。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '404':
+          description: アプリケーションが見つかりませんでした。
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/model.defaultError'
+                  - $ref: '#/components/schemas/model.cloudctrlError'
 components:
   schemas:
     handler.listApplications:
@@ -1303,6 +1432,23 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Traffic"
+
+    PacketFilterSetting:
+      type: object
+      required:
+        - from_ip
+        - from_ip_prefix_length
+      properties:
+        from_ip:
+          type: string
+          description: 送信元IPv4アドレス
+          example: 0.0.0.0
+        from_ip_prefix_length:
+          type: integer
+          description: IPv4アドレスprefix長
+          minimum: 0
+          maximum: 32
+          example: 0
     handler.getPacketFilter:
       type: object
       required:
@@ -1317,20 +1463,7 @@ components:
           type: array
           maxItems: 5
           items:
-            required:
-              - from_ip
-              - from_ip_prefix_length
-            properties:
-              from_ip:
-                type: string
-                description: 送信元IPv4アドレス
-                example: 0.0.0.0
-              from_ip_prefix_length:
-                type: integer
-                description: IPv4アドレスprefix長
-                minimum: 0
-                maximum: 32
-                example: 0
+            $ref: "#/components/schemas/PacketFilterSetting"
     handler.patchPacketFilter:
       type: object
       required:
@@ -1345,18 +1478,7 @@ components:
           type: array
           maxItems: 5
           items:
-            required:
-              - from_ip
-              - from_ip_prefix_length
-            properties:
-              from_ip:
-                type: string
-                description: 送信元IPv4アドレス
-                example: 0.0.0.0
-              from_ip_prefix_length:
-                type: integer
-                description: IPv4アドレスprefix長
-                example: 0
+            $ref: "#/components/schemas/PacketFilterSetting"
     Traffic:
          oneOf:
            - $ref: "#/components/schemas/trafficWithLatestVersion"
@@ -1764,18 +1886,7 @@ components:
           type: array
           maxItems: 5
           items:
-            required:
-              - from_ip
-              - from_ip_prefix_length
-            properties:
-              from_ip:
-                type: string
-                description: 送信元IPv4アドレス
-                example: 0.0.0.0
-              from_ip_prefix_length:
-                type: integer
-                description: IPv4アドレスprefix長
-                example: 0
+            $ref: "#/components/schemas/PacketFilterSetting"
     # handler.postApplication, handler.getApplication, handler.patchApplicationの共通化
     Application:
       type: object

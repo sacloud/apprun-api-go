@@ -28,6 +28,7 @@ import (
 	"strings"
 
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -121,6 +122,14 @@ type ClientInterface interface {
 	PatchApplicationWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PatchApplication(ctx context.Context, id string, body PatchApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetPacketFilter request
+	GetPacketFilter(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PatchPacketFilterWithBody request with any body
+	PatchPacketFilterWithBody(ctx context.Context, id openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	PatchPacketFilter(ctx context.Context, id openapi_types.UUID, body PatchPacketFilterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetApplicationStatus request
 	GetApplicationStatus(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -223,6 +232,42 @@ func (c *Client) PatchApplicationWithBody(ctx context.Context, id string, conten
 
 func (c *Client) PatchApplication(ctx context.Context, id string, body PatchApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPatchApplicationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetPacketFilter(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPacketFilterRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchPacketFilterWithBody(ctx context.Context, id openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchPacketFilterRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchPacketFilter(ctx context.Context, id openapi_types.UUID, body PatchPacketFilterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPatchPacketFilterRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -574,6 +619,87 @@ func NewPatchApplicationRequestWithBody(server string, id string, contentType st
 	}
 
 	operationPath := fmt.Sprintf("/applications/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetPacketFilterRequest generates requests for GetPacketFilter
+func NewGetPacketFilterRequest(server string, id openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s/packet_filter", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPatchPacketFilterRequest calls the generic PatchPacketFilter builder with application/json body
+func NewPatchPacketFilterRequest(server string, id openapi_types.UUID, body PatchPacketFilterJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPatchPacketFilterRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewPatchPacketFilterRequestWithBody generates requests for PatchPacketFilter with any type of body
+func NewPatchPacketFilterRequestWithBody(server string, id openapi_types.UUID, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s/packet_filter", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1010,6 +1136,14 @@ type ClientWithResponsesInterface interface {
 
 	PatchApplicationWithResponse(ctx context.Context, id string, body PatchApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchApplicationResponse, error)
 
+	// GetPacketFilter request
+	GetPacketFilterWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPacketFilterResponse, error)
+
+	// PatchPacketFilter request with any body
+	PatchPacketFilterWithBodyWithResponse(ctx context.Context, id openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchPacketFilterResponse, error)
+
+	PatchPacketFilterWithResponse(ctx context.Context, id openapi_types.UUID, body PatchPacketFilterJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchPacketFilterResponse, error)
+
 	// GetApplicationStatus request
 	GetApplicationStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetApplicationStatusResponse, error)
 
@@ -1230,6 +1364,106 @@ func (r PatchApplicationResponse) Result() (*HandlerPatchApplication, error) {
 
 // UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
 func (r PatchApplicationResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
+type GetPacketFilterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HandlerGetPacketFilter
+	JSON400      *struct {
+		union json.RawMessage
+	}
+	JSON401 *struct {
+		union json.RawMessage
+	}
+	JSON403 *struct {
+		union json.RawMessage
+	}
+	JSON404 *struct {
+		union json.RawMessage
+	}
+	JSON500 *struct {
+		union json.RawMessage
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPacketFilterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPacketFilterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r GetPacketFilterResponse) Result() (*HandlerGetPacketFilter, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r GetPacketFilterResponse) UndefinedError() error {
+	if !isOKStatus(r.HTTPResponse.StatusCode) {
+		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
+	}
+	return nil
+}
+
+type PatchPacketFilterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HandlerPatchPacketFilter
+	JSON400      *struct {
+		union json.RawMessage
+	}
+	JSON401 *struct {
+		union json.RawMessage
+	}
+	JSON403 *struct {
+		union json.RawMessage
+	}
+	JSON404 *struct {
+		union json.RawMessage
+	}
+	JSON500 *struct {
+		union json.RawMessage
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r PatchPacketFilterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PatchPacketFilterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// Result JSON200の結果、もしくは発生したエラーのいずれかを返す
+func (r PatchPacketFilterResponse) Result() (*HandlerPatchPacketFilter, error) {
+	return r.JSON200, eCoalesce(r.JSON400, r.JSON401, r.JSON403, r.JSON404, r.JSON500, r.UndefinedError())
+}
+
+// UndefinedError API定義で未定義なエラーステータスコードを受け取った場合にエラーを返す
+func (r PatchPacketFilterResponse) UndefinedError() error {
 	if !isOKStatus(r.HTTPResponse.StatusCode) {
 		return fmt.Errorf("unknown error: code:%d, body:%s", r.HTTPResponse.StatusCode, string(r.Body))
 	}
@@ -1612,6 +1846,32 @@ func (c *ClientWithResponses) PatchApplicationWithResponse(ctx context.Context, 
 	return ParsePatchApplicationResponse(rsp)
 }
 
+// GetPacketFilterWithResponse request returning *GetPacketFilterResponse
+func (c *ClientWithResponses) GetPacketFilterWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPacketFilterResponse, error) {
+	rsp, err := c.GetPacketFilter(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetPacketFilterResponse(rsp)
+}
+
+// PatchPacketFilterWithBodyWithResponse request with arbitrary body returning *PatchPacketFilterResponse
+func (c *ClientWithResponses) PatchPacketFilterWithBodyWithResponse(ctx context.Context, id openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchPacketFilterResponse, error) {
+	rsp, err := c.PatchPacketFilterWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchPacketFilterResponse(rsp)
+}
+
+func (c *ClientWithResponses) PatchPacketFilterWithResponse(ctx context.Context, id openapi_types.UUID, body PatchPacketFilterJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchPacketFilterResponse, error) {
+	rsp, err := c.PatchPacketFilter(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePatchPacketFilterResponse(rsp)
+}
+
 // GetApplicationStatusWithResponse request returning *GetApplicationStatusResponse
 func (c *ClientWithResponses) GetApplicationStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetApplicationStatusResponse, error) {
 	rsp, err := c.GetApplicationStatus(ctx, id, reqEditors...)
@@ -1980,6 +2240,148 @@ func ParsePatchApplicationResponse(rsp *http.Response) (*PatchApplicationRespons
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest ModelAppRunError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetPacketFilterResponse parses an HTTP response from a GetPacketFilterWithResponse call
+func ParseGetPacketFilterResponse(rsp *http.Response) (*GetPacketFilterResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetPacketFilterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HandlerGetPacketFilter
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePatchPacketFilterResponse parses an HTTP response from a PatchPacketFilterWithResponse call
+func ParsePatchPacketFilterResponse(rsp *http.Response) (*PatchPacketFilterResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PatchPacketFilterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HandlerPatchPacketFilter
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest struct {
+			union json.RawMessage
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest struct {
+			union json.RawMessage
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
