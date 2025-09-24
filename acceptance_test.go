@@ -253,38 +253,51 @@ func TestTrafficAPI(t *testing.T) {
 	v0Percent := 90
 
 	v1Name := versions.Data[1].Name
-	v1IsLatestVersion := false
 	v1Percent := 10
 
-	_, err := trafficOp.Update(ctx, application.Id, &[]v1.Traffic{
-		{
-			IsLatestVersion: v0IsLatestVersion,
-			Percent:         v0Percent,
-		},
-		{
-			VersionName:     v1Name,
-			IsLatestVersion: v1IsLatestVersion,
-			Percent:         v1Percent,
-		},
-	})
+	traffic1 := &v1.Traffic{}
+	traffic2 := &v1.Traffic{}
+
+	if err := traffic1.FromTrafficWithLatestVersion(v1.TrafficWithLatestVersion{
+		IsLatestVersion: v0IsLatestVersion,
+		Percent:         v0Percent,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := traffic2.FromTrafficWithVersionName(v1.TrafficWithVersionName{
+		VersionName: v1Name,
+		Percent:     v1Percent,
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := trafficOp.Update(ctx, application.Id, &[]v1.Traffic{*traffic1, *traffic2})
 	require.NoError(t, err)
 
 	// List Application Traffic
-	blankName := ""
 	traffics, err := trafficOp.List(ctx, application.Id)
 	require.NoError(t, err)
-	require.Equal(t, traffics.Data, []v1.Traffic{
-		{
-			VersionName:     blankName,
-			IsLatestVersion: v0IsLatestVersion,
-			Percent:         v0Percent,
-		},
-		{
-			VersionName:     v1Name,
-			IsLatestVersion: v1IsLatestVersion,
-			Percent:         v1Percent,
-		},
-	})
+
+	gotv1, err := traffics.Data[0].AsTrafficWithLatestVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotv2, err := traffics.Data[1].AsTrafficWithVersionName()
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantv1, err := traffic1.AsTrafficWithLatestVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantv2, err := traffic2.AsTrafficWithVersionName()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.Equal(t, len(traffics.Data), 2)
+	require.Equal(t, gotv1, wantv1)
+	require.Equal(t, gotv2, wantv2)
 
 	// Delete Application
 	appOp.Delete(ctx, application.Id)

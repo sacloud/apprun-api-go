@@ -40,7 +40,6 @@ func TestEngine_Traffic(t *testing.T) {
 			"meta": null,
 			"data": [
 				{
-					"version_name": "",
 					"is_latest_version": true,
 					"percent": 100
 				}
@@ -66,16 +65,23 @@ func TestEngine_Traffic(t *testing.T) {
 		isLatestVersion := true
 		latestPercent := 20
 		previousVersionPercent := 100 - latestPercent
-		tb := v1.PutTrafficsBody{
-			v1.Traffic{
-				IsLatestVersion: isLatestVersion,
-				Percent:         latestPercent,
-			},
-			v1.Traffic{
-				VersionName: previousVersionName,
-				Percent:     previousVersionPercent,
-			},
+
+		latestVersionTraffic := &v1.Traffic{}
+		if err := latestVersionTraffic.FromTrafficWithLatestVersion(v1.TrafficWithLatestVersion{
+			IsLatestVersion: isLatestVersion,
+			Percent:         latestPercent,
+		}); err != nil {
+			t.Fatal(err)
 		}
+		withVersionNameTraffic := &v1.Traffic{}
+		if err := withVersionNameTraffic.FromTrafficWithVersionName(v1.TrafficWithVersionName{
+			VersionName: previousVersionName,
+			Percent:     previousVersionPercent,
+		}); err != nil {
+			t.Fatal(err)
+		}
+
+		tb := v1.PutTrafficsBody{*latestVersionTraffic, *withVersionNameTraffic}
 
 		resp, err := engine.UpdateTraffic(createdApp.Id, &tb)
 		require.NoError(t, err)
@@ -88,13 +94,11 @@ func TestEngine_Traffic(t *testing.T) {
 			"meta": null,
 			"data": [
 				{
-					"version_name": "",
 					"is_latest_version": true,
 					"percent": 20
 				},
 				{
 					"version_name": "` + previousVersionName + `",
-					"is_latest_version": false,
 					"percent": 80
 				}
 			]
