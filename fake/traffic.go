@@ -45,17 +45,24 @@ func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1
 	var data []v1.Traffic
 	total := 0
 	for _, v := range *body {
-		total += v.Percent
+		withVersion, _ := v.AsTrafficWithVersionName()
+		withLatest, _ := v.AsTrafficWithLatestVersion()
 
-		// vを明示的にコピーして新しいメモリを確保する
-		// Go 1.22以降明示的に行う必要がなくなる
-		t := v1.Traffic{
-			IsLatestVersion: v.IsLatestVersion,
-			Percent:         v.Percent,
-			VersionName:     v.VersionName,
+		tr := &v1.Traffic{}
+		if withVersion.VersionName != "" && withVersion.Percent > 0 {
+			total += withVersion.Percent
+			if err := tr.FromTrafficWithVersionName(withVersion); err != nil {
+				return nil, err
+			}
+		} else {
+			total += withLatest.Percent
+			if err := tr.FromTrafficWithLatestVersion(withLatest); err != nil {
+				return nil, err
+			}
 		}
-		ts = append(ts, &t)
-		data = append(data, t)
+
+		ts = append(ts, tr)
+		data = append(data, *tr)
 	}
 
 	if total != 100 {
@@ -73,14 +80,14 @@ func (engine *Engine) UpdateTraffic(appId string, body *v1.PutTrafficsBody) (*v1
 }
 
 func (engine *Engine) initTraffic(app *v1.Application) {
-	isLatestVersion := true
-	percent := 100
-	versionName := ""
+	withLatest := &v1.Traffic{}
+	if err := withLatest.FromTrafficWithLatestVersion(v1.TrafficWithLatestVersion{
+		IsLatestVersion: true,
+		Percent:         100,
+	}); err != nil {
+		panic(err)
+	}
 
 	// 内部的にTrafficとApplicationのリレーションを保持する
-	engine.Traffics[app.Id] = append(engine.Traffics[app.Id], &v1.Traffic{
-		IsLatestVersion: isLatestVersion,
-		Percent:         percent,
-		VersionName:     versionName,
-	})
+	engine.Traffics[app.Id] = append(engine.Traffics[app.Id], withLatest)
 }

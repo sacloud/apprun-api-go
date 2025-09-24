@@ -1304,23 +1304,35 @@ components:
           items:
             $ref: "#/components/schemas/Traffic"
     Traffic:
+         oneOf:
+           - $ref: "#/components/schemas/trafficWithLatestVersion"
+           - $ref: "#/components/schemas/trafficWithVersionName"
+    trafficWithLatestVersion:
       type: object
       required:
-        - version_name
         - is_latest_version
         - percent
       properties:
-        version_name:
-          description: バージョン名
-          type: string
-          example: Version1
         is_latest_version:
           description: 最新バージョンかどうか
           type: boolean
         percent:
           description: トラフィック分散の割合
           type: integer
-          example: 100
+    trafficWithVersionName:
+      type: object
+      required:
+        - version_name
+        - percent
+      properties:
+        version_name:
+          description: バージョン名
+          type: string
+          example: Version1
+        percent:
+          description: トラフィック分散の割合
+          type: integer
+
     postApplicationBody:
       type: object
       required:

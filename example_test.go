@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sacloud/apprun-api-go"
+	apprun "github.com/sacloud/apprun-api-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
@@ -240,20 +240,25 @@ func Example_trafficAPI() {
 	v0Percent := 90
 
 	v1Name := versions.Data[1].Name
-	v1IsLatestVersion := false
 	v1Percent := 10
 
-	_, err = trafficOp.Update(ctx, application.Id, &[]v1.Traffic{
-		{
-			IsLatestVersion: v0IsLatestVersion,
-			Percent:         v0Percent,
-		},
-		{
-			VersionName:     v1Name,
-			IsLatestVersion: v1IsLatestVersion,
-			Percent:         v1Percent,
-		},
-	})
+	v0tr := &v1.Traffic{}
+	if err := v0tr.FromTrafficWithLatestVersion(v1.TrafficWithLatestVersion{
+		IsLatestVersion: v0IsLatestVersion,
+		Percent:         v0Percent,
+	}); err != nil {
+		panic(err)
+	}
+
+	v1tr := &v1.Traffic{}
+	if err := v1tr.FromTrafficWithVersionName(v1.TrafficWithVersionName{
+		VersionName: v1Name,
+		Percent:     v1Percent,
+	}); err != nil {
+		panic(err)
+	}
+
+	_, err = trafficOp.Update(ctx, application.Id, &[]v1.Traffic{*v0tr, *v1tr})
 	if err != nil {
 		panic(err)
 	}
@@ -265,8 +270,10 @@ func Example_trafficAPI() {
 	}
 
 	for _, data := range traffics.Data {
-		if data.IsLatestVersion == true {
-			fmt.Printf("is_latest_version: %t, percent: %d", data.IsLatestVersion, data.Percent)
+		withLatest, _ := data.AsTrafficWithLatestVersion()
+
+		if withLatest.IsLatestVersion == true {
+			fmt.Printf("is_latest_version: %t, percent: %d", withLatest.IsLatestVersion, withLatest.Percent)
 		}
 	}
 	// output:

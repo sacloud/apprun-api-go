@@ -180,14 +180,7 @@ type ApplicationStatus string
 
 // Traffic defines model for Traffic.
 type Traffic struct {
-	// IsLatestVersion 最新バージョンかどうか
-	IsLatestVersion bool `json:"is_latest_version"`
-
-	// Percent トラフィック分散の割合
-	Percent int `json:"percent"`
-
-	// VersionName バージョン名
-	VersionName string `json:"version_name"`
+	union json.RawMessage
 }
 
 // Version defines model for Version.
@@ -687,6 +680,24 @@ type PostApplicationBodyComponentProbeHttpGetHeader struct {
 // PutTrafficsBody defines model for putTrafficsBody.
 type PutTrafficsBody = []Traffic
 
+// TrafficWithLatestVersion defines model for trafficWithLatestVersion.
+type TrafficWithLatestVersion struct {
+	// IsLatestVersion 最新バージョンかどうか
+	IsLatestVersion bool `json:"is_latest_version"`
+
+	// Percent トラフィック分散の割合
+	Percent int `json:"percent"`
+}
+
+// TrafficWithVersionName defines model for trafficWithVersionName.
+type TrafficWithVersionName struct {
+	// Percent トラフィック分散の割合
+	Percent int `json:"percent"`
+
+	// VersionName バージョン名
+	VersionName string `json:"version_name"`
+}
+
 // ListApplicationsParams defines parameters for ListApplications.
 type ListApplicationsParams struct {
 	// PageNum 表示したいページ番号
@@ -731,6 +742,68 @@ type PatchApplicationJSONRequestBody = PatchApplicationBody
 
 // PutApplicationTrafficJSONRequestBody defines body for PutApplicationTraffic for application/json ContentType.
 type PutApplicationTrafficJSONRequestBody = PutTrafficsBody
+
+// AsTrafficWithLatestVersion returns the union data inside the Traffic as a TrafficWithLatestVersion
+func (t Traffic) AsTrafficWithLatestVersion() (TrafficWithLatestVersion, error) {
+	var body TrafficWithLatestVersion
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrafficWithLatestVersion overwrites any union data inside the Traffic as the provided TrafficWithLatestVersion
+func (t *Traffic) FromTrafficWithLatestVersion(v TrafficWithLatestVersion) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrafficWithLatestVersion performs a merge with any union data inside the Traffic, using the provided TrafficWithLatestVersion
+func (t *Traffic) MergeTrafficWithLatestVersion(v TrafficWithLatestVersion) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsTrafficWithVersionName returns the union data inside the Traffic as a TrafficWithVersionName
+func (t Traffic) AsTrafficWithVersionName() (TrafficWithVersionName, error) {
+	var body TrafficWithVersionName
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrafficWithVersionName overwrites any union data inside the Traffic as the provided TrafficWithVersionName
+func (t *Traffic) FromTrafficWithVersionName(v TrafficWithVersionName) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrafficWithVersionName performs a merge with any union data inside the Traffic, using the provided TrafficWithVersionName
+func (t *Traffic) MergeTrafficWithVersionName(v TrafficWithVersionName) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t Traffic) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *Traffic) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
 
 // AsModelDefaultError returns the union data inside the ModelAppRunError as a ModelDefaultError
 func (t ModelAppRunError) AsModelDefaultError() (ModelDefaultError, error) {
