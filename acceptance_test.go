@@ -123,6 +123,80 @@ func TestApplicationAPI(t *testing.T) {
 	require.NoError(t, err)
 }
 
+// TestPacketFilterAPI アプリケーションのパケットフィルタの一連の操作テスト
+// 以下のシナリオでテストを行う
+//   - アプリケーションを作成
+//   - パケットフィルタの作成
+//   - パケットフィルタの取得
+//   - アプリケーションを削除
+func TestPacketFilterAPI(t *testing.T) {
+	skipIfNoAPIKey(t)
+
+	if err := cleanupTestApplication(); err != nil {
+		t.Fatal(err)
+	}
+
+	ctx := context.Background()
+	appOp := apprun.NewApplicationOp(client)
+	pfOp := apprun.NewPacketFilterOp(client)
+
+	// Application Create
+	application, _ := appOp.Create(ctx, &v1.PostApplicationBody{
+		Name:           appName,
+		TimeoutSeconds: 100,
+		Port:           80,
+		MinScale:       0,
+		MaxScale:       1,
+		Components: []v1.PostApplicationBodyComponent{
+			{
+				Name:      "component1",
+				MaxCpu:    "0.1",
+				MaxMemory: "256Mi",
+
+				DeploySource: v1.PostApplicationBodyComponentDeploySource{
+					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
+						Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
+					},
+				},
+				Probe: &v1.PostApplicationBodyComponentProbe{
+					HttpGet: &v1.PostApplicationBodyComponentProbeHttpGet{
+						Path: "/",
+						Port: 80,
+					},
+				},
+			},
+		},
+	})
+
+	// Update PacketFilter
+	enabled := true
+	settings := []v1.PacketFilterSetting{
+		{
+			FromIp:             "192.0.2.0",
+			FromIpPrefixLength: 24,
+		},
+	}
+	updated, err := pfOp.Update(ctx, application.Id, &v1.PatchPacketFilter{
+		IsEnabled: &enabled,
+		Settings:  &settings,
+	})
+	require.NoError(t, err)
+	require.Equal(t, updated.IsEnabled, true)
+	require.Equal(t, len(updated.Settings), 1)
+	require.Equal(t, (updated.Settings)[0].FromIp, "192.0.2.0")
+	require.Equal(t, (updated.Settings)[0].FromIpPrefixLength, 24)
+
+	read, err := pfOp.Read(ctx, application.Id)
+	require.NoError(t, err)
+	require.Equal(t, read.IsEnabled, true)
+	require.Equal(t, len(read.Settings), 1)
+	require.Equal(t, (read.Settings)[0].FromIp, "192.0.2.0")
+	require.Equal(t, (read.Settings)[0].FromIpPrefixLength, 24)
+
+	// Delete Application
+	appOp.Delete(ctx, application.Id)
+}
+
 // TestVersionAPI アプリケーションバージョンの一連の操作テスト
 // 以下のシナリオでテストを行う
 //   - アプリケーションを作成
