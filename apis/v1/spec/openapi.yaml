@@ -292,25 +292,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: AppRunにユーザーが存在しません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     post:
       operationId: postUser
       tags:
@@ -324,25 +324,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: AppRunにユーザーがすでに存在します。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications:
     get:
       operationId: listApplications
@@ -401,25 +401,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     post:
       operationId: postApplication
       tags:
@@ -445,31 +445,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}:
     get:
       operationId: getApplication
@@ -495,31 +495,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     patch:
       operationId: patchApplication
       parameters:
@@ -551,37 +551,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     delete:
       operationId: deleteApplication
       parameters:
@@ -602,31 +602,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/status:
     get:
       operationId: getApplicationStatus
@@ -652,31 +652,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/traffics:
     get:
       operationId: listApplicationTraffics
@@ -702,31 +702,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     put:
       operationId: putApplicationTraffic
       parameters:
@@ -760,31 +760,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/versions:
     get:
       operationId: listApplicationVersions
@@ -848,31 +848,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/versions/{version_id}:
     get:
       operationId: getApplicationVersion
@@ -903,31 +903,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
     delete:
       operationId: deleteApplicationVersion
       parameters:
@@ -953,31 +953,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRunの認証に失敗しました。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRunに対する権限がありません。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model.defaultError'
+                $ref: '#/components/schemas/model.appRunError'
 components:
   schemas:
     handler.listApplications:
@@ -1862,7 +1862,34 @@ components:
           description: ヘッダーフィールド値
           type: string
           example: Awesome
-
+    model.appRunError:
+      oneOf:
+        - $ref: '#/components/schemas/model.defaultError'
+        - $ref: '#/components/schemas/model.cloudctrlError'
+    model.cloudctrlError:
+      type: object
+      required:
+        - is_fatal
+        - serial
+        - status
+        - error_code
+        - error_msg
+      properties:
+        is_fatal:
+          type: boolean
+          example: true
+        serial:
+          type: string
+          example: abcdefghijklmnopqrstuvwxyz0123456789
+        status:
+          type: string
+          example: 403 Forbidden
+        error_code:
+          type: string
+          example: access_no_permission
+        error_msg:
+          type: string
+          example: 要求された操作は許可されていません。このユーザに設定されたアクセス権限により、このゾーンまたは機能へのアクセスは禁止されています。
     model.defaultError:
       type: object
       required:
