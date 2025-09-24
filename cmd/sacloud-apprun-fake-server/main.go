@@ -90,7 +90,7 @@ func startServer(addr, dataFile string) error {
 	fakeData := defaultData
 
 	if dataFile != "" {
-		data, err := os.ReadFile(dataFile)
+		data, err := os.ReadFile(dataFile) //nolint:gosec
 		if err != nil {
 			return err
 		}
@@ -112,7 +112,7 @@ func startServer(addr, dataFile string) error {
 	if err != nil {
 		return err
 	}
-	defer listener.Close()
+	defer listener.Close() //nolint:errcheck
 
 	return httpServer.Serve(listener)
 }
