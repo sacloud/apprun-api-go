@@ -17,7 +17,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
@@ -28,10 +27,9 @@ var (
 	versionDefaultSortOrder = v1.ListApplicationVersionsParamsSortOrderDesc
 )
 
-// アプリケーションバージョン一覧を取得します。
+// ListApplicationVersions returns versions for application
 // (GET /applications/{id}/versions)
-func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.ListApplicationVersionsParams) {
-	// クエリパラメーターのデフォルト値のセット
+func (s *Server) ListApplicationVersions(w http.ResponseWriter, r *http.Request, id string, params v1.ListApplicationVersionsParams) {
 	if params.PageNum == nil {
 		params.PageNum = &versionDefaultPageNum
 	}
@@ -47,32 +45,32 @@ func (s *Server) ListApplicationVersions(c *gin.Context, id string, params v1.Li
 
 	versions, err := s.Engine.ListVersions(id, params)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, versions)
+	writeJSON(w, http.StatusOK, versions)
 }
 
-// アプリケーションバージョン詳細を取得します。
+// GetApplicationVersion returns a specific version
 // (GET /applications/{id}/versions/{version_id})
-func (s *Server) GetApplicationVersion(c *gin.Context, id string, versionId string) {
+func (s *Server) GetApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string) {
 	v, err := s.Engine.ReadVersion(id, versionId)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, v)
+	writeJSON(w, http.StatusOK, v)
 }
 
-// アプリケーションバージョンを削除します。
+// DeleteApplicationVersion deletes a version
 // (DELETE /applications/{id}/versions/{version_id})
-func (s *Server) DeleteApplicationVersion(c *gin.Context, id string, versionId string) {
+func (s *Server) DeleteApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string) {
 	if err := s.Engine.DeleteVersion(id, versionId); err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	w.WriteHeader(http.StatusNoContent)
 }

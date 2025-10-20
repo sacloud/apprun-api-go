@@ -15,10 +15,10 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 	"github.com/sacloud/apprun-api-go/fake"
 )
@@ -29,21 +29,39 @@ type Server struct {
 	Engine *fake.Engine
 }
 
+// Handler returns an http.Handler built from the generated server wrapper.
+// It wires simple recovery and optional logging middlewares based on env vars.
 func (s *Server) Handler() http.Handler {
-	gin.SetMode(gin.ReleaseMode)
-	if os.Getenv("APPRUN_SERVER_DEBUG") != "" {
-		gin.SetMode(gin.DebugMode)
-	}
+	var middlewares []v1.MiddlewareFunc
 
-	engine := gin.New()
-	engine.Use(gin.Recovery())
-	if os.Getenv("APPRUN_SERVER_LOGGING") != "" {
-		engine.Use(gin.Logger())
-	}
-
-	engine.GET("/ping", func(c *gin.Context) {
-		c.String(200, "pong")
+	// recovery middleware
+	middlewares = append(middlewares, func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				if rec := recover(); rec != nil {
+					http.Error(w, "internal server error", http.StatusInternalServerError)
+				}
+			}()
+			next.ServeHTTP(w, r)
+		})
 	})
-	v1.RegisterHandlers(engine, s)
-	return engine
+
+	// optional logging middleware
+	if os.Getenv("APPRUN_SERVER_LOGGING") != "" {
+		middlewares = append(middlewares, func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				log.Printf("%s %s %s", r.RemoteAddr, r.Method, r.URL.Path)
+				next.ServeHTTP(w, r)
+			})
+		})
+	}
+
+	// create base mux so we can register non-API endpoints like /ping
+	m := http.NewServeMux()
+	m.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("pong"))
+	})
+
+	return v1.HandlerWithOptions(s, v1.StdHTTPServerOptions{Middlewares: middlewares, BaseRouter: m})
 }

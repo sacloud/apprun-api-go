@@ -16,28 +16,26 @@ package server
 
 import (
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
-// GetUser ユーザー情報の取得
+// GetUser returns user information
 // (GET /user)
-func (s *Server) GetUser(c *gin.Context) {
+func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	if err := s.Engine.GetUser(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.Status(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 }
 
-// PostUser ユーザーの作成
+// PostUser creates a user
 // (POST /user)
-func (s *Server) PostUser(c *gin.Context) {
+func (s *Server) PostUser(w http.ResponseWriter, r *http.Request) {
 	if err := s.Engine.CreateUser(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.Status(http.StatusCreated)
+	w.WriteHeader(http.StatusCreated)
 }

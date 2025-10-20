@@ -15,39 +15,39 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
-// パケットフィルタを取得します。
+// GetPacketFilter returns packet filter
 // (GET /applications/{id}/packet_filter)
-func (s *Server) GetPacketFilter(c *gin.Context, id openapi_types.UUID) {
+func (s *Server) GetPacketFilter(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
 	pf, err := s.Engine.ReadPacketFilter(id.String())
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, pf)
+	writeJSON(w, http.StatusOK, pf)
 }
 
-// パケットフィルタを部分的に変更します。
+// PatchPacketFilter partially updates packet filter
 // (PATCH /applications/{id}/packet_filter)
-func (s *Server) PatchPacketFilter(c *gin.Context, id openapi_types.UUID) {
+func (s *Server) PatchPacketFilter(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
 	paramJSON := &v1.PatchPacketFilter{}
-	if err := c.ShouldBindJSON(paramJSON); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := json.NewDecoder(r.Body).Decode(paramJSON); err != nil {
+		writeError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	ut, err := s.Engine.UpdatePacketFilter(id.String(), paramJSON)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, &ut)
+	writeJSON(w, http.StatusOK, &ut)
 }

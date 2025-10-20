@@ -1,16 +1,4 @@
-// Copyright 2021-2024 The sacloud/apprun-api-go authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//go:build go1.22
 
 // Package v1 provides primitives to interact with the openapi HTTP API.
 //
@@ -21,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
@@ -30,62 +17,62 @@ import (
 type ServerInterface interface {
 	// アプリケーション一覧を取得します。
 	// (GET /applications)
-	ListApplications(c *gin.Context, params ListApplicationsParams)
+	ListApplications(w http.ResponseWriter, r *http.Request, params ListApplicationsParams)
 	// アプリケーションを作成します。
 	// (POST /applications)
-	PostApplication(c *gin.Context)
+	PostApplication(w http.ResponseWriter, r *http.Request)
 	// アプリケーションを削除します。
 	// (DELETE /applications/{id})
-	DeleteApplication(c *gin.Context, id string)
+	DeleteApplication(w http.ResponseWriter, r *http.Request, id string)
 	// アプリケーション詳細を取得します。
 	// (GET /applications/{id})
-	GetApplication(c *gin.Context, id string)
+	GetApplication(w http.ResponseWriter, r *http.Request, id string)
 	// アプリケーションを部分的に変更します。
 	// (PATCH /applications/{id})
-	PatchApplication(c *gin.Context, id string)
+	PatchApplication(w http.ResponseWriter, r *http.Request, id string)
 	// パケットフィルタを取得します。
 	// (GET /applications/{id}/packet_filter)
-	GetPacketFilter(c *gin.Context, id openapi_types.UUID)
+	GetPacketFilter(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// パケットフィルタを部分的に変更します。
 	// (PATCH /applications/{id}/packet_filter)
-	PatchPacketFilter(c *gin.Context, id openapi_types.UUID)
+	PatchPacketFilter(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// アプリケーションステータスを取得します。
 	// (GET /applications/{id}/status)
-	GetApplicationStatus(c *gin.Context, id string)
+	GetApplicationStatus(w http.ResponseWriter, r *http.Request, id string)
 	// アプリケーショントラフィック分散を取得します。
 	// (GET /applications/{id}/traffics)
-	ListApplicationTraffics(c *gin.Context, id string)
+	ListApplicationTraffics(w http.ResponseWriter, r *http.Request, id string)
 	// アプリケーショントラフィック分散を変更します。
 	// (PUT /applications/{id}/traffics)
-	PutApplicationTraffic(c *gin.Context, id string)
+	PutApplicationTraffic(w http.ResponseWriter, r *http.Request, id string)
 	// アプリケーションバージョン一覧を取得します。
 	// (GET /applications/{id}/versions)
-	ListApplicationVersions(c *gin.Context, id string, params ListApplicationVersionsParams)
+	ListApplicationVersions(w http.ResponseWriter, r *http.Request, id string, params ListApplicationVersionsParams)
 	// アプリケーションバージョンを削除します。
 	// (DELETE /applications/{id}/versions/{version_id})
-	DeleteApplicationVersion(c *gin.Context, id string, versionId string)
+	DeleteApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string)
 	// アプリケーションバージョン詳細を取得します。
 	// (GET /applications/{id}/versions/{version_id})
-	GetApplicationVersion(c *gin.Context, id string, versionId string)
+	GetApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string)
 
 	// (GET /user)
-	GetUser(c *gin.Context)
+	GetUser(w http.ResponseWriter, r *http.Request)
 
 	// (POST /user)
-	PostUser(c *gin.Context)
+	PostUser(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler            ServerInterface
 	HandlerMiddlewares []MiddlewareFunc
-	ErrorHandler       func(*gin.Context, error, int)
+	ErrorHandlerFunc   func(w http.ResponseWriter, r *http.Request, err error)
 }
 
-type MiddlewareFunc func(c *gin.Context)
+type MiddlewareFunc func(http.Handler) http.Handler
 
 // ListApplications operation middleware
-func (siw *ServerInterfaceWrapper) ListApplications(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) ListApplications(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -94,262 +81,272 @@ func (siw *ServerInterfaceWrapper) ListApplications(c *gin.Context) {
 
 	// ------------- Optional query parameter "page_num" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page_num", c.Request.URL.Query(), &params.PageNum)
+	err = runtime.BindQueryParameter("form", true, false, "page_num", r.URL.Query(), &params.PageNum)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page_num: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_num", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "page_size" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page_size", c.Request.URL.Query(), &params.PageSize)
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page_size: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "sort_field" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "sort_field", c.Request.URL.Query(), &params.SortField)
+	err = runtime.BindQueryParameter("form", true, false, "sort_field", r.URL.Query(), &params.SortField)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort_field: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sort_field", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "sort_order" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "sort_order", c.Request.URL.Query(), &params.SortOrder)
+	err = runtime.BindQueryParameter("form", true, false, "sort_order", r.URL.Query(), &params.SortOrder)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort_order: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sort_order", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListApplications(w, r, params)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.ListApplications(c, params)
+	handler.ServeHTTP(w, r)
 }
 
 // PostApplication operation middleware
-func (siw *ServerInterfaceWrapper) PostApplication(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) PostApplication(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostApplication(w, r)
+	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.PostApplication(c)
+	handler.ServeHTTP(w, r)
 }
 
 // DeleteApplication operation middleware
-func (siw *ServerInterfaceWrapper) DeleteApplication(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) DeleteApplication(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteApplication(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.DeleteApplication(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // GetApplication operation middleware
-func (siw *ServerInterfaceWrapper) GetApplication(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) GetApplication(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetApplication(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.GetApplication(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // PatchApplication operation middleware
-func (siw *ServerInterfaceWrapper) PatchApplication(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) PatchApplication(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PatchApplication(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.PatchApplication(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // GetPacketFilter operation middleware
-func (siw *ServerInterfaceWrapper) GetPacketFilter(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) GetPacketFilter(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id openapi_types.UUID
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPacketFilter(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.GetPacketFilter(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // PatchPacketFilter operation middleware
-func (siw *ServerInterfaceWrapper) PatchPacketFilter(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) PatchPacketFilter(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id openapi_types.UUID
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PatchPacketFilter(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.PatchPacketFilter(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // GetApplicationStatus operation middleware
-func (siw *ServerInterfaceWrapper) GetApplicationStatus(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) GetApplicationStatus(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetApplicationStatus(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.GetApplicationStatus(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // ListApplicationTraffics operation middleware
-func (siw *ServerInterfaceWrapper) ListApplicationTraffics(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) ListApplicationTraffics(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListApplicationTraffics(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.ListApplicationTraffics(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // PutApplicationTraffic operation middleware
-func (siw *ServerInterfaceWrapper) PutApplicationTraffic(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) PutApplicationTraffic(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutApplicationTraffic(w, r, id)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.PutApplicationTraffic(c, id)
+	handler.ServeHTTP(w, r)
 }
 
 // ListApplicationVersions operation middleware
-func (siw *ServerInterfaceWrapper) ListApplicationVersions(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) ListApplicationVersions(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
@@ -358,178 +355,278 @@ func (siw *ServerInterfaceWrapper) ListApplicationVersions(c *gin.Context) {
 
 	// ------------- Optional query parameter "page_num" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page_num", c.Request.URL.Query(), &params.PageNum)
+	err = runtime.BindQueryParameter("form", true, false, "page_num", r.URL.Query(), &params.PageNum)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page_num: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_num", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "page_size" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "page_size", c.Request.URL.Query(), &params.PageSize)
+	err = runtime.BindQueryParameter("form", true, false, "page_size", r.URL.Query(), &params.PageSize)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page_size: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page_size", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "sort_field" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "sort_field", c.Request.URL.Query(), &params.SortField)
+	err = runtime.BindQueryParameter("form", true, false, "sort_field", r.URL.Query(), &params.SortField)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort_field: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sort_field", Err: err})
 		return
 	}
 
 	// ------------- Optional query parameter "sort_order" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "sort_order", c.Request.URL.Query(), &params.SortOrder)
+	err = runtime.BindQueryParameter("form", true, false, "sort_order", r.URL.Query(), &params.SortOrder)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort_order: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sort_order", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListApplicationVersions(w, r, id, params)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.ListApplicationVersions(c, id, params)
+	handler.ServeHTTP(w, r)
 }
 
 // DeleteApplicationVersion operation middleware
-func (siw *ServerInterfaceWrapper) DeleteApplicationVersion(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) DeleteApplicationVersion(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
 	// ------------- Path parameter "version_id" -------------
 	var versionId string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "version_id", c.Param("version_id"), &versionId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "version_id", r.PathValue("version_id"), &versionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter version_id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "version_id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteApplicationVersion(w, r, id, versionId)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.DeleteApplicationVersion(c, id, versionId)
+	handler.ServeHTTP(w, r)
 }
 
 // GetApplicationVersion operation middleware
-func (siw *ServerInterfaceWrapper) GetApplicationVersion(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) GetApplicationVersion(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// ------------- Path parameter "id" -------------
 	var id string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
 	// ------------- Path parameter "version_id" -------------
 	var versionId string
 
-	err = runtime.BindStyledParameterWithOptions("simple", "version_id", c.Param("version_id"), &versionId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "version_id", r.PathValue("version_id"), &versionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter version_id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "version_id", Err: err})
 		return
 	}
 
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetApplicationVersion(w, r, id, versionId)
+	}))
+
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.GetApplicationVersion(c, id, versionId)
+	handler.ServeHTTP(w, r)
 }
 
 // GetUser operation middleware
-func (siw *ServerInterfaceWrapper) GetUser(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) GetUser(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetUser(w, r)
+	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.GetUser(c)
+	handler.ServeHTTP(w, r)
 }
 
 // PostUser operation middleware
-func (siw *ServerInterfaceWrapper) PostUser(c *gin.Context) {
+func (siw *ServerInterfaceWrapper) PostUser(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUser(w, r)
+	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
+		handler = middleware(handler)
 	}
 
-	siw.Handler.PostUser(c)
+	handler.ServeHTTP(w, r)
 }
 
-// GinServerOptions provides options for the Gin server.
-type GinServerOptions struct {
-	BaseURL      string
-	Middlewares  []MiddlewareFunc
-	ErrorHandler func(*gin.Context, error, int)
+type UnescapedCookieParamError struct {
+	ParamName string
+	Err       error
 }
 
-// RegisterHandlers creates http.Handler with routing matching OpenAPI spec.
-func RegisterHandlers(router gin.IRouter, si ServerInterface) {
-	RegisterHandlersWithOptions(router, si, GinServerOptions{})
+func (e *UnescapedCookieParamError) Error() string {
+	return fmt.Sprintf("error unescaping cookie parameter '%s'", e.ParamName)
 }
 
-// RegisterHandlersWithOptions creates http.Handler with additional options
-func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options GinServerOptions) {
-	errorHandler := options.ErrorHandler
-	if errorHandler == nil {
-		errorHandler = func(c *gin.Context, err error, statusCode int) {
-			c.JSON(statusCode, gin.H{"msg": err.Error()})
+func (e *UnescapedCookieParamError) Unwrap() error {
+	return e.Err
+}
+
+type UnmarshalingParamError struct {
+	ParamName string
+	Err       error
+}
+
+func (e *UnmarshalingParamError) Error() string {
+	return fmt.Sprintf("Error unmarshaling parameter %s as JSON: %s", e.ParamName, e.Err.Error())
+}
+
+func (e *UnmarshalingParamError) Unwrap() error {
+	return e.Err
+}
+
+type RequiredParamError struct {
+	ParamName string
+}
+
+func (e *RequiredParamError) Error() string {
+	return fmt.Sprintf("Query argument %s is required, but not found", e.ParamName)
+}
+
+type RequiredHeaderError struct {
+	ParamName string
+	Err       error
+}
+
+func (e *RequiredHeaderError) Error() string {
+	return fmt.Sprintf("Header parameter %s is required, but not found", e.ParamName)
+}
+
+func (e *RequiredHeaderError) Unwrap() error {
+	return e.Err
+}
+
+type InvalidParamFormatError struct {
+	ParamName string
+	Err       error
+}
+
+func (e *InvalidParamFormatError) Error() string {
+	return fmt.Sprintf("Invalid format for parameter %s: %s", e.ParamName, e.Err.Error())
+}
+
+func (e *InvalidParamFormatError) Unwrap() error {
+	return e.Err
+}
+
+type TooManyValuesForParamError struct {
+	ParamName string
+	Count     int
+}
+
+func (e *TooManyValuesForParamError) Error() string {
+	return fmt.Sprintf("Expected one value for %s, got %d", e.ParamName, e.Count)
+}
+
+// Handler creates http.Handler with routing matching OpenAPI spec.
+func Handler(si ServerInterface) http.Handler {
+	return HandlerWithOptions(si, StdHTTPServerOptions{})
+}
+
+// ServeMux is an abstraction of http.ServeMux.
+type ServeMux interface {
+	HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request))
+	ServeHTTP(w http.ResponseWriter, r *http.Request)
+}
+
+type StdHTTPServerOptions struct {
+	BaseURL          string
+	BaseRouter       ServeMux
+	Middlewares      []MiddlewareFunc
+	ErrorHandlerFunc func(w http.ResponseWriter, r *http.Request, err error)
+}
+
+// HandlerFromMux creates http.Handler with routing matching OpenAPI spec based on the provided mux.
+func HandlerFromMux(si ServerInterface, m ServeMux) http.Handler {
+	return HandlerWithOptions(si, StdHTTPServerOptions{
+		BaseRouter: m,
+	})
+}
+
+func HandlerFromMuxWithBaseURL(si ServerInterface, m ServeMux, baseURL string) http.Handler {
+	return HandlerWithOptions(si, StdHTTPServerOptions{
+		BaseURL:    baseURL,
+		BaseRouter: m,
+	})
+}
+
+// HandlerWithOptions creates http.Handler with additional options
+func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.Handler {
+	m := options.BaseRouter
+
+	if m == nil {
+		m = http.NewServeMux()
+	}
+	if options.ErrorHandlerFunc == nil {
+		options.ErrorHandlerFunc = func(w http.ResponseWriter, r *http.Request, err error) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 	}
 
 	wrapper := ServerInterfaceWrapper{
 		Handler:            si,
 		HandlerMiddlewares: options.Middlewares,
-		ErrorHandler:       errorHandler,
+		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
-	router.GET(options.BaseURL+"/applications", wrapper.ListApplications)
-	router.POST(options.BaseURL+"/applications", wrapper.PostApplication)
-	router.DELETE(options.BaseURL+"/applications/:id", wrapper.DeleteApplication)
-	router.GET(options.BaseURL+"/applications/:id", wrapper.GetApplication)
-	router.PATCH(options.BaseURL+"/applications/:id", wrapper.PatchApplication)
-	router.GET(options.BaseURL+"/applications/:id/packet_filter", wrapper.GetPacketFilter)
-	router.PATCH(options.BaseURL+"/applications/:id/packet_filter", wrapper.PatchPacketFilter)
-	router.GET(options.BaseURL+"/applications/:id/status", wrapper.GetApplicationStatus)
-	router.GET(options.BaseURL+"/applications/:id/traffics", wrapper.ListApplicationTraffics)
-	router.PUT(options.BaseURL+"/applications/:id/traffics", wrapper.PutApplicationTraffic)
-	router.GET(options.BaseURL+"/applications/:id/versions", wrapper.ListApplicationVersions)
-	router.DELETE(options.BaseURL+"/applications/:id/versions/:version_id", wrapper.DeleteApplicationVersion)
-	router.GET(options.BaseURL+"/applications/:id/versions/:version_id", wrapper.GetApplicationVersion)
-	router.GET(options.BaseURL+"/user", wrapper.GetUser)
-	router.POST(options.BaseURL+"/user", wrapper.PostUser)
+	m.HandleFunc("GET "+options.BaseURL+"/applications", wrapper.ListApplications)
+	m.HandleFunc("POST "+options.BaseURL+"/applications", wrapper.PostApplication)
+	m.HandleFunc("DELETE "+options.BaseURL+"/applications/{id}", wrapper.DeleteApplication)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}", wrapper.GetApplication)
+	m.HandleFunc("PATCH "+options.BaseURL+"/applications/{id}", wrapper.PatchApplication)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/packet_filter", wrapper.GetPacketFilter)
+	m.HandleFunc("PATCH "+options.BaseURL+"/applications/{id}/packet_filter", wrapper.PatchPacketFilter)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/status", wrapper.GetApplicationStatus)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/traffics", wrapper.ListApplicationTraffics)
+	m.HandleFunc("PUT "+options.BaseURL+"/applications/{id}/traffics", wrapper.PutApplicationTraffic)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/versions", wrapper.ListApplicationVersions)
+	m.HandleFunc("DELETE "+options.BaseURL+"/applications/{id}/versions/{version_id}", wrapper.DeleteApplicationVersion)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/versions/{version_id}", wrapper.GetApplicationVersion)
+	m.HandleFunc("GET "+options.BaseURL+"/user", wrapper.GetUser)
+	m.HandleFunc("POST "+options.BaseURL+"/user", wrapper.PostUser)
+
+	return m
 }
