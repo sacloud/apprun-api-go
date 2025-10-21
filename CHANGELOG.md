@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.4.1](https://github.com/sacloud/apprun-api-go/compare/v0.4.0...v0.4.1) - 2025-10-21
+- Use net/http instead of gin for fake server by @repeatedly in https://github.com/sacloud/apprun-api-go/pull/59
+
 ## [v0.4.0](https://github.com/sacloud/apprun-api-go/compare/v0.3.0...v0.4.0) - 2025-09-24
 - AppRun API v1.1.0: update misc by @yamamoto-febc in https://github.com/sacloud/apprun-api-go/pull/36
 - lint openapi.yaml by @yamamoto-febc in https://github.com/sacloud/apprun-api-go/pull/35
