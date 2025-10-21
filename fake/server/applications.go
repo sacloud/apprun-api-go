@@ -15,9 +15,9 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
@@ -28,10 +28,9 @@ var (
 	defaultSortOrder = v1.ListApplicationsParamsSortOrderDesc
 )
 
-// アプリケーション一覧を取得します。
+// ListApplications returns the list of applications.
 // (GET /applications)
-func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsParams) {
-	// クエリパラメーターのデフォルト値のセット
+func (s *Server) ListApplications(w http.ResponseWriter, r *http.Request, params v1.ListApplicationsParams) {
 	if params.PageNum == nil {
 		params.PageNum = &defaultPageNum
 	}
@@ -47,83 +46,82 @@ func (s *Server) ListApplications(c *gin.Context, params v1.ListApplicationsPara
 
 	applications, err := s.Engine.ListApplications(params)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, applications)
+	writeJSON(w, http.StatusOK, applications)
 }
 
-// アプリケーションを作成します。
+// PostApplication creates an application.
 // (POST /applications)
-func (s *Server) PostApplication(c *gin.Context) {
-	// デフォルト値のみ予めセットしておく
+func (s *Server) PostApplication(w http.ResponseWriter, r *http.Request) {
 	paramJSON := &v1.PostApplicationBody{
 		TimeoutSeconds: 60,
 		MinScale:       0,
 		MaxScale:       10,
 	}
-	if err := c.ShouldBindJSON(paramJSON); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := json.NewDecoder(r.Body).Decode(paramJSON); err != nil {
+		writeError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	application, err := s.Engine.CreateApplication(paramJSON)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, &application)
+	writeJSON(w, http.StatusCreated, &application)
 }
 
-// アプリケーション詳細を取得します。
+// GetApplication returns application details.
 // (GET /applications/{id})
-func (s *Server) GetApplication(c *gin.Context, id string) {
+func (s *Server) GetApplication(w http.ResponseWriter, r *http.Request, id string) {
 	application, err := s.Engine.ReadApplication(id)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, &application)
+	writeJSON(w, http.StatusOK, &application)
 }
 
-// アプリケーションを部分的に変更します。
+// PatchApplication partially updates an application.
 // (PATCH /applications/{id})
-func (s *Server) PatchApplication(c *gin.Context, id string) {
+func (s *Server) PatchApplication(w http.ResponseWriter, r *http.Request, id string) {
 	paramJSON := &v1.PatchApplicationBody{}
-	if err := c.ShouldBindJSON(paramJSON); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := json.NewDecoder(r.Body).Decode(paramJSON); err != nil {
+		writeError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	application, err := s.Engine.UpdateApplication(id, paramJSON)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, &application)
+	writeJSON(w, http.StatusOK, &application)
 }
 
-// アプリケーションを削除します。
+// DeleteApplication deletes an application.
 // (DELETE /applications/{id})
-func (s *Server) DeleteApplication(c *gin.Context, id string) {
+func (s *Server) DeleteApplication(w http.ResponseWriter, r *http.Request, id string) {
 	if err := s.Engine.DeleteApplication(id); err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	w.WriteHeader(http.StatusNoContent)
 }
 
-// アプリケーションステータスを取得します。
+// GetApplicationStatus returns application status.
 // (GET /applications/{id}/status)
-func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
+func (s *Server) GetApplicationStatus(w http.ResponseWriter, r *http.Request, id string) {
 	application, err := s.Engine.ReadApplication(id)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -137,7 +135,7 @@ func (s *Server) GetApplicationStatus(c *gin.Context, id string) {
 	case v1.ApplicationStatusUnHealthy:
 		status = v1.HandlerGetApplicationStatusStatusUnHealthy
 	}
-	c.JSON(http.StatusOK, v1.HandlerGetApplicationStatusResponse{
+	writeJSON(w, http.StatusOK, v1.HandlerGetApplicationStatusResponse{
 		Status:  status,
 		Message: message,
 	})

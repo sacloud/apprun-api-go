@@ -42,8 +42,8 @@ apis/v1/zz_types_gen.go: apis/v1/spec/openapi.yaml apis/v1/spec/codegen/types.ya
 apis/v1/zz_client_gen.go: apis/v1/spec/openapi.yaml apis/v1/spec/codegen/client.yaml
 	oapi-codegen --old-config-style -config apis/v1/spec/codegen/client.yaml apis/v1/spec/openapi.yaml
 
-apis/v1/zz_server_gen.go: apis/v1/spec/openapi.yaml apis/v1/spec/codegen/gin.yaml
-	oapi-codegen --old-config-style -config apis/v1/spec/codegen/gin.yaml apis/v1/spec/openapi.yaml
+apis/v1/zz_server_gen.go: apis/v1/spec/openapi.yaml apis/v1/spec/codegen/server.yaml
+	oapi-codegen -config apis/v1/spec/codegen/server.yaml apis/v1/spec/openapi.yaml
 
 lint-def:
 	# NOTE: 上流側のOpenAPI定義ではtag周りの警告が出るため "-F warn"の指定を外しておく
