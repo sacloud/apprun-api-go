@@ -1,14 +1,14 @@
 openapi: 3.0.0
 info:
-  version: 1.1.0
-  title: AppRun β APIドキュメント
+  version: 1.2.0
+  title: AppRun共用型 APIドキュメント
   contact:
     name: SAKURA internet Inc.
   license:
     name: Copyright(C) SAKURA internet Inc. all rights reserved.
   description: |-
     ---
-    「AppRun」が提供するAPIの利用方法とサンプルを公開しております。
+    「AppRun共用型」が提供するAPIの利用方法とサンプルを公開しております。
 
     # 基本的な使い方
 
@@ -95,9 +95,9 @@ info:
 
     ## 1.ユーザーの作成
 
-    AppRunの利用を開始するには**ユーザー**を作成します。
+    AppRun共用型の利用を開始するには**ユーザー**を作成します。
 
-    ユーザーとは、AppRunを利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  
+    ユーザーとは、AppRun共用型を利用するための独立したユーザーであり、ユーザー作成および削除による料金の発生はございません。  
     なお、すでにユーザーを作成済みの場合は、再度ユーザーの作成は不要です。
 
     ユーザーを作成するには以下のような入力を行います。
@@ -136,8 +136,8 @@ info:
       "components": [
         {
           "name": "Component01",
-          "max_cpu": "0.1",
-          "max_memory": "256Mi",
+          "max_cpu": "0.5",
+          "max_memory": "1Gi",
           "deploy_source": {
             "container_registry": {
               "image": "my-app.sakuracr.jp/my-app:latest"
@@ -189,8 +189,8 @@ info:
       "components": [
         {
           "name": "Component01 updated",
-          "max_cpu": "0.1",
-          "max_memory": "256Mi",
+          "max_cpu": "0.5",
+          "max_memory": "1Gi",
           "deploy_source": {
             "container_registry": {
               "image": "my-app.sakuracr.jp/my-app-v2:latest"
@@ -288,19 +288,19 @@ paths:
         '200':
           description: ユーザー情報の取得に成功しました。
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '404':
-          description: AppRunにユーザーが存在しません。
+          description: AppRun共用型にユーザーが存在しません。
           content:
             application/json:
               schema:
@@ -315,24 +315,24 @@ paths:
       operationId: postUser
       tags:
         - ユーザー
-      description: AppRunにサインアップします。
+      description: AppRun共用型にサインアップします。
       responses:
         '201':
           description: サインアップに成功しました。
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '409':
-          description: AppRunにユーザーがすでに存在します。
+          description: AppRun共用型にユーザーがすでに存在します。
           content:
             application/json:
               schema:
@@ -349,7 +349,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーション一覧を取得します。
-      description: AppRunのアプリケーション一覧を取得します。
+      description: AppRun共用型のアプリケーション一覧を取得します。
       parameters:
         - in: query
           name: page_num
@@ -403,13 +403,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -425,7 +425,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションを作成します。
-      description: AppRunにアプリケーションを作成します。
+      description: AppRun共用型にアプリケーションを作成します。
       requestBody:
         description: 作成するアプリケーションの情報を入力します。
         required: true
@@ -447,13 +447,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -482,7 +482,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーション詳細を取得します。
-      description: AppRunのアプリケーション詳細を取得します。
+      description: AppRun共用型のアプリケーション詳細を取得します。
       responses:
         '200':
           description: アプリケーション詳細の取得に成功しました。
@@ -497,13 +497,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -531,7 +531,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションを部分的に変更します。
-      description: AppRunのアプリケーションを部分的に変更します。
+      description: AppRun共用型のアプリケーションを部分的に変更します。
       requestBody:
         description: 部分的に変更するアプリケーションの情報を入力します。
         required: true
@@ -553,13 +553,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -593,7 +593,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションを削除します。
-      description: AppRunのアプリケーションを削除します。
+      description: AppRun共用型のアプリケーションを削除します。
       responses:
         '204':
           description: アプリケーションの削除に成功しました。
@@ -604,13 +604,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -639,7 +639,7 @@ paths:
       tags:
         - アプリケーション
       summary: アプリケーションステータスを取得します。
-      description: AppRunのアプリケーションステータスを取得します。
+      description: AppRun共用型のアプリケーションステータスを取得します。
       responses:
         '200':
           description: アプリケーションステータスの取得に成功しました。
@@ -654,13 +654,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -689,7 +689,7 @@ paths:
       tags:
         - トラフィック
       summary: アプリケーショントラフィック分散を取得します。
-      description: AppRunのアプリケーショントラフィック分散を取得します。
+      description: AppRun共用型のアプリケーショントラフィック分散を取得します。
       responses:
         '200':
           description: アプリケーショントラフィック分散の取得に成功しました。
@@ -704,13 +704,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -738,7 +738,7 @@ paths:
       tags:
         - トラフィック
       summary: アプリケーショントラフィック分散を変更します。
-      description: AppRunのアプリケーショントラフィック分散を変更します。
+      description: AppRun共用型のアプリケーショントラフィック分散を変更します。
       requestBody:
         description: |
           トラフィック分散の割合を入力します。
@@ -762,13 +762,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -835,7 +835,7 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョン一覧を取得します。
-      description: AppRunのアプリケーションバージョン一覧を取得します。
+      description: AppRun共用型のアプリケーションバージョン一覧を取得します。
       responses:
         '200':
           description: アプリケーションバージョン一覧の取得に成功しました。
@@ -850,13 +850,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -890,7 +890,7 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョン詳細を取得します。
-      description: AppRunのアプリケーションバージョン詳細を取得します。
+      description: AppRun共用型のアプリケーションバージョン詳細を取得します。
       responses:
         '200':
           description: アプリケーションバージョン詳細の取得に成功しました。
@@ -905,13 +905,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -944,7 +944,7 @@ paths:
       tags:
         - バージョン
       summary: アプリケーションバージョンを削除します。
-      description: AppRunのアプリケーションバージョンを削除します。
+      description: AppRun共用型のアプリケーションバージョンを削除します。
       responses:
         '204':
           description: アプリケーションバージョンの削除に成功しました。
@@ -955,13 +955,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -992,7 +992,7 @@ paths:
       tags:
         - パケットフィルタ
       summary: パケットフィルタを取得します。
-      description: AppRunのパケットフィルタを取得します。
+      description: AppRun共用型のパケットフィルタを取得します。
       responses:
         '200':
           description: パケットフィルタの取得に成功しました。
@@ -1009,7 +1009,7 @@ paths:
                   - $ref: '#/components/schemas/model.defaultError'
                   - $ref: '#/components/schemas/model.cloudctrlError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
@@ -1017,7 +1017,7 @@ paths:
                   - $ref: '#/components/schemas/model.defaultError'
                   - $ref: '#/components/schemas/model.cloudctrlError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -1052,7 +1052,7 @@ paths:
       tags:
         - パケットフィルタ
       summary: パケットフィルタを部分的に変更します。
-      description: AppRunのパケットフィルタを部分的に変更します。
+      description: AppRun共用型のパケットフィルタを部分的に変更します。
       requestBody:
         required: true
         description: 部分的に変更するパケットフィルタの情報を入力します。
@@ -1076,7 +1076,7 @@ paths:
                   - $ref: '#/components/schemas/model.defaultError'
                   - $ref: '#/components/schemas/model.cloudctrlError'
         '401':
-          description: AppRunの認証に失敗しました。
+          description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
@@ -1084,7 +1084,7 @@ paths:
                   - $ref: '#/components/schemas/model.defaultError'
                   - $ref: '#/components/schemas/model.cloudctrlError'
         '403':
-          description: AppRunに対する権限がありません。
+          description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
@@ -1575,27 +1575,19 @@ components:
         max_cpu:
           description: コンポーネントの最大CPU数
           type: string
-          example: "0.1"
+          example: "0.5"
           enum:
-            - "0.1"
-            - "0.2"
-            - "0.3"
-            - "0.4"
             - "0.5"
-            - "0.6"
-            - "0.7"
-            - "0.8"
-            - "0.9"
             - "1"
+            - "2"
         max_memory:
           description: コンポーネントの最大メモリ
           type: string
-          example: 256Mi
+          example: 1Gi
           enum:
-            - 256Mi
-            - 512Mi
             - 1Gi
             - 2Gi
+            - 4Gi
         deploy_source:
 
           $ref: "#/components/schemas/postApplicationBodyComponentDeploySource"
@@ -1750,27 +1742,19 @@ components:
         max_cpu:
           description: コンポーネントの最大CPU数
           type: string
-          example: "0.1"
+          example: "0.5"
           enum:
-            - "0.1"
-            - "0.2"
-            - "0.3"
-            - "0.4"
             - "0.5"
-            - "0.6"
-            - "0.7"
-            - "0.8"
-            - "0.9"
             - "1"
+            - "2"
         max_memory:
           description: コンポーネントの最大メモリ
           type: string
-          example: 256Mi
+          example: 1Gi
           enum:
-            - 256Mi
-            - 512Mi
             - 1Gi
             - 2Gi
+            - 4Gi
         deploy_source:
           $ref: "#/components/schemas/patchApplicationBodyComponentDeploySource"
         env:
@@ -1973,11 +1957,11 @@ components:
         max_cpu:
           description: コンポーネントの最大CPU数
           type: string
-          example: "0.1"
+          example: "0.5"
         max_memory:
           description: コンポーネントの最大メモリ
           type: string
-          example: 256Mi
+          example: '1Gi'
         deploy_source:
           $ref: "#/components/schemas/handler.ApplicationComponentDeploySource"
         env:

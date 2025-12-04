@@ -88,46 +88,30 @@ const (
 
 // Defines values for PatchApplicationBodyComponentMaxCpu.
 const (
-	PatchApplicationBodyComponentMaxCpuN01 PatchApplicationBodyComponentMaxCpu = "0.1"
-	PatchApplicationBodyComponentMaxCpuN02 PatchApplicationBodyComponentMaxCpu = "0.2"
-	PatchApplicationBodyComponentMaxCpuN03 PatchApplicationBodyComponentMaxCpu = "0.3"
-	PatchApplicationBodyComponentMaxCpuN04 PatchApplicationBodyComponentMaxCpu = "0.4"
 	PatchApplicationBodyComponentMaxCpuN05 PatchApplicationBodyComponentMaxCpu = "0.5"
-	PatchApplicationBodyComponentMaxCpuN06 PatchApplicationBodyComponentMaxCpu = "0.6"
-	PatchApplicationBodyComponentMaxCpuN07 PatchApplicationBodyComponentMaxCpu = "0.7"
-	PatchApplicationBodyComponentMaxCpuN08 PatchApplicationBodyComponentMaxCpu = "0.8"
-	PatchApplicationBodyComponentMaxCpuN09 PatchApplicationBodyComponentMaxCpu = "0.9"
 	PatchApplicationBodyComponentMaxCpuN1  PatchApplicationBodyComponentMaxCpu = "1"
+	PatchApplicationBodyComponentMaxCpuN2  PatchApplicationBodyComponentMaxCpu = "2"
 )
 
 // Defines values for PatchApplicationBodyComponentMaxMemory.
 const (
-	PatchApplicationBodyComponentMaxMemoryN1Gi   PatchApplicationBodyComponentMaxMemory = "1Gi"
-	PatchApplicationBodyComponentMaxMemoryN256Mi PatchApplicationBodyComponentMaxMemory = "256Mi"
-	PatchApplicationBodyComponentMaxMemoryN2Gi   PatchApplicationBodyComponentMaxMemory = "2Gi"
-	PatchApplicationBodyComponentMaxMemoryN512Mi PatchApplicationBodyComponentMaxMemory = "512Mi"
+	PatchApplicationBodyComponentMaxMemoryN1Gi PatchApplicationBodyComponentMaxMemory = "1Gi"
+	PatchApplicationBodyComponentMaxMemoryN2Gi PatchApplicationBodyComponentMaxMemory = "2Gi"
+	PatchApplicationBodyComponentMaxMemoryN4Gi PatchApplicationBodyComponentMaxMemory = "4Gi"
 )
 
 // Defines values for PostApplicationBodyComponentMaxCpu.
 const (
-	PostApplicationBodyComponentMaxCpuN01 PostApplicationBodyComponentMaxCpu = "0.1"
-	PostApplicationBodyComponentMaxCpuN02 PostApplicationBodyComponentMaxCpu = "0.2"
-	PostApplicationBodyComponentMaxCpuN03 PostApplicationBodyComponentMaxCpu = "0.3"
-	PostApplicationBodyComponentMaxCpuN04 PostApplicationBodyComponentMaxCpu = "0.4"
 	PostApplicationBodyComponentMaxCpuN05 PostApplicationBodyComponentMaxCpu = "0.5"
-	PostApplicationBodyComponentMaxCpuN06 PostApplicationBodyComponentMaxCpu = "0.6"
-	PostApplicationBodyComponentMaxCpuN07 PostApplicationBodyComponentMaxCpu = "0.7"
-	PostApplicationBodyComponentMaxCpuN08 PostApplicationBodyComponentMaxCpu = "0.8"
-	PostApplicationBodyComponentMaxCpuN09 PostApplicationBodyComponentMaxCpu = "0.9"
 	PostApplicationBodyComponentMaxCpuN1  PostApplicationBodyComponentMaxCpu = "1"
+	PostApplicationBodyComponentMaxCpuN2  PostApplicationBodyComponentMaxCpu = "2"
 )
 
 // Defines values for PostApplicationBodyComponentMaxMemory.
 const (
-	PostApplicationBodyComponentMaxMemoryN1Gi   PostApplicationBodyComponentMaxMemory = "1Gi"
-	PostApplicationBodyComponentMaxMemoryN256Mi PostApplicationBodyComponentMaxMemory = "256Mi"
-	PostApplicationBodyComponentMaxMemoryN2Gi   PostApplicationBodyComponentMaxMemory = "2Gi"
-	PostApplicationBodyComponentMaxMemoryN512Mi PostApplicationBodyComponentMaxMemory = "512Mi"
+	PostApplicationBodyComponentMaxMemoryN1Gi PostApplicationBodyComponentMaxMemory = "1Gi"
+	PostApplicationBodyComponentMaxMemoryN2Gi PostApplicationBodyComponentMaxMemory = "2Gi"
+	PostApplicationBodyComponentMaxMemoryN4Gi PostApplicationBodyComponentMaxMemory = "4Gi"
 )
 
 // Defines values for ListApplicationsParamsSortOrder.
