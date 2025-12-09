@@ -76,8 +76,8 @@ func TestApplicationAPI(t *testing.T) {
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
-				MaxCpu:    "0.1",
-				MaxMemory: "256Mi",
+				MaxCpu:    "0.5",
+				MaxMemory: "1Gi",
 				DeploySource: v1.PostApplicationBodyComponentDeploySource{
 					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
 						Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
@@ -150,8 +150,8 @@ func TestPacketFilterAPI(t *testing.T) {
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
-				MaxCpu:    "0.1",
-				MaxMemory: "256Mi",
+				MaxCpu:    "0.5",
+				MaxMemory: "1Gi",
 
 				DeploySource: v1.PostApplicationBodyComponentDeploySource{
 					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
@@ -226,8 +226,8 @@ func TestVersionAPI(t *testing.T) {
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
-				MaxCpu:    "0.1",
-				MaxMemory: "256Mi",
+				MaxCpu:    "0.5",
+				MaxMemory: "1Gi",
 
 				DeploySource: v1.PostApplicationBodyComponentDeploySource{
 					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
@@ -297,8 +297,8 @@ func TestTrafficAPI(t *testing.T) {
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
-				MaxCpu:    "0.1",
-				MaxMemory: "256Mi",
+				MaxCpu:    "0.5",
+				MaxMemory: "1Gi",
 				DeploySource: v1.PostApplicationBodyComponentDeploySource{
 					ContainerRegistry: &v1.PostApplicationBodyComponentDeploySourceContainerRegistry{
 						Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
