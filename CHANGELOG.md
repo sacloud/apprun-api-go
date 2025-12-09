@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.5.1](https://github.com/sacloud/apprun-api-go/compare/v0.5.0...v0.5.1) - 2025-12-09
+- fixes acceptance test - specs by @yamamoto-febc in https://github.com/sacloud/apprun-api-go/pull/65
+
 ## [v0.5.0](https://github.com/sacloud/apprun-api-go/compare/v0.4.1...v0.5.0) - 2025-12-05
 - go: bump github.com/spf13/cobra from 1.10.1 to 1.10.2 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/62
 - ci: bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/61
