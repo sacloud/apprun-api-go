@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/google/uuid v1.6.0
 	github.com/oapi-codegen/runtime v1.1.2
-	github.com/sacloud/api-client-go v0.3.3
+	github.com/sacloud/api-client-go v0.3.4
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 )
@@ -31,7 +31,7 @@ require (
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sacloud/go-http v0.1.9 // indirect
-	github.com/sacloud/packages-go v0.0.11 // indirect
+	github.com/sacloud/packages-go v0.0.12 // indirect
 	github.com/speakeasy-api/jsonpath v0.6.0 // indirect
 	github.com/speakeasy-api/openapi-overlay v0.10.2 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
