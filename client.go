@@ -22,6 +22,7 @@ import (
 
 	client "github.com/sacloud/api-client-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/saclient-go"
 )
 
 // DefaultAPIRootURL デフォルトのAPIルートURL
@@ -39,26 +40,45 @@ var UserAgent = fmt.Sprintf(
 // Client APIクライアント
 type Client struct {
 	// Profile usacloud互換プロファイル名
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	Profile string
 
 	// Token APIキー: トークン
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	Token string
 	// Token APIキー: シークレット
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	Secret string
 
 	// APIRootURL APIのリクエスト先URLプレフィックス、省略可能
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	APIRootURL string
 
 	// Options HTTPクライアント関連オプション
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	Options *client.Options
 
 	// DisableProfile usacloud互換プロファイルからの設定読み取りを無効化
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	DisableProfile bool
 	// DisableEnv 環境変数からの設定読み取りを無効化
+	//
+	// Saclientフィールドが指定されている場合は無視される
 	DisableEnv bool
 
+	// Saclient APIクライアント
+	//
+	// 従来のapi-cient-goを置き換えるもので、通常は*saclient.Clientを呼び出し側で組み立ててから渡すことを想定している。
+	// 互換性維持のためにこの値が空の場合はClientの残りのフィールドから組み立てられる。
+	Saclient saclient.ClientAPI
+
 	initOnce sync.Once
-	factory  *client.Factory
 }
 
 func (c *Client) serverURL() string {
@@ -107,7 +127,9 @@ func (c *Client) init() error {
 			AccessTokenSecret: c.Secret,
 		})
 
-		c.factory = client.NewFactory(opts...)
+		if c.Saclient == nil {
+			c.Saclient = saclient.NewFactory(opts...)
+		}
 	})
 	return initError
 }
@@ -120,7 +142,7 @@ func (c *Client) apiClient() (*v1.ClientWithResponses, error) {
 	return &v1.ClientWithResponses{
 		ClientInterface: &v1.Client{
 			Server: c.serverURL(),
-			Client: c.factory.NewHttpRequestDoer(),
+			Client: c.Saclient,
 		},
 	}, nil
 }
