@@ -20,6 +20,7 @@ import (
 
 	apprun "github.com/sacloud/apprun-api-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/saclient-go"
 )
 
 const defaultServerURL = "https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api"
@@ -28,8 +29,10 @@ var serverURL = defaultServerURL
 
 // Example_userAPI ユーザーAPIの利用例
 func Example_userAPI() {
+	var theClient saclient.Client
 	client := &apprun.Client{
 		APIRootURL: serverURL, // 省略可能
+		Saclient:   &theClient,
 	}
 
 	// ユーザー情報の取得
