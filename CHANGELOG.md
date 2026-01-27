@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.6.1](https://github.com/sacloud/apprun-api-go/compare/v0.6.0...v0.6.1) - 2026-01-27
+- go: bump github.com/sacloud/saclient-go from 0.2.5-0.20251224021203-f6c92b75e9ab to 0.2.6 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/70
+- go: bump github.com/sacloud/api-client-go from 0.3.4 to 0.3.5 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/73
+- go: bump github.com/sacloud/saclient-go from 0.2.6 to 0.2.7 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/72
+
 ## [v0.6.0](https://github.com/sacloud/apprun-api-go/compare/v0.5.0...v0.6.0) - 2025-12-24
 - fixes acceptance test - specs by @yamamoto-febc in https://github.com/sacloud/apprun-api-go/pull/65
 - go: bump github.com/sacloud/api-client-go from 0.3.3 to 0.3.4 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/67
