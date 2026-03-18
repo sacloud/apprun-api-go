@@ -25,8 +25,11 @@ import (
 	"github.com/sacloud/saclient-go"
 )
 
-// DefaultAPIRootURL デフォルトのAPIルートURL
-const DefaultAPIRootURL = "https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api"
+const (
+	// DefaultAPIRootURL デフォルトのAPIルートURL
+	DefaultAPIRootURL = "https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api"
+	serviceKey        = "apprun"
+)
 
 // UserAgent APIリクエスト時のユーザーエージェント
 var UserAgent = fmt.Sprintf(
@@ -86,6 +89,7 @@ func (c *Client) serverURL() string {
 	if c.APIRootURL != "" {
 		v = c.APIRootURL
 	}
+
 	if !strings.HasSuffix(v, "/") {
 		v += "/"
 	}
@@ -129,6 +133,16 @@ func (c *Client) init() error {
 
 		if c.Saclient == nil {
 			c.Saclient = saclient.NewFactory(opts...)
+
+			endpointConfig, err := c.Saclient.EndpointConfig()
+			if err != nil {
+				initError = err
+				return
+			}
+			// エンドポイント設定にapprunのエンドポイントがあれば上書きする
+			if ep, ok := endpointConfig.Endpoints[serviceKey]; ok && ep != "" {
+				c.APIRootURL = ep
+			}
 		}
 	})
 	return initError
