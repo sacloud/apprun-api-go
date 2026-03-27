@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.7.1](https://github.com/sacloud/apprun-api-go/compare/v0.7.0...v0.7.1) - 2026-03-27
+- go: bump github.com/sacloud/saclient-go from 0.3.2 to 0.3.4 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/82
+
 ## [v0.7.0](https://github.com/sacloud/apprun-api-go/compare/v0.6.1...v0.7.0) - 2026-03-22
 - Add support endpoint setting from env and profiles by @to-shoji in https://github.com/sacloud/apprun-api-go/pull/78
 
