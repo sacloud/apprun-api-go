@@ -327,6 +327,6 @@ func (engine *Engine) newId() (string, error) {
 }
 
 func (engine *Engine) newResourceId() string {
-	id := rand.Int32()
+	id := rand.Int32() //nolint:gosec
 	return strconv.FormatInt(int64(id), 10)
 }
