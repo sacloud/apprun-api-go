@@ -16,6 +16,7 @@ package apprun
 
 import (
 	"context"
+	"encoding/json"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
@@ -59,7 +60,7 @@ type ApplicationAPI interface {
 	// Delete アプリケーションを削除
 	Delete(ctx context.Context, id string) error
 	// ReadStatus アプリケーションステータスを取得
-	ReadStatus(ctx context.Context, id string) (*v1.HandlerGetApplicationStatusResponse, error)
+	ReadStatus(ctx context.Context, id string) (*v1.HandlerGetApplicationOnlyStatus, error)
 }
 
 var _ ApplicationAPI = (*applicationOp)(nil)
@@ -98,11 +99,20 @@ func (op *applicationOp) Create(ctx context.Context, params *v1.PostApplicationB
 	if err != nil {
 		return nil, err
 	}
-	application, err := resp.Result()
+	created, err := resp.Result()
 	if err != nil {
 		return nil, err
 	}
-	return application, nil
+	// Convert create response to a stable application shape.
+	b, err := json.Marshal(created)
+	if err != nil {
+		return nil, err
+	}
+	var application v1.Application
+	if err := json.Unmarshal(b, &application); err != nil {
+		return nil, err
+	}
+	return &application, nil
 }
 
 func (op *applicationOp) Update(ctx context.Context, id string, params *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
@@ -149,7 +159,7 @@ func (op *applicationOp) Delete(ctx context.Context, id string) error {
 	return resp.Result()
 }
 
-func (op *applicationOp) ReadStatus(ctx context.Context, id string) (*v1.HandlerGetApplicationStatusResponse, error) {
+func (op *applicationOp) ReadStatus(ctx context.Context, id string) (*v1.HandlerGetApplicationOnlyStatus, error) {
 	apiClient, err := op.client.apiClient()
 	if err != nil {
 		return nil, err

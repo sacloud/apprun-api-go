@@ -274,8 +274,7 @@ func Example_trafficAPI() {
 
 	for _, data := range traffics.Data {
 		withLatest, _ := data.AsTrafficWithLatestVersion()
-
-		if withLatest.IsLatestVersion == true {
+		if withLatest.IsLatestVersion {
 			fmt.Printf("is_latest_version: %t, percent: %d", withLatest.IsLatestVersion, withLatest.Percent)
 		}
 	}
