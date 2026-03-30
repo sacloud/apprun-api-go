@@ -20,6 +20,7 @@ import (
 	"time"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/saclient-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -97,6 +98,7 @@ func TestEngine_Application(t *testing.T) {
 			"port": 8081,
 			"min_scale": 1,
 			"max_scale": 10,
+			"scale_target_concurrency": 100,
 			"components": [
 				{
 					"name": "component1",
@@ -131,6 +133,7 @@ func TestEngine_Application(t *testing.T) {
 			],
 			"status": "Healthy",
 			"public_url": "` + resp.PublicUrl + `",
+			"resource_id": "` + resp.ResourceId + `",
 			"created_at": "` + resp.CreatedAt.Format(time.RFC3339) + `"
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
@@ -156,6 +159,7 @@ func TestEngine_Application(t *testing.T) {
 			"port": 8081,
 			"min_scale": 1,
 			"max_scale": 10,
+			"scale_target_concurrency": 100,
 			"components": [
 				{
 					"name": "component1",
@@ -190,6 +194,7 @@ func TestEngine_Application(t *testing.T) {
 			],
 			"status": "Healthy",
 			"public_url": "` + readResp.PublicUrl + `",
+			"resource_id": "` + readResp.ResourceId + `",
 			"created_at": "` + readResp.CreatedAt.Format(time.RFC3339) + `"
 		}`
 		require.JSONEq(t, expectedJSON, string(respJson))
@@ -244,10 +249,11 @@ func postApplicationBody() *v1.PostApplicationBody {
 		},
 	}
 	req := &v1.PostApplicationBody{
-		Name:     "app1",
-		Port:     8081,
-		MinScale: 1,
-		MaxScale: 10,
+		Name:                   "app1",
+		Port:                   8081,
+		MinScale:               1,
+		MaxScale:               10,
+		ScaleTargetConcurrency: saclient.Ptr(100),
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",

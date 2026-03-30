@@ -116,6 +116,29 @@ func (engine *Engine) ReadVersion(appId string, versionId string) (*v1.HandlerGe
 	return &v, nil
 }
 
+func (engine *Engine) ReadVersionStatus(appId string, versionId string) (*v1.HandlerGetApplicationVersionOnlyStatus, error) {
+	defer engine.rLock()()
+
+	if _, ok := engine.appVersionRelations[appId]; !ok {
+		return nil, newError(
+			ErrorTypeNotFound, "version", nil,
+			"アプリケーションが見つかりませんでした。")
+	}
+
+	for _, r := range engine.appVersionRelations[appId] {
+		if r.version.Id == versionId {
+			return &v1.HandlerGetApplicationVersionOnlyStatus{
+				Status:  v1.HandlerGetVersionStatusStatus(r.version.Status),
+				Message: "",
+			}, nil
+		}
+	}
+
+	return nil, newError(
+		ErrorTypeNotFound, "version", nil,
+		"アプリケーションが見つかりませんでした。")
+}
+
 func (engine *Engine) DeleteVersion(appId string, versionId string) error {
 	defer engine.lock()()
 

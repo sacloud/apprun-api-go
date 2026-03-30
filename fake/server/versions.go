@@ -64,6 +64,18 @@ func (s *Server) GetApplicationVersion(w http.ResponseWriter, r *http.Request, i
 	writeJSON(w, http.StatusOK, v)
 }
 
+// GetApplicationVersionStatus returns status for a specific version
+// (GET /applications/{id}/versions/{version_id}/status)
+func (s *Server) GetApplicationVersionStatus(w http.ResponseWriter, r *http.Request, id string, versionId string) {
+	status, err := s.Engine.ReadVersionStatus(id, versionId)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, status)
+}
+
 // DeleteApplicationVersion deletes a version
 // (DELETE /applications/{id}/versions/{version_id})
 func (s *Server) DeleteApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string) {

@@ -147,6 +147,20 @@ func TestEngine_Version(t *testing.T) {
 		require.JSONEq(t, expectedJSON, string(respJson))
 	})
 
+	t.Run("read version status", func(t *testing.T) {
+		engine := NewEngine()
+		req := postApplicationBody()
+		createdApp, err := engine.CreateApplication(req)
+		require.NoError(t, err)
+
+		r := engine.appVersionRelations[createdApp.Id][0]
+		resp, err := engine.ReadVersionStatus(r.application.Id, r.version.Id)
+		require.NoError(t, err)
+
+		require.Equal(t, "", resp.Message)
+		require.Equal(t, v1.HandlerGetVersionStatusStatus(r.version.Status), resp.Status)
+	})
+
 	t.Run("delete version", func(t *testing.T) {
 		engine := NewEngine()
 		req := postApplicationBody()

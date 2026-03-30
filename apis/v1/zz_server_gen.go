@@ -1,17 +1,3 @@
-// Copyright 2021-2024 The sacloud/apprun-api-go authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //go:build go1.22
 
 // Package v1 provides primitives to interact with the openapi HTTP API.
@@ -68,10 +54,13 @@ type ServerInterface interface {
 	// アプリケーションバージョン詳細を取得します。
 	// (GET /applications/{id}/versions/{version_id})
 	GetApplicationVersion(w http.ResponseWriter, r *http.Request, id string, versionId string)
-
+	// アプリケーションバージョンステータスを取得します。
+	// (GET /applications/{id}/versions/{version_id}/status)
+	GetApplicationVersionStatus(w http.ResponseWriter, r *http.Request, id string, versionId string)
+	// ユーザー情報を取得します。
 	// (GET /user)
 	GetUser(w http.ResponseWriter, r *http.Request)
-
+	// ユーザーを作成します。
 	// (POST /user)
 	PostUser(w http.ResponseWriter, r *http.Request)
 }
@@ -478,6 +467,40 @@ func (siw *ServerInterfaceWrapper) GetApplicationVersion(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r)
 }
 
+// GetApplicationVersionStatus operation middleware
+func (siw *ServerInterfaceWrapper) GetApplicationVersionStatus(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "version_id" -------------
+	var versionId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "version_id", r.PathValue("version_id"), &versionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "version_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetApplicationVersionStatus(w, r, id, versionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetUser operation middleware
 func (siw *ServerInterfaceWrapper) GetUser(w http.ResponseWriter, r *http.Request) {
 
@@ -639,6 +662,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/versions", wrapper.ListApplicationVersions)
 	m.HandleFunc("DELETE "+options.BaseURL+"/applications/{id}/versions/{version_id}", wrapper.DeleteApplicationVersion)
 	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/versions/{version_id}", wrapper.GetApplicationVersion)
+	m.HandleFunc("GET "+options.BaseURL+"/applications/{id}/versions/{version_id}/status", wrapper.GetApplicationVersionStatus)
 	m.HandleFunc("GET "+options.BaseURL+"/user", wrapper.GetUser)
 	m.HandleFunc("POST "+options.BaseURL+"/user", wrapper.PostUser)
 
