@@ -15,6 +15,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -22,6 +23,7 @@ import (
 var (
 	_ error = (*ModelDefaultError)(nil)
 	_ error = (*ModelCloudctrlError)(nil)
+	_ error = (*ModelAppRunError)(nil)
 )
 
 func (e ModelDefaultError) Error() string {
@@ -63,4 +65,18 @@ func (e ModelDefaultError) Error() string {
 func (e ModelCloudctrlError) Error() string {
 	return fmt.Sprintf("CloudctrlError: %s (code: %s, fatal: %v, serial: %s, status: %s)",
 		e.ErrorMsg, e.ErrorCode, e.IsFatal, e.Serial, e.Status)
+}
+
+func (e ModelAppRunError) Error() string {
+	var defaultErr ModelDefaultError
+	if err := json.Unmarshal(e.union, &defaultErr); err == nil && defaultErr.Detail.Message != "" {
+		return defaultErr.Error()
+	}
+
+	var cloudctrlErr ModelCloudctrlError
+	if err := json.Unmarshal(e.union, &cloudctrlErr); err == nil && cloudctrlErr.ErrorMsg != "" {
+		return cloudctrlErr.Error()
+	}
+
+	return string(e.union)
 }

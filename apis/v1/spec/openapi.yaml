@@ -333,33 +333,25 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: AppRun共用型にユーザーが存在しません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     post:
       operationId: postUser
       tags:
@@ -378,33 +370,25 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: AppRun共用型にユーザーがすでに存在します。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications:
     get:
       operationId: listApplications
@@ -463,33 +447,25 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     post:
       operationId: postApplication
       tags:
@@ -515,41 +491,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}:
     get:
       operationId: getApplication
@@ -575,41 +541,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     patch:
       operationId: patchApplication
       parameters:
@@ -641,49 +597,37 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '409':
           description: アプリケーションが重複し作成が失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     delete:
       operationId: deleteApplication
       parameters:
@@ -704,41 +648,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/status:
     get:
       operationId: getApplicationStatus
@@ -764,41 +698,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/traffics:
     get:
       operationId: listApplicationTraffics
@@ -824,41 +748,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     put:
       operationId: putApplicationTraffic
       parameters:
@@ -892,41 +806,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/versions:
     get:
       operationId: listApplicationVersions
@@ -990,41 +894,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/versions/{version_id}:
     get:
       operationId: getApplicationVersion
@@ -1055,41 +949,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     delete:
       operationId: deleteApplicationVersion
       parameters:
@@ -1115,41 +999,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/versions/{version_id}/status:
     get:
       operationId: getApplicationVersionStatus
@@ -1180,41 +1054,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションバージョンが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/packet_filter:
     get:
       operationId: getPacketFilter
@@ -1241,41 +1105,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     patch:
       operationId: patchPacketFilter
       parameters:
@@ -1308,41 +1162,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
 components:
   schemas:
     handler.getUser:
@@ -2388,6 +2232,10 @@ components:
           description: ヘッダーフィールド値
           type: string
           example: Awesome
+    model.appRunError:
+      oneOf:
+        - $ref: '#/components/schemas/model.defaultError'
+        - $ref: '#/components/schemas/model.cloudctrlError'
     model.cloudctrlError:
       type: object
       required:

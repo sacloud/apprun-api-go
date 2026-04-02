@@ -1220,18 +1220,10 @@ type ListApplicationsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerListApplications
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1267,21 +1259,11 @@ type PostApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *HandlerPostApplication
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON409 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON409      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1316,21 +1298,11 @@ func (r PostApplicationResponse) UndefinedError() error {
 type DeleteApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1366,21 +1338,11 @@ type GetApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetApplication
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1416,24 +1378,12 @@ type PatchApplicationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerPatchApplication
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON409 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON409      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1469,21 +1419,11 @@ type GetPacketFilterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetPacketFilter
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1519,21 +1459,11 @@ type PatchPacketFilterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerPatchPacketFilter
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1569,21 +1499,11 @@ type GetApplicationStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetApplicationOnlyStatus
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1619,21 +1539,11 @@ type ListApplicationTrafficsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerListTraffics
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1669,21 +1579,11 @@ type PutApplicationTrafficResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerPutTraffics
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1719,21 +1619,11 @@ type ListApplicationVersionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerListVersions
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1768,21 +1658,11 @@ func (r ListApplicationVersionsResponse) UndefinedError() error {
 type DeleteApplicationVersionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1818,21 +1698,11 @@ type GetApplicationVersionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetVersion
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1868,21 +1738,11 @@ type GetApplicationVersionStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetApplicationVersionOnlyStatus
-	JSON400      *struct {
-		union json.RawMessage
-	}
-	JSON401 *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON400      *ModelAppRunError
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1918,18 +1778,10 @@ type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *HandlerGetUser
-	JSON401      *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON404 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON404      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -1965,18 +1817,10 @@ type PostUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *HandlerPostUser
-	JSON401      *struct {
-		union json.RawMessage
-	}
-	JSON403 *struct {
-		union json.RawMessage
-	}
-	JSON409 *struct {
-		union json.RawMessage
-	}
-	JSON500 *struct {
-		union json.RawMessage
-	}
+	JSON401      *ModelAppRunError
+	JSON403      *ModelAppRunError
+	JSON409      *ModelAppRunError
+	JSON500      *ModelAppRunError
 }
 
 // Status returns HTTPResponse.Status
@@ -2206,36 +2050,28 @@ func ParseListApplicationsResponse(rsp *http.Response) (*ListApplicationsRespons
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2268,45 +2104,35 @@ func ParsePostApplicationResponse(rsp *http.Response) (*PostApplicationResponse,
 		response.JSON201 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2332,45 +2158,35 @@ func ParseDeleteApplicationResponse(rsp *http.Response) (*DeleteApplicationRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2403,45 +2219,35 @@ func ParseGetApplicationResponse(rsp *http.Response) (*GetApplicationResponse, e
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2474,54 +2280,42 @@ func ParsePatchApplicationResponse(rsp *http.Response) (*PatchApplicationRespons
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2554,45 +2348,35 @@ func ParseGetPacketFilterResponse(rsp *http.Response) (*GetPacketFilterResponse,
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2625,45 +2409,35 @@ func ParsePatchPacketFilterResponse(rsp *http.Response) (*PatchPacketFilterRespo
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2696,45 +2470,35 @@ func ParseGetApplicationStatusResponse(rsp *http.Response) (*GetApplicationStatu
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2767,45 +2531,35 @@ func ParseListApplicationTrafficsResponse(rsp *http.Response) (*ListApplicationT
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2838,45 +2592,35 @@ func ParsePutApplicationTrafficResponse(rsp *http.Response) (*PutApplicationTraf
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2909,45 +2653,35 @@ func ParseListApplicationVersionsResponse(rsp *http.Response) (*ListApplicationV
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2973,45 +2707,35 @@ func ParseDeleteApplicationVersionResponse(rsp *http.Response) (*DeleteApplicati
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -3044,45 +2768,35 @@ func ParseGetApplicationVersionResponse(rsp *http.Response) (*GetApplicationVers
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -3115,45 +2829,35 @@ func ParseGetApplicationVersionStatusResponse(rsp *http.Response) (*GetApplicati
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -3186,36 +2890,28 @@ func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -3248,36 +2944,28 @@ func ParsePostUserResponse(rsp *http.Response) (*PostUserResponse, error) {
 		response.JSON201 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest struct {
-			union json.RawMessage
-		}
+		var dest ModelAppRunError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
