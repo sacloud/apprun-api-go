@@ -50,7 +50,7 @@ func (s *Server) Handler() http.Handler {
 	if os.Getenv("APPRUN_SERVER_LOGGING") != "" {
 		middlewares = append(middlewares, func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				log.Printf("%s %s %s", r.RemoteAddr, r.Method, r.URL.Path)
+				log.Printf("%s %s %s", r.RemoteAddr, r.Method, r.URL.Path) //nolint:gosec
 				next.ServeHTTP(w, r)
 			})
 		})

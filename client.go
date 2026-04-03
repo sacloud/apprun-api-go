@@ -54,7 +54,7 @@ type Client struct {
 	// Token APIキー: シークレット
 	//
 	// Saclientフィールドが指定されている場合は無視される
-	Secret string
+	Secret string //nolint:gosec
 
 	// APIRootURL APIのリクエスト先URLプレフィックス、省略可能
 	//

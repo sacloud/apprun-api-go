@@ -25,6 +25,7 @@ import (
 
 	"github.com/sacloud/apprun-api-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/saclient-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -68,11 +69,12 @@ func TestApplicationAPI(t *testing.T) {
 
 	// Create
 	application, err := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           appName,
-		TimeoutSeconds: 100,
-		Port:           80,
-		MinScale:       0,
-		MaxScale:       1,
+		Name:                   appName,
+		TimeoutSeconds:         100,
+		Port:                   80,
+		MinScale:               0,
+		MaxScale:               1,
+		ScaleTargetConcurrency: saclient.Ptr(100),
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
@@ -142,11 +144,12 @@ func TestPacketFilterAPI(t *testing.T) {
 
 	// Application Create
 	application, _ := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           appName,
-		TimeoutSeconds: 100,
-		Port:           80,
-		MinScale:       0,
-		MaxScale:       1,
+		Name:                   appName,
+		TimeoutSeconds:         100,
+		Port:                   80,
+		MinScale:               0,
+		MaxScale:               1,
+		ScaleTargetConcurrency: saclient.Ptr(100),
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
@@ -218,11 +221,12 @@ func TestVersionAPI(t *testing.T) {
 
 	// Application Create
 	application, _ := appOp.Create(ctx, &v1.PostApplicationBody{
-		Name:           appName,
-		TimeoutSeconds: 100,
-		Port:           80,
-		MinScale:       0,
-		MaxScale:       1,
+		Name:                   appName,
+		TimeoutSeconds:         100,
+		Port:                   80,
+		MinScale:               0,
+		MaxScale:               1,
+		ScaleTargetConcurrency: saclient.Ptr(100),
 		Components: []v1.PostApplicationBodyComponent{
 			{
 				Name:      "component1",
@@ -263,6 +267,11 @@ func TestVersionAPI(t *testing.T) {
 	versions, err = versionOp.List(ctx, application.Id, &v1.ListApplicationVersionsParams{})
 	require.NoError(t, err)
 	require.Equal(t, len(versions.Data), 1)
+
+	status, err := versionOp.ReadStatus(ctx, application.Id, versions.Data[0].Id)
+	require.NoError(t, err)
+	// タイミングによってはDeployingの可能性もあるため、HealthyかDeployingのどちらかであればテスト成功とする
+	require.Contains(t, []string{string(v1.HandlerGetVersionStatusStatusHealthy), string(v1.HandlerGetVersionStatusStatusDeploying)}, string(status.Status))
 
 	// Delete Application
 	appOp.Delete(ctx, application.Id)
@@ -396,7 +405,7 @@ func skipIfNoEnv(t *testing.T, envs ...string) {
 }
 
 func skipIfNoAPIKey(t *testing.T) {
-	skipIfNoEnv(t, "SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET")
+	skipIfNoEnv(t, "SAKURA_ACCESS_TOKEN", "SAKURA_ACCESS_TOKEN_SECRET")
 }
 
 func cleanupTestApplication() error {

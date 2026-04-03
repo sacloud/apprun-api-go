@@ -28,9 +28,9 @@ var VersionSortOrders = []string{
 
 // バージョンステータス
 var VersionStatuses = []string{
-	(string)(v1.VersionStatusHealthy),
-	(string)(v1.VersionStatusDeploying),
-	(string)(v1.VersionStatusUnHealthy),
+	(string)(v1.HandlerGetVersionStatusHealthy),
+	(string)(v1.HandlerGetVersionStatusDeploying),
+	(string)(v1.HandlerGetVersionStatusUnHealthy),
 }
 
 type VersionAPI interface {
@@ -40,6 +40,8 @@ type VersionAPI interface {
 	Read(ctx context.Context, appId, versionId string) (*v1.HandlerGetVersion, error)
 	// Delete アプリケーションバージョンを削除
 	Delete(ctx context.Context, appId, versionId string) error
+
+	ReadStatus(ctx context.Context, appId, versionId string) (*v1.HandlerGetApplicationVersionOnlyStatus, error)
 }
 
 var _ VersionAPI = (*versionOp)(nil)
@@ -95,4 +97,20 @@ func (op *versionOp) Delete(ctx context.Context, appId, versionId string) error 
 		return err
 	}
 	return resp.Result()
+}
+
+func (op *versionOp) ReadStatus(ctx context.Context, appId, versionId string) (*v1.HandlerGetApplicationVersionOnlyStatus, error) {
+	apiClient, err := op.client.apiClient()
+	if err != nil {
+		return nil, err
+	}
+	resp, err := apiClient.GetApplicationVersionStatusWithResponse(ctx, appId, versionId)
+	if err != nil {
+		return nil, err
+	}
+	status, err := resp.Result()
+	if err != nil {
+		return nil, err
+	}
+	return status, nil
 }

@@ -32,42 +32,34 @@ func (e ModelDefaultError) Error() string {
 		in = "(empty)"
 	} else {
 		var errorStrings []string
-		for _, err := range e.Detail.Errors {
-			errorStrings = append(errorStrings, fmt.Sprintf("{%s}", err.String()))
+		for _, errItem := range e.Detail.Errors {
+			domain := ""
+			reason := ""
+			message := ""
+			locationType := ""
+			location := ""
+			if errItem.Domain != nil {
+				domain = *errItem.Domain
+			}
+			if errItem.Reason != nil {
+				reason = *errItem.Reason
+			}
+			if errItem.Message != nil {
+				message = *errItem.Message
+			}
+			if errItem.LocationType != nil {
+				locationType = string(*errItem.LocationType)
+			}
+			if errItem.Location != nil {
+				location = *errItem.Location
+			}
+			errorStrings = append(errorStrings, fmt.Sprintf("{domain: %s, reason: %s, message: %s, location_type: %s, location: %s}", domain, reason, message, locationType, location))
 		}
 
 		in = strings.Join(errorStrings, ", ")
 	}
 
 	return fmt.Sprintf("code: %d, message: %s, inner_error: %s", e.Detail.Code, e.Detail.Message, in)
-}
-
-// String Stringer実装
-func (e ModelError) String() string {
-	var domain, reason, message, locationType, location string
-	if e.Domain != nil {
-		domain = *e.Domain
-	}
-	if e.Reason != nil {
-		reason = *e.Reason
-	}
-	if e.Message != nil {
-		message = *e.Message
-	}
-	if e.LocationType != nil {
-		locationType = string(*e.LocationType)
-	}
-	if e.Location != nil {
-		location = *e.Location
-	}
-
-	return fmt.Sprintf("domain: %s, reason: %s, message: %s, location_type: %s, location: %s",
-		domain,
-		reason,
-		message,
-		locationType,
-		location,
-	)
 }
 
 func (e ModelCloudctrlError) Error() string {

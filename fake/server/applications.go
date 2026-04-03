@@ -135,7 +135,7 @@ func (s *Server) GetApplicationStatus(w http.ResponseWriter, r *http.Request, id
 	case v1.ApplicationStatusUnHealthy:
 		status = v1.HandlerGetApplicationStatusStatusUnHealthy
 	}
-	writeJSON(w, http.StatusOK, v1.HandlerGetApplicationStatusResponse{
+	writeJSON(w, http.StatusOK, v1.HandlerGetApplicationOnlyStatus{
 		Status:  status,
 		Message: message,
 	})

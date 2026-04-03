@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.2.0
+  version: 1.3.0
   title: AppRun共用型 APIドキュメント
   contact:
     name: SAKURA internet Inc.
@@ -133,6 +133,7 @@ info:
       "port": 8080,
       "min_scale": 0,
       "max_scale": 1,
+      "scale_target_concurrency": 100,
       "components": [
         {
           "name": "Component01",
@@ -269,7 +270,42 @@ info:
     ]
     curl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \
          -X PUT \
+         -d '@request_body.json' \
          https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/traffics
+    ```
+
+    ## 5.パケットフィルタの確認、変更
+
+    アプリケーションに対してパケットフィルタを指定できます。
+
+    パケットフィルタを確認するには以下のような入力を行います。
+
+    ```
+    # 入力サンプル
+    curl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \
+         -X GET \
+         https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/packet_filter
+    ```
+
+    パケットフィルタを変更するには以下のような入力を行います。
+
+    ```
+    # 入力サンプル
+    vi request_body.json
+    cat request_body.json
+    {
+      "is_enabled": true,
+      "settings": [
+        {
+          "from_ip": "198.51.100.2",
+          "from_ip_prefix_length": 24
+        }
+      ]
+    }
+    curl -u '01234567-89ab-cdef-0123-456789abcdef:SAMPLETOKENSAMPLETOKENSAMPLETOKENSAM' \
+         -X PATCH \
+         -d '@request_body.json' \
+         https://secure.sakura.ad.jp/cloud/api/apprun/1.0/apprun/api/applications/{id}/packet_filter
     ```
     ----
 servers:
@@ -283,10 +319,15 @@ paths:
       operationId: getUser
       tags:
         - ユーザー
+      summary: ユーザー情報を取得します。
       description: ログイン中のユーザー情報を取得します。
       responses:
         '200':
           description: ユーザー情報の取得に成功しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handler.getUser'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
@@ -315,10 +356,15 @@ paths:
       operationId: postUser
       tags:
         - ユーザー
-      description: AppRun共用型にサインアップします。
+      summary: ユーザーを作成します。
+      description: AppRun共用型にユーザーを作成します。
       responses:
         '201':
-          description: サインアップに成功しました。
+          description: ユーザーの作成に成功しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handler.postUser'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
@@ -978,7 +1024,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/model.appRunError'
-
+  /applications/{id}/versions/{version_id}/status:
+    get:
+      operationId: getApplicationVersionStatus
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: version_id
+          schema:
+            type: string
+          required: true
+      tags:
+        - バージョン
+      summary: アプリケーションバージョンステータスを取得します。
+      description: AppRun共用型のアプリケーションバージョンステータスを取得します。
+      responses:
+        '200':
+          description: アプリケーションバージョンステータスの取得に成功しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handler.getVersionStatus'
+        '400':
+          description: リクエストが不正です。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.appRunError'
+        '401':
+          description: AppRun共用型の認証に失敗しました。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.appRunError'
+        '403':
+          description: AppRun共用型に対する権限がありません。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.appRunError'
+        '404':
+          description: アプリケーションバージョンが見つかりませんでした。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.appRunError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.appRunError'
   /applications/{id}/packet_filter:
     get:
       operationId: getPacketFilter
@@ -1005,41 +1105,31 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
     patch:
       operationId: patchPacketFilter
       parameters:
@@ -1072,43 +1162,61 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '401':
           description: AppRun共用型の認証に失敗しました。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '403':
           description: AppRun共用型に対する権限がありません。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '404':
           description: アプリケーションが見つかりませんでした。
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/model.defaultError'
-                  - $ref: '#/components/schemas/model.cloudctrlError'
+                $ref: '#/components/schemas/model.appRunError'
 components:
   schemas:
+    handler.getUser:
+      type: object
+      required:
+        - limit
+      properties:
+        limit:
+          type: object
+          required:
+            - application_count
+          properties:
+            application_count:
+              description: プロジェクトで作成できるアプリケーション数の上限
+              type: integer
+              example: 5
+    handler.postUser:
+      type: object
+      required:
+        - limit
+      properties:
+        limit:
+          type: object
+          required:
+            - application_count
+          properties:
+            application_count:
+              description: プロジェクトで作成できるアプリケーション数の上限
+              type: integer
+              example: 5
     handler.listApplications:
       type: object
       required:
@@ -1198,6 +1306,7 @@ components:
         - components
         - status
         - public_url
+        - resource_id
         - updated_at
       properties:
         id:
@@ -1225,13 +1334,19 @@ components:
           type: integer
           example: 0
           minimum: 0
-          maximum: 0
+          maximum: 10
         max_scale:
           description: アプリケーション全体の最大スケール数
           type: integer
           example: 2
           minimum: 1
           maximum: 10
+        scale_target_concurrency:
+          description: アプリケーションのスケールの閾値の目安となる同時リクエスト数
+          type: integer
+          example: 100
+          minimum: 50
+          maximum: 200
         components:
           description: アプリケーションのコンポーネント情報
           type: array
@@ -1249,16 +1364,20 @@ components:
           description: 公開URL
           type: string
           example: https://fq1I4vpQkN1YiGp.apprun.sakura.ne.jp
+        resource_id:
+          description: リソースID
+          type: string
+          example: '100000000000'
         updated_at:
           description: 更新日時
           type: string
           format: date-time
     handler.getApplicationStatus:
       type: object
+      x-go-name: HandlerGetApplicationOnlyStatus
       required:
         - status
         - message
-      x-go-name: HandlerGetApplicationStatusResponse
       properties:
         status:
           description: アプリケーションステータス
@@ -1388,7 +1507,7 @@ components:
           example: 0
           default: 0
           minimum: 0
-          maximum: 0
+          maximum: 10
         max_scale:
           description: バージョンの最大スケール数
           type: integer
@@ -1396,6 +1515,13 @@ components:
           default: 10
           minimum: 1
           maximum: 10
+        scale_target_concurrency:
+          description: バージョンのスケールの閾値の目安となる同時リクエスト数
+          type: integer
+          example: 100
+          default: 100
+          minimum: 50
+          maximum: 200
         components:
           description: バージョンのコンポーネント情報
           type: array
@@ -1405,6 +1531,25 @@ components:
           description: 作成日時
           type: string
           format: date-time
+    handler.getVersionStatus:
+      type: object
+      x-go-name: HandlerGetApplicationVersionOnlyStatus
+      required:
+        - status
+        - message
+      properties:
+        status:
+          description: アプリケーションバージョンステータス
+          type: string
+          example: UnHealthy
+          enum:
+            - Healthy
+            - UnHealthy
+            - Deploying
+        message:
+          description: ステータス失敗時のメッセージ
+          type: string
+          example: Failed to authenticate with the registry
     handler.listTraffics:
       type: object
       required:
@@ -1432,7 +1577,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Traffic"
-
     PacketFilterSetting:
       type: object
       required:
@@ -1461,7 +1605,7 @@ components:
           example: true
         settings:
           type: array
-          maxItems: 5
+          maxItems: 10
           items:
             $ref: "#/components/schemas/PacketFilterSetting"
     handler.patchPacketFilter:
@@ -1476,7 +1620,7 @@ components:
           example: true
         settings:
           type: array
-          maxItems: 5
+          maxItems: 10
           items:
             $ref: "#/components/schemas/PacketFilterSetting"
     Traffic:
@@ -1508,7 +1652,6 @@ components:
         percent:
           description: トラフィック分散の割合
           type: integer
-
     postApplicationBody:
       type: object
       required:
@@ -1533,7 +1676,9 @@ components:
           minimum: 1
           maximum: 300
         port:
-          description: アプリケーションがリクエストを待ち受けるポート番号
+          description: |
+            アプリケーションがリクエストを待ち受けるポート番号。
+            ただし、8012, 8013, 8022, 9090, 9091, 8008 は予約済みのため設定不可。
           type: integer
           example: 8080
           minimum: 1
@@ -1544,7 +1689,7 @@ components:
           example: 0
           default: 0
           minimum: 0
-          maximum: 0
+          maximum: 10
         max_scale:
           description: アプリケーション全体の最大スケール数
           type: integer
@@ -1552,6 +1697,13 @@ components:
           default: 10
           minimum: 1
           maximum: 10
+        scale_target_concurrency:
+          description: アプリケーションのスケールの閾値の目安となる同時リクエスト数
+          type: integer
+          example: 100
+          default: 100
+          minimum: 50
+          maximum: 200
         components:
           description: アプリケーションのコンポーネント情報
           type: array
@@ -1699,7 +1851,9 @@ components:
           minimum: 1
           maximum: 300
         port:
-          description: アプリケーションがリクエストを待ち受けるポート番号
+          description: |
+            アプリケーションがリクエストを待ち受けるポート番号。
+            ただし、8012, 8013, 8022, 9090, 9091, 8008 は予約済みのため設定不可。
           type: integer
           example: 8080
           minimum: 1
@@ -1709,13 +1863,19 @@ components:
           type: integer
           example: 0
           minimum: 0
-          maximum: 0
+          maximum: 10
         max_scale:
           description: アプリケーション全体の最大スケール数
           type: integer
           example: 2
           minimum: 1
           maximum: 10
+        scale_target_concurrency:
+          description: アプリケーションのスケールの閾値の目安となる同時リクエスト数
+          type: integer
+          example: 100
+          minimum: 50
+          maximum: 200
         components:
           description: アプリケーションのコンポーネント情報
           type: array
@@ -1804,11 +1964,15 @@ components:
           minLength: 1
           maxLength: 63
           nullable: true
+        action:
+          $ref: '#/components/schemas/containerRegistryAction'
     patchApplicationBodyComponentEnv:
       type: object
       properties:
         key:
-          description: 環境変数名
+          description: |
+            環境変数名。
+            ただし、K_SERVICE, K_CONFIGURATION, K_REVISION, PORTは予約済みのため設定不可。
           type: string
           example: MY_ENV
         value:
@@ -1855,6 +2019,17 @@ components:
           description: ヘッダーフィールド値
           type: string
           example: Awesome
+    containerRegistryAction:
+      description: |
+        コンテナレジストリの認証情報の設定方法
+        * new: 指定された認証情報を使用します。
+        * keep: 最新のバージョンで保存された認証情報を使用します。
+      type: string
+      default: new
+      enum:
+        - new
+        - keep
+      nullable: true
     putTrafficsBody:
       type: array
       items:
@@ -1868,7 +2043,7 @@ components:
           example: true
         settings:
           type: array
-          maxItems: 5
+          maxItems: 10
           items:
             $ref: "#/components/schemas/PacketFilterSetting"
     # handler.postApplication, handler.getApplication, handler.patchApplicationの共通化
@@ -1884,6 +2059,7 @@ components:
         - components
         - status
         - public_url
+        - resource_id
         - created_at
       properties:
         id:
@@ -1921,6 +2097,12 @@ components:
           default: 10
           minimum: 1
           maximum: 10
+        scale_target_concurrency:
+          description: アプリケーションのスケールの閾値の目安となる同時リクエスト数
+          type: integer
+          example: 100
+          minimum: 50
+          maximum: 200
         components:
           description: アプリケーションのコンポーネント情報
           type: array
@@ -1938,6 +2120,10 @@ components:
           description: 公開URL
           type: string
           example: https://fq1I4vpQkN1YiGp.apprun.sakura.ne.jp
+        resource_id:
+          description: リソースID
+          type: string
+          example: '100000000000'
         created_at:
           description: 作成日時
           type: string
@@ -2098,8 +2284,6 @@ components:
     model.errors:
       type: array
       items:
-        $ref: '#/components/schemas/model.error'
-    model.error:
         type: object
         required:
           - domain

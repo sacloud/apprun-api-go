@@ -16,7 +16,9 @@ package fake
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -121,7 +123,7 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 		var env []v1.HandlerApplicationComponentEnv
 		if reqComponent.Env != nil {
 			for _, e := range *reqComponent.Env {
-				env = append(env, (v1.HandlerApplicationComponentEnv)(e))
+				env = append(env, v1.HandlerApplicationComponentEnv(e))
 			}
 		}
 
@@ -157,16 +159,18 @@ func (engine *Engine) CreateApplication(reqBody *v1.PostApplicationBody) (*v1.Ap
 	url := fmt.Sprintf("https://example.com/apprun/dummy/%s", appId)
 	createdAt := time.Now().UTC().Truncate(time.Second)
 	app := &v1.Application{
-		Id:             appId,
-		Name:           reqBody.Name,
-		TimeoutSeconds: reqBody.TimeoutSeconds,
-		Port:           reqBody.Port,
-		MinScale:       reqBody.MinScale,
-		MaxScale:       reqBody.MaxScale,
-		Components:     components,
-		Status:         status,
-		PublicUrl:      url,
-		CreatedAt:      createdAt,
+		Id:                     appId,
+		Name:                   reqBody.Name,
+		TimeoutSeconds:         reqBody.TimeoutSeconds,
+		Port:                   reqBody.Port,
+		MinScale:               reqBody.MinScale,
+		MaxScale:               reqBody.MaxScale,
+		ScaleTargetConcurrency: reqBody.ScaleTargetConcurrency,
+		Components:             components,
+		Status:                 status,
+		PublicUrl:              url,
+		ResourceId:             engine.newResourceId(),
+		CreatedAt:              createdAt,
 	}
 	engine.Applications = append(engine.Applications, app)
 
@@ -230,7 +234,7 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 			var env []v1.HandlerApplicationComponentEnv
 			if reqComponent.Env != nil {
 				for _, e := range *reqComponent.Env {
-					env = append(env, (v1.HandlerApplicationComponentEnv)(e))
+					env = append(env, v1.HandlerApplicationComponentEnv(e))
 				}
 			}
 
@@ -280,16 +284,18 @@ func (engine *Engine) UpdateApplication(id string, reqBody *v1.PatchApplicationB
 	}
 
 	return &v1.HandlerPatchApplication{
-		Id:             patchedApp.Id,
-		Name:           patchedApp.Name,
-		TimeoutSeconds: patchedApp.TimeoutSeconds,
-		Port:           patchedApp.Port,
-		MinScale:       patchedApp.MinScale,
-		MaxScale:       patchedApp.MaxScale,
-		Components:     patchedApp.Components,
-		Status:         (v1.HandlerPatchApplicationStatus)(patchedApp.Status),
-		PublicUrl:      patchedApp.PublicUrl,
-		UpdatedAt:      now,
+		Id:                     patchedApp.Id,
+		Name:                   patchedApp.Name,
+		TimeoutSeconds:         patchedApp.TimeoutSeconds,
+		Port:                   patchedApp.Port,
+		MinScale:               patchedApp.MinScale,
+		MaxScale:               patchedApp.MaxScale,
+		ScaleTargetConcurrency: patchedApp.ScaleTargetConcurrency,
+		Components:             patchedApp.Components,
+		Status:                 (v1.HandlerPatchApplicationStatus)(patchedApp.Status),
+		PublicUrl:              patchedApp.PublicUrl,
+		ResourceId:             patchedApp.ResourceId,
+		UpdatedAt:              now,
 	}, nil
 }
 
@@ -318,4 +324,9 @@ func (engine *Engine) latestApplication(id string) *v1.Application {
 func (engine *Engine) newId() (string, error) {
 	id, err := uuid.NewRandom()
 	return id.String(), err
+}
+
+func (engine *Engine) newResourceId() string {
+	id := rand.Int32() //nolint:gosec
+	return strconv.FormatInt(int64(id), 10)
 }
