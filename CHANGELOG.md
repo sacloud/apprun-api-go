@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.7.2](https://github.com/sacloud/apprun-api-go/compare/v0.7.1...v0.7.2) - 2026-04-03
+- github: update settings by @repeatedly in https://github.com/sacloud/apprun-api-go/pull/87
+
 ## [v0.7.1](https://github.com/sacloud/apprun-api-go/compare/v0.7.0...v0.7.1) - 2026-04-03
 - go: bump github.com/sacloud/saclient-go from 0.3.2 to 0.3.4 by @dependabot[bot] in https://github.com/sacloud/apprun-api-go/pull/82
 - Use OpenAPI spec v1.3.0 by @repeatedly in https://github.com/sacloud/apprun-api-go/pull/85
