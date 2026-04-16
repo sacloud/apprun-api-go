@@ -16,21 +16,22 @@ package apprun
 
 import (
 	"context"
+	"fmt"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
 // ソート順
 var VersionSortOrders = []string{
-	(string)(v1.ListApplicationVersionsParamsSortOrderAsc),
-	(string)(v1.ListApplicationVersionsParamsSortOrderDesc),
+	(string)(v1.ListApplicationVersionsSortOrderAsc),
+	(string)(v1.ListApplicationVersionsSortOrderDesc),
 }
 
 // バージョンステータス
 var VersionStatuses = []string{
-	(string)(v1.HandlerGetVersionStatusHealthy),
-	(string)(v1.HandlerGetVersionStatusDeploying),
-	(string)(v1.HandlerGetVersionStatusUnHealthy),
+	(string)(v1.HandlerGetApplicationVersionOnlyStatusStatusHealthy),
+	(string)(v1.HandlerGetApplicationVersionOnlyStatusStatusDeploying),
+	(string)(v1.HandlerGetApplicationVersionOnlyStatusStatusUnHealthy),
 }
 
 type VersionAPI interface {
@@ -60,15 +61,21 @@ func (op *versionOp) List(ctx context.Context, appId string, params *v1.ListAppl
 	if err != nil {
 		return nil, err
 	}
-	resp, err := apiClient.ListApplicationVersionsWithResponse(ctx, appId, params)
+	reqParams := v1.ListApplicationVersionsParams{ID: appId}
+	if params != nil {
+		reqParams = *params
+		reqParams.ID = appId
+	}
+	resp, err := apiClient.ListApplicationVersions(ctx, reqParams)
 	if err != nil {
 		return nil, err
 	}
-	versions, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerListVersions:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected list versions response: %T", resp)
 	}
-	return versions, nil
 }
 
 func (op *versionOp) Read(ctx context.Context, appId, versionId string) (*v1.HandlerGetVersion, error) {
@@ -76,15 +83,16 @@ func (op *versionOp) Read(ctx context.Context, appId, versionId string) (*v1.Han
 	if err != nil {
 		return nil, err
 	}
-	resp, err := apiClient.GetApplicationVersionWithResponse(ctx, appId, versionId)
+	resp, err := apiClient.GetApplicationVersion(ctx, v1.GetApplicationVersionParams{ID: appId, VersionID: versionId})
 	if err != nil {
 		return nil, err
 	}
-	version, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerGetVersion:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected get version response: %T", resp)
 	}
-	return version, nil
 }
 
 func (op *versionOp) Delete(ctx context.Context, appId, versionId string) error {
@@ -92,11 +100,16 @@ func (op *versionOp) Delete(ctx context.Context, appId, versionId string) error 
 	if err != nil {
 		return err
 	}
-	resp, err := apiClient.DeleteApplicationVersionWithResponse(ctx, appId, versionId)
+	resp, err := apiClient.DeleteApplicationVersion(ctx, v1.DeleteApplicationVersionParams{ID: appId, VersionID: versionId})
 	if err != nil {
 		return err
 	}
-	return resp.Result()
+	switch resp.(type) {
+	case *v1.DeleteApplicationVersionNoContent:
+		return nil
+	default:
+		return fmt.Errorf("unexpected delete version response: %T", resp)
+	}
 }
 
 func (op *versionOp) ReadStatus(ctx context.Context, appId, versionId string) (*v1.HandlerGetApplicationVersionOnlyStatus, error) {
@@ -104,13 +117,14 @@ func (op *versionOp) ReadStatus(ctx context.Context, appId, versionId string) (*
 	if err != nil {
 		return nil, err
 	}
-	resp, err := apiClient.GetApplicationVersionStatusWithResponse(ctx, appId, versionId)
+	resp, err := apiClient.GetApplicationVersionStatus(ctx, v1.GetApplicationVersionStatusParams{ID: appId, VersionID: versionId})
 	if err != nil {
 		return nil, err
 	}
-	status, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerGetApplicationVersionOnlyStatus:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected get version status response: %T", resp)
 	}
-	return status, nil
 }

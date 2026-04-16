@@ -16,14 +16,16 @@ package apprun
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+
+	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
 type UserAPI interface {
 	// Read ログイン中のユーザー情報を取得
-	Read(ctx context.Context) (*http.Response, error)
+	Read(ctx context.Context) (*v1.HandlerGetUser, error)
 	// Create さくらのAppRunにサインアップ
-	Create(ctx context.Context) (*http.Response, error)
+	Create(ctx context.Context) (*v1.HandlerPostUser, error)
 }
 
 var _ UserAPI = (*userOp)(nil)
@@ -37,7 +39,7 @@ func NewUserOp(client *Client) UserAPI {
 	return &userOp{client: client}
 }
 
-func (op *userOp) Read(ctx context.Context) (*http.Response, error) {
+func (op *userOp) Read(ctx context.Context) (*v1.HandlerGetUser, error) {
 	apiClient, err := op.client.apiClient()
 	if err != nil {
 		return nil, err
@@ -46,10 +48,15 @@ func (op *userOp) Read(ctx context.Context) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch result := resp.(type) {
+	case *v1.HandlerGetUser:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected get user response: %T", resp)
+	}
 }
 
-func (op *userOp) Create(ctx context.Context) (*http.Response, error) {
+func (op *userOp) Create(ctx context.Context) (*v1.HandlerPostUser, error) {
 	apiClient, err := op.client.apiClient()
 	if err != nil {
 		return nil, err
@@ -58,5 +65,10 @@ func (op *userOp) Create(ctx context.Context) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	switch result := resp.(type) {
+	case *v1.HandlerPostUser:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected post user response: %T", resp)
+	}
 }

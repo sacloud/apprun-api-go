@@ -16,6 +16,7 @@ package apprun
 
 import (
 	"context"
+	"fmt"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
@@ -24,7 +25,7 @@ type TrafficAPI interface {
 	// List アプリケーショントラフィック分散を取得
 	List(ctx context.Context, appId string) (*v1.HandlerListTraffics, error)
 	// Update アプリケーショントラフィック分散を変更
-	Update(ctx context.Context, appId string, params *v1.PutApplicationTrafficJSONRequestBody) (*v1.HandlerPutTraffics, error)
+	Update(ctx context.Context, appId string, params *v1.PutTrafficsBody) (*v1.HandlerPutTraffics, error)
 }
 
 var _ TrafficAPI = (*trafficOp)(nil)
@@ -43,15 +44,16 @@ func (op *trafficOp) List(ctx context.Context, appId string) (*v1.HandlerListTra
 	if err != nil {
 		return nil, err
 	}
-	resp, err := apiClient.ListApplicationTrafficsWithResponse(ctx, appId)
+	resp, err := apiClient.ListApplicationTraffics(ctx, v1.ListApplicationTrafficsParams{ID: appId})
 	if err != nil {
 		return nil, err
 	}
-	traffics, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerListTraffics:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected list traffics response: %T", resp)
 	}
-	return traffics, nil
 }
 
 func (op *trafficOp) Update(ctx context.Context, appId string, params *v1.PutTrafficsBody) (*v1.HandlerPutTraffics, error) {
@@ -59,13 +61,17 @@ func (op *trafficOp) Update(ctx context.Context, appId string, params *v1.PutTra
 	if err != nil {
 		return nil, err
 	}
-	resp, err := apiClient.PutApplicationTrafficWithResponse(ctx, appId, *params)
+	if params == nil {
+		return nil, fmt.Errorf("params is nil")
+	}
+	resp, err := apiClient.PutApplicationTraffic(ctx, *params, v1.PutApplicationTrafficParams{ID: appId})
 	if err != nil {
 		return nil, err
 	}
-	traffics, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerPutTraffics:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected put traffics response: %T", resp)
 	}
-	return traffics, nil
 }

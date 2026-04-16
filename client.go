@@ -148,15 +148,13 @@ func (c *Client) init() error {
 	return initError
 }
 
-func (c *Client) apiClient() (*v1.ClientWithResponses, error) {
+func (c *Client) apiClient() (*v1.Client, error) {
 	if err := c.init(); err != nil {
 		return nil, err
 	}
 
-	return &v1.ClientWithResponses{
-		ClientInterface: &v1.Client{
-			Server: c.serverURL(),
-			Client: c.Saclient,
-		},
-	}, nil
+	return v1.NewClient(
+		c.serverURL(),
+		v1.WithClient(c.Saclient),
+	)
 }

@@ -48,5 +48,5 @@ func (s *Server) PutApplicationTraffic(w http.ResponseWriter, r *http.Request, i
 		return
 	}
 
-	writeJSON(w, http.StatusOK, &ut)
+	writeJSON(w, http.StatusOK, ut)
 }

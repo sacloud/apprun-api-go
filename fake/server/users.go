@@ -16,6 +16,8 @@ package server
 
 import (
 	"net/http"
+
+	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
 
 // GetUser returns user information
@@ -26,7 +28,9 @@ func (s *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	writeJSON(w, http.StatusOK, &v1.HandlerGetUser{
+		Limit: v1.HandlerGetUserLimit{ApplicationCount: 0},
+	})
 }
 
 // PostUser creates a user
@@ -37,5 +41,7 @@ func (s *Server) PostUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	writeJSON(w, http.StatusCreated, &v1.HandlerPostUser{
+		Limit: v1.HandlerPostUserLimit{ApplicationCount: 0},
+	})
 }

@@ -16,6 +16,7 @@ package apprun
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
@@ -50,15 +51,16 @@ func (op *packetFilterOp) Read(ctx context.Context, appId string) (*v1.HandlerGe
 		return nil, err
 	}
 
-	resp, err := apiClient.GetPacketFilterWithResponse(ctx, id)
+	resp, err := apiClient.GetPacketFilter(ctx, v1.GetPacketFilterParams{ID: id})
 	if err != nil {
 		return nil, err
 	}
-	packetFilter, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerGetPacketFilter:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected get packet filter response: %T", resp)
 	}
-	return packetFilter, nil
 }
 
 func (op *packetFilterOp) Update(ctx context.Context, appId string, params *v1.PatchPacketFilter) (*v1.HandlerPatchPacketFilter, error) {
@@ -72,13 +74,17 @@ func (op *packetFilterOp) Update(ctx context.Context, appId string, params *v1.P
 		return nil, err
 	}
 
-	resp, err := apiClient.PatchPacketFilterWithResponse(ctx, id, *params)
+	if params == nil {
+		return nil, fmt.Errorf("params is nil")
+	}
+	resp, err := apiClient.PatchPacketFilter(ctx, params, v1.PatchPacketFilterParams{ID: id})
 	if err != nil {
 		return nil, err
 	}
-	packetFilter, err := resp.Result()
-	if err != nil {
-		return nil, err
+	switch result := resp.(type) {
+	case *v1.HandlerPatchPacketFilter:
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unexpected patch packet filter response: %T", resp)
 	}
-	return packetFilter, nil
 }

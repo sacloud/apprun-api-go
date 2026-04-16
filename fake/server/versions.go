@@ -24,23 +24,23 @@ var (
 	versionDefaultPageNum   = 1
 	versionDefaultPageSize  = 50
 	versionDefaultSortField = "created_at"
-	versionDefaultSortOrder = v1.ListApplicationVersionsParamsSortOrderDesc
+	versionDefaultSortOrder = v1.ListApplicationVersionsSortOrderDesc
 )
 
 // ListApplicationVersions returns versions for application
 // (GET /applications/{id}/versions)
 func (s *Server) ListApplicationVersions(w http.ResponseWriter, r *http.Request, id string, params v1.ListApplicationVersionsParams) {
-	if params.PageNum == nil {
-		params.PageNum = &versionDefaultPageNum
+	if !params.PageNum.IsSet() {
+		params.PageNum = v1.NewOptInt(versionDefaultPageNum)
 	}
-	if params.PageSize == nil {
-		params.PageSize = &versionDefaultPageSize
+	if !params.PageSize.IsSet() {
+		params.PageSize = v1.NewOptInt(versionDefaultPageSize)
 	}
-	if params.SortField == nil {
-		params.SortField = &versionDefaultSortField
+	if !params.SortField.IsSet() {
+		params.SortField = v1.NewOptString(versionDefaultSortField)
 	}
-	if params.SortOrder == nil {
-		params.SortOrder = &versionDefaultSortOrder
+	if !params.SortOrder.IsSet() {
+		params.SortOrder = v1.NewOptListApplicationVersionsSortOrder(versionDefaultSortOrder)
 	}
 
 	versions, err := s.Engine.ListVersions(id, params)
