@@ -1676,7 +1676,6 @@ components:
       properties:
         meta:
           type: object
-          nullable: true
           required:
             - page_num
             - page_size
