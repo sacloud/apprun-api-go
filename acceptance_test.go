@@ -1,4 +1,4 @@
-// Copyright 2021-2024 The sacloud/apprun-api-go authors
+// Copyright 2021-2026 The sacloud/apprun-api-go authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import (
 
 	"github.com/sacloud/apprun-api-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
+	"github.com/sacloud/saclient-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,11 +37,19 @@ func TestUserAPI(t *testing.T) {
 	skipIfNoAPIKey(t)
 
 	ctx := context.Background()
+	client, err := newAPIClient()
+	require.NoError(t, err)
 	userOp := apprun.NewUserOp(client)
 
 	// Create
-	_, err := userOp.Create(ctx)
-	require.NoError(t, err)
+	_, err = userOp.Create(ctx)
+	if err != nil {
+		if saclient.IsConflictError(err) {
+			t.Log("user already exists, ignoring conflict error and continuing test")
+		} else {
+			t.Fatal(err)
+		}
+	}
 
 	// Read
 	res, err := userOp.Read(ctx)
@@ -64,6 +73,8 @@ func TestApplicationAPI(t *testing.T) {
 	}
 
 	ctx := context.Background()
+	client, err := newAPIClient()
+	require.NoError(t, err)
 	appOp := apprun.NewApplicationOp(client)
 
 	// Create
@@ -144,6 +155,8 @@ func TestPacketFilterAPI(t *testing.T) {
 	}
 
 	ctx := context.Background()
+	client, err := newAPIClient()
+	require.NoError(t, err)
 	appOp := apprun.NewApplicationOp(client)
 	pfOp := apprun.NewPacketFilterOp(client)
 
@@ -226,6 +239,8 @@ func TestVersionAPI(t *testing.T) {
 	}
 
 	ctx := context.Background()
+	client, err := newAPIClient()
+	require.NoError(t, err)
 	appOp := apprun.NewApplicationOp(client)
 	versionOp := apprun.NewVersionOp(client)
 
@@ -307,6 +322,8 @@ func TestTrafficAPI(t *testing.T) {
 	}
 
 	ctx := context.Background()
+	client, err := newAPIClient()
+	require.NoError(t, err)
 	appOp := apprun.NewApplicationOp(client)
 	versionOp := apprun.NewVersionOp(client)
 	trafficOp := apprun.NewTrafficOp(client)
@@ -370,7 +387,7 @@ func TestTrafficAPI(t *testing.T) {
 		}),
 	}
 
-	_, err := trafficOp.Update(ctx, application.ID, &trafficBody)
+	_, err = trafficOp.Update(ctx, application.ID, &trafficBody)
 	require.NoError(t, err)
 
 	// List Application Traffic
@@ -386,8 +403,6 @@ func TestTrafficAPI(t *testing.T) {
 	// Delete Application
 	appOp.Delete(ctx, application.ID)
 }
-
-var client = &apprun.Client{}
 
 // skipIfNoEnv 指定の環境変数のいずれかが空の場合はt.SkipNow()する
 func skipIfNoEnv(t *testing.T, envs ...string) {
@@ -411,8 +426,12 @@ func skipIfNoAPIKey(t *testing.T) {
 
 func cleanupTestApplication() error {
 	ctx := context.Background()
-	appOp := apprun.NewApplicationOp(client)
+	client, err := newAPIClient()
+	if err != nil {
+		return err
+	}
 
+	appOp := apprun.NewApplicationOp(client)
 	apps, err := appOp.List(ctx, &v1.ListApplicationsParams{})
 	if err != nil {
 		return err
@@ -430,4 +449,9 @@ func cleanupTestApplication() error {
 		}
 	}
 	return nil
+}
+
+func newAPIClient() (*v1.Client, error) {
+	var theClient saclient.Client
+	return apprun.NewClient(&theClient)
 }

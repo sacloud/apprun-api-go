@@ -1,4 +1,4 @@
-// Copyright 2021-2024 The sacloud/apprun-api-go authors
+// Copyright 2021-2026 The sacloud/apprun-api-go authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@ package apprun
 
 import (
 	"context"
-	"fmt"
+	"errors"
+	"net/http"
 
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
 )
@@ -66,122 +67,166 @@ type ApplicationAPI interface {
 var _ ApplicationAPI = (*applicationOp)(nil)
 
 type applicationOp struct {
-	client *Client
+	client *v1.Client
 }
 
 // NewApplicationOp アプリケーション操作関連API
-func NewApplicationOp(client *Client) ApplicationAPI {
+func NewApplicationOp(client *v1.Client) ApplicationAPI {
 	return &applicationOp{client: client}
 }
 
 func (op *applicationOp) List(ctx context.Context, params *v1.ListApplicationsParams) (*v1.HandlerListApplications, error) {
-	apiClient, err := op.client.apiClient()
-	if err != nil {
-		return nil, err
-	}
 	reqParams := v1.ListApplicationsParams{}
 	if params != nil {
 		reqParams = *params
 	}
-	resp, err := apiClient.ListApplications(ctx, reqParams)
+	const methodName = "Applications.List"
+	res, err := op.client.ListApplications(ctx, reqParams)
 	if err != nil {
-		return nil, err
+		return nil, NewAPIError(methodName, 0, err)
 	}
-	switch result := resp.(type) {
+	switch result := res.(type) {
 	case *v1.HandlerListApplications:
 		return result, nil
+	case *v1.ListApplicationsBadRequest:
+		return nil, apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.ListApplicationsUnauthorized:
+		return nil, apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.ListApplicationsForbidden:
+		return nil, apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.ListApplicationsInternalServerError:
+		return nil, apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return nil, fmt.Errorf("unexpected list applications response: %T", resp)
+		return nil, NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }
 
 func (op *applicationOp) Create(ctx context.Context, params *v1.PostApplicationBody) (*v1.HandlerPostApplication, error) {
-	apiClient, err := op.client.apiClient()
-	if err != nil {
-		return nil, err
-	}
+	const methodName = "Applications.Create"
 	if params == nil {
-		return nil, fmt.Errorf("params is nil")
+		return nil, NewError(methodName, errors.New("params is nil"))
 	}
-	resp, err := apiClient.PostApplication(ctx, params)
+
+	res, err := op.client.PostApplication(ctx, params)
 	if err != nil {
-		return nil, err
+		return nil, NewAPIError(methodName, 0, err)
 	}
-	switch result := resp.(type) {
+	switch result := res.(type) {
 	case *v1.HandlerPostApplication:
 		return result, nil
+	case *v1.PostApplicationBadRequest:
+		return nil, apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.PostApplicationUnauthorized:
+		return nil, apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.PostApplicationForbidden:
+		return nil, apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.PostApplicationConflict:
+		return nil, apiErrorFromModel(methodName, http.StatusConflict, result)
+	case *v1.PostApplicationInternalServerError:
+		return nil, apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return nil, fmt.Errorf("unexpected post application response: %T", resp)
+		return nil, NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }
 
 func (op *applicationOp) Update(ctx context.Context, id string, params *v1.PatchApplicationBody) (*v1.HandlerPatchApplication, error) {
-	apiClient, err := op.client.apiClient()
-	if err != nil {
-		return nil, err
-	}
+	const methodName = "Applications.Update"
 	if params == nil {
-		return nil, fmt.Errorf("params is nil")
+		return nil, NewError(methodName, errors.New("params is nil"))
 	}
-	resp, err := apiClient.PatchApplication(ctx, params, v1.PatchApplicationParams{ID: id})
+
+	res, err := op.client.PatchApplication(ctx, params, v1.PatchApplicationParams{ID: id})
 	if err != nil {
-		return nil, err
+		return nil, NewAPIError(methodName, 0, err)
 	}
-	switch result := resp.(type) {
+	switch result := res.(type) {
 	case *v1.HandlerPatchApplication:
 		return result, nil
+	case *v1.PatchApplicationBadRequest:
+		return nil, apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.PatchApplicationUnauthorized:
+		return nil, apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.PatchApplicationForbidden:
+		return nil, apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.PatchApplicationNotFound:
+		return nil, apiErrorFromModel(methodName, http.StatusNotFound, result)
+	case *v1.PatchApplicationConflict:
+		return nil, apiErrorFromModel(methodName, http.StatusConflict, result)
+	case *v1.PatchApplicationInternalServerError:
+		return nil, apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return nil, fmt.Errorf("unexpected patch application response: %T", resp)
+		return nil, NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }
 
 func (op *applicationOp) Read(ctx context.Context, id string) (*v1.HandlerGetApplication, error) {
-	apiClient, err := op.client.apiClient()
+	const methodName = "Applications.Read"
+	res, err := op.client.GetApplication(ctx, v1.GetApplicationParams{ID: id})
 	if err != nil {
-		return nil, err
+		return nil, NewAPIError(methodName, 0, err)
 	}
-	resp, err := apiClient.GetApplication(ctx, v1.GetApplicationParams{ID: id})
-	if err != nil {
-		return nil, err
-	}
-	switch result := resp.(type) {
+	switch result := res.(type) {
 	case *v1.HandlerGetApplication:
 		return result, nil
+	case *v1.GetApplicationBadRequest:
+		return nil, apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.GetApplicationUnauthorized:
+		return nil, apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.GetApplicationForbidden:
+		return nil, apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.GetApplicationNotFound:
+		return nil, apiErrorFromModel(methodName, http.StatusNotFound, result)
+	case *v1.GetApplicationInternalServerError:
+		return nil, apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return nil, fmt.Errorf("unexpected get application response: %T", resp)
+		return nil, NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }
 
 func (op *applicationOp) Delete(ctx context.Context, id string) error {
-	apiClient, err := op.client.apiClient()
+	const methodName = "Applications.Delete"
+	res, err := op.client.DeleteApplication(ctx, v1.DeleteApplicationParams{ID: id})
 	if err != nil {
-		return err
+		return NewAPIError(methodName, 0, err)
 	}
-	resp, err := apiClient.DeleteApplication(ctx, v1.DeleteApplicationParams{ID: id})
-	if err != nil {
-		return err
-	}
-	switch resp.(type) {
+	switch result := res.(type) {
 	case *v1.DeleteApplicationNoContent:
 		return nil
+	case *v1.DeleteApplicationBadRequest:
+		return apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.DeleteApplicationUnauthorized:
+		return apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.DeleteApplicationForbidden:
+		return apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.DeleteApplicationNotFound:
+		return apiErrorFromModel(methodName, http.StatusNotFound, result)
+	case *v1.DeleteApplicationInternalServerError:
+		return apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return fmt.Errorf("unexpected delete application response: %T", resp)
+		return NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }
 
 func (op *applicationOp) ReadStatus(ctx context.Context, id string) (*v1.HandlerGetApplicationOnlyStatus, error) {
-	apiClient, err := op.client.apiClient()
+	const methodName = "Applications.ReadStatus"
+	res, err := op.client.GetApplicationStatus(ctx, v1.GetApplicationStatusParams{ID: id})
 	if err != nil {
-		return nil, err
+		return nil, NewAPIError(methodName, 0, err)
 	}
-	resp, err := apiClient.GetApplicationStatus(ctx, v1.GetApplicationStatusParams{ID: id})
-	if err != nil {
-		return nil, err
-	}
-	switch result := resp.(type) {
+	switch result := res.(type) {
 	case *v1.HandlerGetApplicationOnlyStatus:
 		return result, nil
+	case *v1.GetApplicationStatusBadRequest:
+		return nil, apiErrorFromModel(methodName, http.StatusBadRequest, result)
+	case *v1.GetApplicationStatusUnauthorized:
+		return nil, apiErrorFromModel(methodName, http.StatusUnauthorized, result)
+	case *v1.GetApplicationStatusForbidden:
+		return nil, apiErrorFromModel(methodName, http.StatusForbidden, result)
+	case *v1.GetApplicationStatusNotFound:
+		return nil, apiErrorFromModel(methodName, http.StatusNotFound, result)
+	case *v1.GetApplicationStatusInternalServerError:
+		return nil, apiErrorFromModel(methodName, http.StatusInternalServerError, result)
 	default:
-		return nil, fmt.Errorf("unexpected get application status response: %T", resp)
+		return nil, NewAPIError(methodName, 0, errors.New("unknown error"))
 	}
 }

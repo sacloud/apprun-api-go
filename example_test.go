@@ -1,4 +1,4 @@
-// Copyright 2021-2024 The sacloud/apprun-api-go authors
+// Copyright 2021-2026 The sacloud/apprun-api-go authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ var serverURL = defaultServerURL
 // Example_userAPI ユーザーAPIの利用例
 func Example_userAPI() {
 	var theClient saclient.Client
-	client := &apprun.Client{
-		APIRootURL: serverURL, // 省略可能
-		Saclient:   &theClient,
+	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
+	if err != nil {
+		panic(err)
 	}
 
 	// ユーザー情報の取得
@@ -49,8 +49,10 @@ func Example_userAPI() {
 
 // Example_applicationAPI アプリケーションAPIの利用例
 func Example_applicationAPI() {
-	client := &apprun.Client{
-		APIRootURL: serverURL, // 省略可能
+	var theClient saclient.Client
+	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
+	if err != nil {
+		panic(err)
 	}
 
 	// アプリケーションの作成
@@ -111,8 +113,10 @@ func Example_applicationAPI() {
 
 // Example_versionAPI アプリケーションバージョンAPIの利用例
 func Example_versionAPI() {
-	client := &apprun.Client{
-		APIRootURL: serverURL, // 省略可能
+	var theClient saclient.Client
+	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
+	if err != nil {
+		panic(err)
 	}
 
 	// アプリケーションの作成
@@ -196,8 +200,10 @@ func Example_versionAPI() {
 
 // Example_trafficAPI アプリケーショントラフィックAPIの利用例
 func Example_trafficAPI() {
-	client := &apprun.Client{
-		APIRootURL: serverURL, // 省略可能
+	var theClient saclient.Client
+	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
+	if err != nil {
+		panic(err)
 	}
 
 	// アプリケーションの作成
