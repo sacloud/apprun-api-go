@@ -93,7 +93,7 @@ func TestApplicationAPI(t *testing.T) {
 				DeploySource: v1.PostApplicationBodyComponentsItemDeploySource{
 					ContainerRegistry: v1.NewOptPostApplicationBodyComponentsItemDeploySourceContainerRegistry(
 						v1.PostApplicationBodyComponentsItemDeploySourceContainerRegistry{
-							Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
+							Image: "sakura-oss-dev.sakuracr.jp/test:latest",
 						},
 					),
 				},
@@ -176,7 +176,7 @@ func TestPacketFilterAPI(t *testing.T) {
 				DeploySource: v1.PostApplicationBodyComponentsItemDeploySource{
 					ContainerRegistry: v1.NewOptPostApplicationBodyComponentsItemDeploySourceContainerRegistry(
 						v1.PostApplicationBodyComponentsItemDeploySourceContainerRegistry{
-							Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
+							Image: "sakura-oss-dev.sakuracr.jp/test:latest",
 						},
 					),
 				},
@@ -260,7 +260,7 @@ func TestVersionAPI(t *testing.T) {
 				DeploySource: v1.PostApplicationBodyComponentsItemDeploySource{
 					ContainerRegistry: v1.NewOptPostApplicationBodyComponentsItemDeploySourceContainerRegistry(
 						v1.PostApplicationBodyComponentsItemDeploySourceContainerRegistry{
-							Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
+							Image: "sakura-oss-dev.sakuracr.jp/test:latest",
 						},
 					),
 				},
@@ -343,7 +343,7 @@ func TestTrafficAPI(t *testing.T) {
 				DeploySource: v1.PostApplicationBodyComponentsItemDeploySource{
 					ContainerRegistry: v1.NewOptPostApplicationBodyComponentsItemDeploySourceContainerRegistry(
 						v1.PostApplicationBodyComponentsItemDeploySourceContainerRegistry{
-							Image: "apprun-test.sakuracr.jp/apprun/test1:latest",
+							Image: "sakura-oss-dev.sakuracr.jp/test:latest",
 						},
 					),
 				},
