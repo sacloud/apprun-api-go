@@ -94,6 +94,8 @@ func main() {
 
 :warning:  v1.0に達するまでは互換性のない形で変更される可能性がありますのでご注意ください。
 
+apprun-api-goはv0.8からogenベースの実装となっています。oapi-codegenベースの実装を使いたい場合にはv0.7系を使ってください。ただし新機能は追加されないため、新規APIを利用したい場合には移行が必要となります。
+
 ## License
 
 `apprun-api-go` Copyright (C) 2021-2026 The sacloud/apprun-api-go authors.
