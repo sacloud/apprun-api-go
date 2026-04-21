@@ -15457,8 +15457,10 @@ func (s *ModelErrorsItem) encodeFields(e *jx.Encoder) {
 		s.LocationType.Encode(e)
 	}
 	{
-		e.FieldStart("location")
-		s.Location.Encode(e)
+		if s.Location.Set {
+			e.FieldStart("location")
+			s.Location.Encode(e)
+		}
 	}
 }
 
@@ -15520,8 +15522,8 @@ func (s *ModelErrorsItem) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"location_type\"")
 			}
 		case "location":
-			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
+				s.Location.Reset()
 				if err := s.Location.Decode(d); err != nil {
 					return err
 				}
@@ -15539,7 +15541,7 @@ func (s *ModelErrorsItem) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00011111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

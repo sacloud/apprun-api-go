@@ -86,3 +86,20 @@ index aba03d1..02d6e3a 100644
  		default:
 
 ```
+
+また、OpenAPI上ではrequiredになっているものの、実際のレスポンスではOptionalなフィールドに関してはOpenAPI定義を修正しています。
+
+```
+diff --git a/openapi/openapi.yaml b/openapi/openapi.yaml
+index 7fcd3a4..5e939ca 100644
+--- a/openapi/openapi.yaml
++++ b/openapi/openapi.yaml
+@@ -2484,7 +2484,7 @@ components:
+           - reason
+           - message
+           - location_type
+-          - location
++          # - location
+         properties:
+           domain:
+```

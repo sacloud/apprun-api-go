@@ -6642,7 +6642,7 @@ type ModelErrorsItem struct {
 	Reason       NilString                      `json:"reason"`
 	Message      NilString                      `json:"message"`
 	LocationType NilModelErrorsItemLocationType `json:"location_type"`
-	Location     NilString                      `json:"location"`
+	Location     OptNilString                   `json:"location"`
 }
 
 // GetDomain returns the value of Domain.
@@ -6666,7 +6666,7 @@ func (s *ModelErrorsItem) GetLocationType() NilModelErrorsItemLocationType {
 }
 
 // GetLocation returns the value of Location.
-func (s *ModelErrorsItem) GetLocation() NilString {
+func (s *ModelErrorsItem) GetLocation() OptNilString {
 	return s.Location
 }
 
@@ -6691,7 +6691,7 @@ func (s *ModelErrorsItem) SetLocationType(val NilModelErrorsItemLocationType) {
 }
 
 // SetLocation sets the value of Location.
-func (s *ModelErrorsItem) SetLocation(val NilString) {
+func (s *ModelErrorsItem) SetLocation(val OptNilString) {
 	s.Location = val
 }
 

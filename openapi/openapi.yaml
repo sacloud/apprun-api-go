@@ -2484,7 +2484,7 @@ components:
           - reason
           - message
           - location_type
-          - location
+          # - location
         properties:
           domain:
             type: string
