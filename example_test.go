@@ -17,7 +17,6 @@ package apprun_test
 import (
 	"context"
 	"fmt"
-	"os"
 
 	apprun "github.com/sacloud/apprun-api-go"
 	v1 "github.com/sacloud/apprun-api-go/apis/v1"
@@ -30,8 +29,6 @@ var serverURL = defaultServerURL
 
 // Example_userAPI ユーザーAPIの利用例
 func Example_userAPI() {
-	exitIfNoAPIKey()
-
 	var theClient saclient.Client
 	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
 	if err != nil {
@@ -52,8 +49,6 @@ func Example_userAPI() {
 
 // Example_applicationAPI アプリケーションAPIの利用例
 func Example_applicationAPI() {
-	exitIfNoRequiredKeys()
-
 	var theClient saclient.Client
 	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
 	if err != nil {
@@ -81,7 +76,7 @@ func Example_applicationAPI() {
 							Image:    "apprun-test.sakuracr.jp/apprun/test1:latest",
 							Server:   v1.NewOptNilString("apprun-test.sakuracr.jp"),
 							Username: v1.NewOptNilString("test-user"),
-							Password: v1.NewOptNilString(os.Getenv("SAKURA_CONTAINER_REGISTRY_USER_PASSWORD")),
+							Password: v1.NewOptNilString("test-password"),
 						},
 					),
 				},
@@ -121,8 +116,6 @@ func Example_applicationAPI() {
 
 // Example_versionAPI アプリケーションバージョンAPIの利用例
 func Example_versionAPI() {
-	exitIfNoRequiredKeys()
-
 	var theClient saclient.Client
 	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
 	if err != nil {
@@ -151,7 +144,7 @@ func Example_versionAPI() {
 							Image:    "apprun-test.sakuracr.jp/apprun/test1:latest",
 							Server:   v1.NewOptNilString("apprun-test.sakuracr.jp"),
 							Username: v1.NewOptNilString("test-user"),
-							Password: v1.NewOptNilString(os.Getenv("SAKURA_CONTAINER_REGISTRY_USER_PASSWORD")),
+							Password: v1.NewOptNilString("test-password"),
 						},
 					),
 				},
@@ -213,8 +206,6 @@ func Example_versionAPI() {
 
 // Example_trafficAPI アプリケーショントラフィックAPIの利用例
 func Example_trafficAPI() {
-	exitIfNoRequiredKeys()
-
 	var theClient saclient.Client
 	client, err := apprun.NewClientWithAPIRootURL(&theClient, serverURL)
 	if err != nil {
@@ -244,7 +235,7 @@ func Example_trafficAPI() {
 							Image:    "apprun-test.sakuracr.jp/apprun/test1:latest",
 							Server:   v1.NewOptNilString("apprun-test.sakuracr.jp"),
 							Username: v1.NewOptNilString("test-user"),
-							Password: v1.NewOptNilString(os.Getenv("SAKURA_CONTAINER_REGISTRY_USER_PASSWORD")),
+							Password: v1.NewOptNilString("test-password"),
 						},
 					),
 				},
@@ -316,27 +307,4 @@ func Example_trafficAPI() {
 	}
 	// output:
 	// is_latest_version: true, percent: 90
-}
-
-func exitIfNoEnv(envs ...string) {
-	var emptyEnvs []string
-	for _, env := range envs {
-		if os.Getenv(env) == "" {
-			emptyEnvs = append(emptyEnvs, env)
-		}
-	}
-	if len(emptyEnvs) > 0 {
-		for _, env := range emptyEnvs {
-			fmt.Printf("environment variable %q is not set\n", env)
-		}
-		os.Exit(0)
-	}
-}
-
-func exitIfNoAPIKey() {
-	exitIfNoEnv("SAKURA_ACCESS_TOKEN", "SAKURA_ACCESS_TOKEN_SECRET")
-}
-
-func exitIfNoRequiredKeys() {
-	exitIfNoEnv("SAKURA_ACCESS_TOKEN", "SAKURA_ACCESS_TOKEN_SECRET", "SAKURA_CONTAINER_REGISTRY_USER_PASSWORD")
 }

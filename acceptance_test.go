@@ -149,7 +149,7 @@ func TestApplicationAPI(t *testing.T) {
 //   - アプリケーションを作成
 //   - アプリケーションを削除
 func TestApplicationAPIWithExternalRegistry(t *testing.T) {
-	skipIfNoRequiredKeys(t)
+	skipIfNoAPIKey(t)
 
 	if err := cleanupTestApplication(); err != nil {
 		t.Fatal(err)
