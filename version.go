@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Deprecated: This module has moved to github.com/sacloud/sacloud-sdk-go.
+// Please migrate to that module. This repository will be archived.
 package apprun
 
 var (
