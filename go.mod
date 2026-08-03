@@ -1,3 +1,5 @@
+// Deprecated: This module has moved to github.com/sacloud/sacloud-sdk-go.
+// Please migrate to that module. This repository will be archived.
 module github.com/sacloud/apprun-api-go
 
 go 1.25.5
