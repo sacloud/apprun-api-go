@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.8.3](https://github.com/sacloud/apprun-api-go/compare/v0.8.2...v0.8.3) - 2026-08-03
+- update README for repository transition by @shyouhei in https://github.com/sacloud/apprun-api-go/pull/107
+
 ## [v0.8.2](https://github.com/sacloud/apprun-api-go/compare/v0.8.1...v0.8.2) - 2026-06-11
 - Update openapi by @repeatedly in https://github.com/sacloud/apprun-api-go/pull/101
 
